@@ -25,8 +25,12 @@ export async function POST(req: NextRequest) {
   try {
     await appendSubmissionLine(line);
   } catch (err) {
+    const detail = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
     console.error("Failed to append picks line:", err);
-    return NextResponse.json({ ok: false, error: "Failed to save picks" }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: `Failed to save picks — ${detail}` },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ ok: true, url: "/api/picks", line });

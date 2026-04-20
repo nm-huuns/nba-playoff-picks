@@ -27,7 +27,7 @@ export interface Submission {
 
 export async function readPicksRaw(): Promise<string> {
   try {
-    const result = await get(BLOB_PATHNAME, { access: "public", useCache: false });
+    const result = await get(BLOB_PATHNAME, { access: "private", useCache: false });
     if (!result || result.statusCode === 304 || !result.stream) return "";
     const reader = result.stream.getReader();
     const chunks: Uint8Array[] = [];
@@ -44,15 +44,19 @@ export async function readPicksRaw(): Promise<string> {
         return merged;
       }, new Uint8Array())
     );
-  } catch {
+  } catch (err) {
     // If the blob doesn't exist yet, treat as empty.
+    // Log other errors so they surface in Vercel function logs.
+    if (err instanceof Error && err.name !== "BlobNotFoundError") {
+      console.error("readPicksRaw error:", err);
+    }
     return "";
   }
 }
 
 export async function writePicksRaw(contents: string): Promise<void> {
   await put(BLOB_PATHNAME, contents, {
-    access: "public",
+    access: "private",
     allowOverwrite: true,
     addRandomSuffix: false,
     contentType: "text/plain; charset=utf-8",
