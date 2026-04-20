@@ -18,7 +18,7 @@ export default function Home() {
         </p>
       </header>
 
-      <PicksForm matchups={matchups} />
+      <PicksForm matchups={matchups} eastTeams={bracket.east} westTeams={bracket.west} />
     </main>
   );
 }

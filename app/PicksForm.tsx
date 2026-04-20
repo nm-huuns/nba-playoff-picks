@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Matchup } from "@/lib/bracket";
+import type { Matchup, Team } from "@/lib/bracket";
 
 interface PickState {
   winner?: string;
@@ -12,15 +12,34 @@ type PicksMap = Record<string, PickState>;
 
 const GAMES_OPTIONS = [4, 5, 6, 7];
 
-export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
+export default function PicksForm({
+  matchups,
+  eastTeams,
+  westTeams,
+}: {
+  matchups: Matchup[];
+  eastTeams: Team[];
+  westTeams: Team[];
+}) {
   const [name, setName] = useState("");
   const [picks, setPicks] = useState<PicksMap>({});
+  const [eastWinner, setEastWinner] = useState<string>("");
+  const [westWinner, setWestWinner] = useState<string>("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
 
   const east = useMemo(() => matchups.filter((m) => m.conference === "East"), [matchups]);
   const west = useMemo(() => matchups.filter((m) => m.conference === "West"), [matchups]);
+
+  const eastTeamOptions = useMemo(
+    () => eastTeams.filter((t) => t.team.length > 0),
+    [eastTeams]
+  );
+  const westTeamOptions = useMemo(
+    () => westTeams.filter((t) => t.team.length > 0),
+    [westTeams]
+  );
 
   const allReady = useMemo(
     () => matchups.every((m) => m.high.team.length > 0 && m.low.team.length > 0),
@@ -39,6 +58,8 @@ export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
   function findMissing(): string | null {
     if (!allReady) return "Bracket is not fully configured yet";
     if (!name.trim()) return "Please enter your name";
+    if (!eastWinner) return "Pick the Eastern Conference winner";
+    if (!westWinner) return "Pick the Western Conference winner";
     for (const m of matchups) {
       const p = picks[m.id];
       if (!p?.winner) return `Pick a winner for ${m.id} (${m.high.team} vs ${m.low.team})`;
@@ -60,6 +81,8 @@ export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
 
     const body = {
       name: name.trim(),
+      eastConferenceWinner: eastWinner,
+      westConferenceWinner: westWinner,
       picks: matchups.map((m) => ({
         seriesId: m.id,
         winner: picks[m.id].winner,
@@ -80,6 +103,8 @@ export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
         setSuccess(true);
         // Clear picks but keep name so the user can see what they submitted.
         setPicks({});
+        setEastWinner("");
+        setWestWinner("");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Network error");
@@ -102,7 +127,7 @@ export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
           maxLength={50}
           required
           className="w-full sm:w-64 rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
-          placeholder="e.g. Sunny"
+          placeholder="Name here"
         />
       </div>
 
@@ -112,6 +137,39 @@ export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
           <code>bracket.json</code> to enable submissions.
         </div>
       )}
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold">Conference winners</h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Who comes out of each conference?
+          </p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <ConferenceWinnerSelect
+            id="east-conference-winner"
+            label="Eastern Conference winner"
+            teams={eastTeamOptions}
+            value={eastWinner}
+            onChange={(v) => {
+              setEastWinner(v);
+              setSuccess(false);
+              setError(null);
+            }}
+          />
+          <ConferenceWinnerSelect
+            id="west-conference-winner"
+            label="Western Conference winner"
+            teams={westTeamOptions}
+            value={westWinner}
+            onChange={(v) => {
+              setWestWinner(v);
+              setSuccess(false);
+              setError(null);
+            }}
+          />
+        </div>
+      </section>
 
       <div className="grid gap-8 md:grid-cols-2">
         <Column title="Eastern Conference" matchups={east} picks={picks} setPick={setPick} />
@@ -131,6 +189,42 @@ export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
         {success && <p className="text-sm text-green-700 dark:text-green-400">Picks saved!</p>}
       </div>
     </form>
+  );
+}
+
+function ConferenceWinnerSelect({
+  id,
+  label,
+  teams,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  teams: Team[];
+  value: string;
+  onChange: (next: string) => void;
+}) {
+  return (
+    <label htmlFor={id} className="block">
+      <span className="block text-sm font-medium mb-1">{label}</span>
+      <select
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={teams.length === 0}
+        className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm disabled:opacity-50"
+      >
+        <option value="" disabled>
+          {teams.length === 0 ? "TBD" : "Pick a team…"}
+        </option>
+        {teams.map((t) => (
+          <option key={t.seed} value={t.team}>
+            {t.seed}. {t.team}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 

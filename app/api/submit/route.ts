@@ -20,7 +20,12 @@ export async function POST(req: NextRequest) {
 
   const name = ((body as { name?: unknown }).name as string).trim();
   const timestamp = new Date().toISOString();
-  const line = formatLine({ timestamp, name, picks: result.picks });
+  const line = formatLine({
+    timestamp,
+    name,
+    picks: result.picks,
+    conferenceWinners: result.conferenceWinners,
+  });
 
   try {
     await appendSubmissionLine(line);

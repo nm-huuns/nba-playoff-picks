@@ -37,6 +37,14 @@ export default async function Results() {
                   <span className="font-medium">{s.name}</span>
                   <span className="text-xs text-gray-500 font-mono">{s.timestamp}</span>
                 </div>
+                {s.conferenceWinners && (
+                  <div className="text-xs mb-2">
+                    <span className="text-gray-500">Conference winners — </span>
+                    <span className="font-medium">East:</span> {s.conferenceWinners.east}
+                    <span className="text-gray-500"> · </span>
+                    <span className="font-medium">West:</span> {s.conferenceWinners.west}
+                  </div>
+                )}
                 <div className="text-xs text-gray-500 font-mono break-all">
                   {s.picks.map((p) => `${p.seriesId}: ${p.winner} in ${p.games}`).join(" · ")}
                 </div>

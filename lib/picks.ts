@@ -17,10 +17,16 @@ export interface Pick {
   games: Games;
 }
 
+export interface ConferenceWinners {
+  east: string;
+  west: string;
+}
+
 export interface Submission {
   timestamp: string; // ISO-8601
   name: string;
   picks: Pick[];
+  conferenceWinners?: ConferenceWinners;
 }
 
 // ---------- Blob I/O ----------
@@ -83,17 +89,43 @@ function sanitizeTeam(team: string): string {
   return team.replace(/[|\n\r,:]/g, " ").trim();
 }
 
+// Conference-winner team is written into a `KEY=value;KEY=value` segment, so
+// we additionally strip `=` and `;` here.
+function sanitizeConferenceWinner(team: string): string {
+  return team.replace(/[|\n\r,:;=]/g, " ").trim();
+}
+
 export function formatLine(submission: Submission): string {
   const picksStr = submission.picks
     .map((p) => `${p.seriesId}:${sanitizeTeam(p.winner)}-${p.games}`)
     .join(",");
-  return `${submission.timestamp} | ${sanitizeName(submission.name)} | ${picksStr}`;
+  const base = `${submission.timestamp} | ${sanitizeName(submission.name)} | ${picksStr}`;
+  if (submission.conferenceWinners) {
+    const cw = submission.conferenceWinners;
+    return `${base} | EAST=${sanitizeConferenceWinner(cw.east)};WEST=${sanitizeConferenceWinner(cw.west)}`;
+  }
+  return base;
+}
+
+function parseConferenceWinners(segment: string): ConferenceWinners | undefined {
+  let east: string | undefined;
+  let west: string | undefined;
+  for (const part of segment.split(";")) {
+    const eqIdx = part.indexOf("=");
+    if (eqIdx < 0) continue;
+    const key = part.slice(0, eqIdx).trim().toUpperCase();
+    const value = part.slice(eqIdx + 1).trim();
+    if (key === "EAST") east = value;
+    else if (key === "WEST") west = value;
+  }
+  if (!east || !west) return undefined;
+  return { east, west };
 }
 
 export function parseLine(line: string): Submission | null {
   const parts = line.split(" | ");
   if (parts.length < 3) return null;
-  const [timestamp, name, picksStr] = parts;
+  const [timestamp, name, picksStr, conferenceWinnersStr] = parts;
   const picks: Pick[] = [];
   for (const token of picksStr.split(",")) {
     const colonIdx = token.indexOf(":");
@@ -107,7 +139,12 @@ export function parseLine(line: string): Submission | null {
     if (!VALID_GAMES.includes(games as Games)) return null;
     picks.push({ seriesId, winner, games: games as Games });
   }
-  return { timestamp, name, picks };
+  const submission: Submission = { timestamp, name, picks };
+  if (conferenceWinnersStr) {
+    const cw = parseConferenceWinners(conferenceWinnersStr);
+    if (cw) submission.conferenceWinners = cw;
+  }
+  return submission;
 }
 
 export function parsePicksFile(contents: string): Submission[] {
@@ -122,7 +159,7 @@ export function parsePicksFile(contents: string): Submission[] {
 // ---------- Validation ----------
 
 export type ValidationResult =
-  | { ok: true; picks: Pick[] }
+  | { ok: true; picks: Pick[]; conferenceWinners: ConferenceWinners }
   | { ok: false; error: string };
 
 const MAX_NAME_LENGTH = 50;
@@ -130,6 +167,8 @@ const MAX_NAME_LENGTH = 50;
 interface SubmitBody {
   name?: unknown;
   picks?: unknown;
+  eastConferenceWinner?: unknown;
+  westConferenceWinner?: unknown;
 }
 
 function isPickShape(x: unknown): x is { seriesId: string; winner: string; games: number } {
@@ -158,6 +197,33 @@ export function validateSubmission(body: SubmitBody, config: BracketConfig): Val
     return { ok: false, error: `Expected ${SERIES_IDS.length} picks, got ${body.picks.length}` };
   }
 
+  // Conference winner validation: must be a non-empty string and one of the
+  // configured teams in the corresponding conference.
+  const eastTeams = config.east.map((t) => t.team);
+  const westTeams = config.west.map((t) => t.team);
+  const eastWinnerRaw =
+    typeof body.eastConferenceWinner === "string" ? body.eastConferenceWinner.trim() : "";
+  const westWinnerRaw =
+    typeof body.westConferenceWinner === "string" ? body.westConferenceWinner.trim() : "";
+  if (eastWinnerRaw.length === 0) {
+    return { ok: false, error: "Eastern Conference winner is required" };
+  }
+  if (westWinnerRaw.length === 0) {
+    return { ok: false, error: "Western Conference winner is required" };
+  }
+  if (!eastTeams.includes(eastWinnerRaw)) {
+    return {
+      ok: false,
+      error: `Eastern Conference winner must be one of the East teams`,
+    };
+  }
+  if (!westTeams.includes(westWinnerRaw)) {
+    return {
+      ok: false,
+      error: `Western Conference winner must be one of the West teams`,
+    };
+  }
+
   const matchups = getMatchups(config);
   const matchupById = new Map<string, Matchup>(matchups.map((m) => [m.id, m]));
   const seen = new Set<string>();
@@ -184,7 +250,11 @@ export function validateSubmission(body: SubmitBody, config: BracketConfig): Val
 
   // Return picks in the canonical series order.
   const ordered = SERIES_IDS.map((id) => picks.find((p) => p.seriesId === id)!);
-  return { ok: true, picks: ordered };
+  return {
+    ok: true,
+    picks: ordered,
+    conferenceWinners: { east: eastWinnerRaw, west: westWinnerRaw },
+  };
 }
 
 export { getMatchups, SERIES_IDS };

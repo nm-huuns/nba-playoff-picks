@@ -51,8 +51,20 @@ function validPicks(): Pick[] {
   ];
 }
 
+const VALID_CONFERENCE_WINNERS = { east: "E1", west: "W1" };
+
+function validBody(overrides: Record<string, unknown> = {}) {
+  return {
+    name: "Sunny",
+    eastConferenceWinner: VALID_CONFERENCE_WINNERS.east,
+    westConferenceWinner: VALID_CONFERENCE_WINNERS.west,
+    picks: validPicks(),
+    ...overrides,
+  };
+}
+
 describe("formatLine & parseLine", () => {
-  it("round-trips a submission", () => {
+  it("round-trips a submission without conference winners (legacy)", () => {
     const submission: Submission = {
       timestamp: TIMESTAMP,
       name: "Sunny",
@@ -60,6 +72,23 @@ describe("formatLine & parseLine", () => {
     };
     const line = formatLine(submission);
     expect(line.startsWith(`${TIMESTAMP} | Sunny | `)).toBe(true);
+    expect(line.split(" | ")).toHaveLength(3);
+    const parsed = parseLine(line);
+    expect(parsed).toEqual(submission);
+    expect(parsed?.conferenceWinners).toBeUndefined();
+  });
+
+  it("round-trips a submission with conference winners", () => {
+    const submission: Submission = {
+      timestamp: TIMESTAMP,
+      name: "Sunny",
+      picks: validPicks(),
+      conferenceWinners: { east: "Boston Celtics", west: "OKC Thunder" },
+    };
+    const line = formatLine(submission);
+    expect(line.split(" | ")).toHaveLength(4);
+    expect(line).toContain("EAST=Boston Celtics");
+    expect(line).toContain("WEST=OKC Thunder");
     const parsed = parseLine(line);
     expect(parsed).toEqual(submission);
   });
@@ -72,6 +101,18 @@ describe("formatLine & parseLine", () => {
     });
     expect(line).toContain("Su nny");
     expect(line.split(" | ")).toHaveLength(3);
+  });
+
+  it("sanitizes `=` and `;` in conference-winner team names", () => {
+    const line = formatLine({
+      timestamp: TIMESTAMP,
+      name: "Sunny",
+      picks: validPicks(),
+      conferenceWinners: { east: "We=ird;Team", west: "OKC Thunder" },
+    });
+    expect(line).toContain("EAST=We ird Team");
+    const parsed = parseLine(line);
+    expect(parsed?.conferenceWinners?.east).toBe("We ird Team");
   });
 
   it("parseLine returns null for malformed lines", () => {
@@ -114,38 +155,35 @@ describe("parsePicksFile", () => {
 
 describe("validateSubmission", () => {
   it("accepts a valid submission", () => {
-    const result = validateSubmission(
-      { name: "Sunny", picks: validPicks() },
-      fullConfig()
-    );
+    const result = validateSubmission(validBody(), fullConfig());
     expect(result.ok).toBe(true);
-    if (result.ok) expect(result.picks).toHaveLength(8);
+    if (result.ok) {
+      expect(result.picks).toHaveLength(8);
+      expect(result.conferenceWinners).toEqual(VALID_CONFERENCE_WINNERS);
+    }
   });
 
   it("rejects when bracket is incomplete", () => {
     const config = fullConfig();
     config.east[0].team = "";
-    const result = validateSubmission({ name: "Sunny", picks: validPicks() }, config);
+    const result = validateSubmission(validBody(), config);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.error).toMatch(/not fully configured/i);
   });
 
   it("rejects empty name", () => {
-    const result = validateSubmission({ name: "   ", picks: validPicks() }, fullConfig());
+    const result = validateSubmission(validBody({ name: "   " }), fullConfig());
     expect(result).toMatchObject({ ok: false, error: expect.stringMatching(/name/i) });
   });
 
   it("rejects an overlong name", () => {
-    const result = validateSubmission(
-      { name: "x".repeat(51), picks: validPicks() },
-      fullConfig()
-    );
+    const result = validateSubmission(validBody({ name: "x".repeat(51) }), fullConfig());
     expect(result.ok).toBe(false);
   });
 
   it("rejects wrong number of picks", () => {
     const result = validateSubmission(
-      { name: "Sunny", picks: validPicks().slice(0, 7) },
+      validBody({ picks: validPicks().slice(0, 7) }),
       fullConfig()
     );
     expect(result).toMatchObject({ ok: false, error: expect.stringMatching(/8 picks/i) });
@@ -154,21 +192,21 @@ describe("validateSubmission", () => {
   it("rejects a duplicate seriesId", () => {
     const picks = validPicks();
     picks[1] = { ...picks[0] };
-    const result = validateSubmission({ name: "Sunny", picks }, fullConfig());
+    const result = validateSubmission(validBody({ picks }), fullConfig());
     expect(result).toMatchObject({ ok: false, error: expect.stringMatching(/duplicate/i) });
   });
 
   it("rejects an unknown seriesId", () => {
     const picks = validPicks();
     picks[0] = { seriesId: "E-99v99", winner: "E1", games: 4 };
-    const result = validateSubmission({ name: "Sunny", picks }, fullConfig());
+    const result = validateSubmission(validBody({ picks }), fullConfig());
     expect(result).toMatchObject({ ok: false, error: expect.stringMatching(/unknown/i) });
   });
 
   it("rejects a winner not in the matchup", () => {
     const picks = validPicks();
     picks[0] = { seriesId: "E-1v8", winner: "W1", games: 4 };
-    const result = validateSubmission({ name: "Sunny", picks }, fullConfig());
+    const result = validateSubmission(validBody({ picks }), fullConfig());
     expect(result).toMatchObject({ ok: false, error: expect.stringMatching(/winner/i) });
   });
 
@@ -176,20 +214,64 @@ describe("validateSubmission", () => {
     const picks = validPicks() as unknown as Array<Record<string, unknown>>;
     picks[0] = { seriesId: "E-1v8", winner: "E1", games: 3 };
     const result = validateSubmission(
-      { name: "Sunny", picks: picks as unknown as Pick[] },
+      validBody({ picks: picks as unknown as Pick[] }),
       fullConfig()
     );
     expect(result).toMatchObject({ ok: false, error: expect.stringMatching(/games/i) });
   });
 
   it("rejects non-array picks", () => {
-    const result = validateSubmission({ name: "Sunny", picks: "nope" }, fullConfig());
+    const result = validateSubmission(validBody({ picks: "nope" }), fullConfig());
     expect(result.ok).toBe(false);
+  });
+
+  it("rejects a missing East conference winner", () => {
+    const result = validateSubmission(
+      validBody({ eastConferenceWinner: "" }),
+      fullConfig()
+    );
+    expect(result).toMatchObject({
+      ok: false,
+      error: expect.stringMatching(/eastern conference winner/i),
+    });
+  });
+
+  it("rejects a missing West conference winner", () => {
+    const result = validateSubmission(
+      validBody({ westConferenceWinner: undefined }),
+      fullConfig()
+    );
+    expect(result).toMatchObject({
+      ok: false,
+      error: expect.stringMatching(/western conference winner/i),
+    });
+  });
+
+  it("rejects an East conference winner that is not an East team", () => {
+    const result = validateSubmission(
+      validBody({ eastConferenceWinner: "W1" }),
+      fullConfig()
+    );
+    expect(result).toMatchObject({
+      ok: false,
+      error: expect.stringMatching(/eastern conference winner/i),
+    });
+  });
+
+  it("rejects a West conference winner that is not a West team", () => {
+    const result = validateSubmission(
+      validBody({ westConferenceWinner: "E1" }),
+      fullConfig()
+    );
+    expect(result).toMatchObject({
+      ok: false,
+      error: expect.stringMatching(/western conference winner/i),
+    });
   });
 
   it("returns picks in canonical SERIES_IDS order", () => {
     const picks = validPicks().slice().reverse();
-    const result = validateSubmission({ name: "Sunny", picks }, fullConfig());
+    const result = validateSubmission(validBody({ picks }), fullConfig());
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.picks.map((p) => p.seriesId)).toEqual([
