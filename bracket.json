@@ -8,7 +8,7 @@
     { "seed": 5, "team": "Houston Rockets" },
     { "seed": 6, "team": "Minnesota Timberwolves" },
     { "seed": 7, "team": "Portland Trail Blazers" },
-    { "seed": 8, "team": "Pheonix Suns" }
+    { "seed": 8, "team": "Phoenix Suns" }
   ],
   "east": [
     { "seed": 1, "team": "Detroit Pistons" },
@@ -17,7 +17,7 @@
     { "seed": 4, "team": "Cleveland Cavaliers" },
     { "seed": 5, "team": "Toronto Raptors" },
     { "seed": 6, "team": "Atlanta Hawks" },
-    { "seed": 7, "team": "Philadephia 76ers" },
+    { "seed": 7, "team": "Philadelphia 76ers" },
     { "seed": 8, "team": "Orlando Magic" }
   ]
 }

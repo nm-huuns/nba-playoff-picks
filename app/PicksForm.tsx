@@ -4,8 +4,8 @@ import { useMemo, useState } from "react";
 import type { Matchup } from "@/lib/bracket";
 
 interface PickState {
-  winner: string;
-  games: number;
+  winner?: string;
+  games?: number;
 }
 
 type PicksMap = Record<string, PickState>;
@@ -27,27 +27,33 @@ export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
     [matchups]
   );
 
-  const allFilled = useMemo(() => {
-    if (!allReady) return false;
-    if (!name.trim()) return false;
-    return matchups.every((m) => {
-      const p = picks[m.id];
-      return p && p.winner && p.games;
-    });
-  }, [allReady, name, picks, matchups]);
-
   function setPick(id: string, patch: Partial<PickState>) {
     setPicks((prev) => ({
       ...prev,
-      [id]: { winner: prev[id]?.winner ?? "", games: prev[id]?.games ?? 0, ...patch },
+      [id]: { ...prev[id], ...patch },
     }));
     setSuccess(null);
     setError(null);
   }
 
+  function findMissing(): string | null {
+    if (!allReady) return "Bracket is not fully configured yet";
+    if (!name.trim()) return "Please enter your name";
+    for (const m of matchups) {
+      const p = picks[m.id];
+      if (!p?.winner) return `Pick a winner for ${m.id} (${m.high.team} vs ${m.low.team})`;
+      if (typeof p.games !== "number") return `Pick the series length for ${m.id}`;
+    }
+    return null;
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!allFilled) return;
+    const missing = findMissing();
+    if (missing) {
+      setError(missing);
+      return;
+    }
     setSubmitting(true);
     setError(null);
     setSuccess(null);
@@ -115,7 +121,7 @@ export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
         <button
           type="submit"
-          disabled={!allFilled || submitting}
+          disabled={submitting || !allReady}
           className="rounded bg-black text-white px-5 py-2 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white dark:text-black"
         >
           {submitting ? "Submitting…" : "Submit picks"}
