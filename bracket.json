@@ -1,0 +1,23 @@
+{
+  "season": "2025-26",
+  "west": [
+    { "seed": 1, "team": "OKC Thunder" },
+    { "seed": 2, "team": "San Antonio Spurs" },
+    { "seed": 3, "team": "Denver Nuggets" },
+    { "seed": 4, "team": "LA Lakers" },
+    { "seed": 5, "team": "Houston Rockets" },
+    { "seed": 6, "team": "Minnesota Timberwolves" },
+    { "seed": 7, "team": "Portland Trail Blazers" },
+    { "seed": 8, "team": "Pheonix Suns" }
+  ],
+  "east": [
+    { "seed": 1, "team": "Detroit Pistons" },
+    { "seed": 2, "team": "Boston Celtics" },
+    { "seed": 3, "team": "New York Knicks" },
+    { "seed": 4, "team": "Cleveland Cavaliers" },
+    { "seed": 5, "team": "Toronto Raptors" },
+    { "seed": 6, "team": "Atlanta Hawks" },
+    { "seed": 7, "team": "Philadephia 76ers" },
+    { "seed": 8, "team": "Orlando Magic" }
+  ]
+}
