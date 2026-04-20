@@ -17,7 +17,7 @@ export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
   const [picks, setPicks] = useState<PicksMap>({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<{ url: string } | null>(null);
+  const [success, setSuccess] = useState<boolean>(false);
 
   const east = useMemo(() => matchups.filter((m) => m.conference === "East"), [matchups]);
   const west = useMemo(() => matchups.filter((m) => m.conference === "West"), [matchups]);
@@ -32,7 +32,7 @@ export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
       ...prev,
       [id]: { ...prev[id], ...patch },
     }));
-    setSuccess(null);
+    setSuccess(false);
     setError(null);
   }
 
@@ -56,7 +56,7 @@ export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
     }
     setSubmitting(true);
     setError(null);
-    setSuccess(null);
+    setSuccess(false);
 
     const body = {
       name: name.trim(),
@@ -77,7 +77,7 @@ export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
       if (!res.ok || !data.ok) {
         setError(data.error ?? "Submission failed");
       } else {
-        setSuccess({ url: data.url });
+        setSuccess(true);
         // Clear picks but keep name so the user can see what they submitted.
         setPicks({});
       }
@@ -128,14 +128,7 @@ export default function PicksForm({ matchups }: { matchups: Matchup[] }) {
         </button>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
-        {success && (
-          <p className="text-sm">
-            Picks saved.{" "}
-            <a href={success.url} className="underline" target="_blank" rel="noreferrer">
-              View published picks
-            </a>
-          </p>
-        )}
+        {success && <p className="text-sm text-green-700 dark:text-green-400">Picks saved!</p>}
       </div>
     </form>
   );
