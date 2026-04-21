@@ -262,8 +262,6 @@ function MatchupCard({
 
   return (
     <li className="rounded border border-gray-200 dark:border-gray-800 p-3">
-      <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{matchup.id}</p>
-
       {!ready ? (
         <p className="text-sm italic text-gray-500">TBD — team(s) not yet set in bracket.json</p>
       ) : (

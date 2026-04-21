@@ -2,12 +2,14 @@ export const dynamic = "force-dynamic";
 
 import bracketData from "@/bracket.json";
 import { getMatchups, type BracketConfig } from "@/lib/bracket";
+import { readLockState } from "@/lib/lock";
 import PicksForm from "./PicksForm";
 
 const bracket = bracketData as BracketConfig;
 
-export default function Home() {
+export default async function Home() {
   const matchups = getMatchups(bracket);
+  const { locked } = await readLockState();
 
   return (
     <main className="max-w-5xl mx-auto py-12 px-4 w-full">
@@ -37,7 +39,17 @@ export default function Home() {
         </div>
       </section>
 
-      <PicksForm matchups={matchups} eastTeams={bracket.east} westTeams={bracket.west} />
+      {locked ? (
+        <div className="rounded border border-red-500/60 bg-red-50 dark:bg-red-950/30 px-4 py-4 text-sm">
+          <p className="font-medium mb-1">Picks are locked for this round</p>
+          <p className="text-gray-600 dark:text-gray-400">
+            The first round has started, so submissions are closed. Check back when the next
+            round opens.
+          </p>
+        </div>
+      ) : (
+        <PicksForm matchups={matchups} eastTeams={bracket.east} westTeams={bracket.west} />
+      )}
     </main>
   );
 }

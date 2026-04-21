@@ -3,11 +3,16 @@ export const dynamic = "force-dynamic";
 import bracketData from "@/bracket.json";
 import { type BracketConfig } from "@/lib/bracket";
 import { parsePicksFile, readPicksRaw } from "@/lib/picks";
+import { readLockState } from "@/lib/lock";
+import LockToggle from "./LockToggle";
 
 const bracket = bracketData as BracketConfig;
 
 export default async function Results() {
-  const raw = await readPicksRaw().catch(() => "");
+  const [raw, { locked }] = await Promise.all([
+    readPicksRaw().catch(() => ""),
+    readLockState(),
+  ]);
   const submissions = parsePicksFile(raw).slice(-20).reverse();
 
   return (
@@ -18,6 +23,8 @@ export default async function Results() {
           Most recent submissions from everyone who&apos;s picked so far.
         </p>
       </header>
+
+      <LockToggle initialLocked={locked} />
 
       <section>
         <div className="flex items-baseline justify-between mb-4">

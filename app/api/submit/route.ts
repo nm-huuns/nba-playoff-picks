@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import bracket from "@/bracket.json";
 import { appendSubmissionLine, formatLine, validateSubmission } from "@/lib/picks";
+import { readLockState } from "@/lib/lock";
 import type { BracketConfig } from "@/lib/bracket";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  // Hard stop if picks are locked — must run before parsing so bad clients
+  // can't slip through on an unparseable body.
+  const { locked } = await readLockState();
+  if (locked) {
+    return NextResponse.json(
+      { ok: false, error: "Picks are locked for this round" },
+      { status: 400 }
+    );
+  }
+
   let body: unknown;
   try {
     body = await req.json();
