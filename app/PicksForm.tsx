@@ -138,42 +138,39 @@ export default function PicksForm({
         </div>
       )}
 
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-base font-semibold">Conference winners</h2>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Who comes out of each conference?
-          </p>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <ConferenceWinnerSelect
-            id="east-conference-winner"
-            label="Eastern Conference winner"
-            teams={eastTeamOptions}
-            value={eastWinner}
-            onChange={(v) => {
+      <div className="grid gap-8 md:grid-cols-2">
+        <Column
+          title="Eastern Conference"
+          matchups={east}
+          picks={picks}
+          setPick={setPick}
+          conferenceWinner={{
+            id: "east-conference-winner",
+            teams: eastTeamOptions,
+            value: eastWinner,
+            onChange: (v) => {
               setEastWinner(v);
               setSuccess(false);
               setError(null);
-            }}
-          />
-          <ConferenceWinnerSelect
-            id="west-conference-winner"
-            label="Western Conference winner"
-            teams={westTeamOptions}
-            value={westWinner}
-            onChange={(v) => {
+            },
+          }}
+        />
+        <Column
+          title="Western Conference"
+          matchups={west}
+          picks={picks}
+          setPick={setPick}
+          conferenceWinner={{
+            id: "west-conference-winner",
+            teams: westTeamOptions,
+            value: westWinner,
+            onChange: (v) => {
               setWestWinner(v);
               setSuccess(false);
               setError(null);
-            }}
-          />
-        </div>
-      </section>
-
-      <div className="grid gap-8 md:grid-cols-2">
-        <Column title="Eastern Conference" matchups={east} picks={picks} setPick={setPick} />
-        <Column title="Western Conference" matchups={west} picks={picks} setPick={setPick} />
+            },
+          }}
+        />
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
@@ -192,40 +189,11 @@ export default function PicksForm({
   );
 }
 
-function ConferenceWinnerSelect({
-  id,
-  label,
-  teams,
-  value,
-  onChange,
-}: {
+interface ConferenceWinnerField {
   id: string;
-  label: string;
   teams: Team[];
   value: string;
   onChange: (next: string) => void;
-}) {
-  return (
-    <label htmlFor={id} className="block">
-      <span className="block text-sm font-medium mb-1">{label}</span>
-      <select
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={teams.length === 0}
-        className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm disabled:opacity-50"
-      >
-        <option value="" disabled>
-          {teams.length === 0 ? "TBD" : "Pick a team…"}
-        </option>
-        {teams.map((t) => (
-          <option key={t.seed} value={t.team}>
-            {t.seed}. {t.team}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
 }
 
 function Column({
@@ -233,15 +201,40 @@ function Column({
   matchups,
   picks,
   setPick,
+  conferenceWinner,
 }: {
   title: string;
   matchups: Matchup[];
   picks: PicksMap;
   setPick: (id: string, patch: Partial<PickState>) => void;
+  conferenceWinner: ConferenceWinnerField;
 }) {
   return (
     <section className="space-y-4">
       <h2 className="text-base font-semibold">{title}</h2>
+
+      <div className="rounded border border-gray-200 dark:border-gray-800 p-3">
+        <label htmlFor={conferenceWinner.id} className="block">
+          <span className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Conference winner</span>
+          <select
+            id={conferenceWinner.id}
+            value={conferenceWinner.value}
+            onChange={(e) => conferenceWinner.onChange(e.target.value)}
+            disabled={conferenceWinner.teams.length === 0}
+            className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-2 py-1 text-sm disabled:opacity-50"
+          >
+            <option value="" disabled>
+              {conferenceWinner.teams.length === 0 ? "TBD" : "Pick a team…"}
+            </option>
+            {conferenceWinner.teams.map((t) => (
+              <option key={t.seed} value={t.team}>
+                {t.seed}. {t.team}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
       <ul className="space-y-3">
         {matchups.map((m) => (
           <MatchupCard
