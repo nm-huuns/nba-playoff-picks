@@ -19,5 +19,15 @@
     { "seed": 6, "team": "Atlanta Hawks" },
     { "seed": 7, "team": "Philadelphia 76ers" },
     { "seed": 8, "team": "Orlando Magic" }
-  ]
+  ],
+  "round2": {
+    "east": [
+      { "id": "E-semi-1", "teamA": "", "teamB": "" },
+      { "id": "E-semi-2", "teamA": "", "teamB": "" }
+    ],
+    "west": [
+      { "id": "W-semi-1", "teamA": "", "teamB": "" },
+      { "id": "W-semi-2", "teamA": "", "teamB": "" }
+    ]
+  }
 }

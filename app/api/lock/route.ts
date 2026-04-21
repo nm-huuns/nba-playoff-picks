@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { readLockState, toggleLockState } from "@/lib/lock";
+import { NextRequest, NextResponse } from "next/server";
+import { isLockKind, readLockState, toggleLockKind } from "@/lib/lock";
 
 export const dynamic = "force-dynamic";
 
@@ -10,9 +10,25 @@ export async function GET() {
   });
 }
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  let body: unknown;
   try {
-    const next = await toggleLockState();
+    body = await req.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid JSON body — expected {kind: 'r1'|'r2'|'awards'}" },
+      { status: 400 }
+    );
+  }
+  const kind = (body as { kind?: unknown })?.kind;
+  if (!isLockKind(kind)) {
+    return NextResponse.json(
+      { error: "kind must be one of: r1, r2, awards" },
+      { status: 400 }
+    );
+  }
+  try {
+    const next = await toggleLockKind(kind);
     return NextResponse.json(next, {
       headers: { "Cache-Control": "no-store" },
     });

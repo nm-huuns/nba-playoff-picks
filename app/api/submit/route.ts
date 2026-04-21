@@ -7,12 +7,12 @@ import type { BracketConfig } from "@/lib/bracket";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  // Hard stop if picks are locked — must run before parsing so bad clients
-  // can't slip through on an unparseable body.
-  const { locked } = await readLockState();
-  if (locked) {
+  // Hard stop if Round 1 picks are locked — must run before parsing so bad
+  // clients can't slip through on an unparseable body.
+  const lockState = await readLockState();
+  if (lockState.r1) {
     return NextResponse.json(
-      { ok: false, error: "Picks are locked for this round" },
+      { ok: false, error: "Round 1 picks are locked" },
       { status: 400 }
     );
   }

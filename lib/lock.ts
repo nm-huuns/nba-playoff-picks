@@ -2,11 +2,16 @@ import { put, get } from "@vercel/blob";
 
 export const LOCK_BLOB_PATHNAME = "lock.json";
 
+export type LockKind = "r1" | "r2" | "awards";
+export const LOCK_KINDS: LockKind[] = ["r1", "r2", "awards"];
+
 export interface LockState {
-  locked: boolean;
+  r1: boolean;
+  r2: boolean;
+  awards: boolean;
 }
 
-const DEFAULT_STATE: LockState = { locked: false };
+const DEFAULT_STATE: LockState = { r1: false, r2: false, awards: false };
 
 async function streamToString(stream: ReadableStream<Uint8Array>): Promise<string> {
   const reader = stream.getReader();
@@ -25,20 +30,39 @@ async function streamToString(stream: ReadableStream<Uint8Array>): Promise<strin
   return new TextDecoder().decode(merged);
 }
 
+// Parses both the new per-kind shape and the legacy `{ locked: boolean }` shape.
+// Legacy shape maps to: r1 = locked, r2 = false, awards = false.
+function normalize(raw: unknown): LockState {
+  if (!raw || typeof raw !== "object") return { ...DEFAULT_STATE };
+  const obj = raw as Record<string, unknown>;
+  const hasPerKind =
+    "r1" in obj || "r2" in obj || "awards" in obj;
+  if (hasPerKind) {
+    return {
+      r1: Boolean(obj.r1),
+      r2: Boolean(obj.r2),
+      awards: Boolean(obj.awards),
+    };
+  }
+  if ("locked" in obj) {
+    return { r1: Boolean(obj.locked), r2: false, awards: false };
+  }
+  return { ...DEFAULT_STATE };
+}
+
 export async function readLockState(): Promise<LockState> {
   try {
     const result = await get(LOCK_BLOB_PATHNAME, { access: "private", useCache: false });
-    if (!result || result.statusCode === 304 || !result.stream) return DEFAULT_STATE;
+    if (!result || result.statusCode === 304 || !result.stream) return { ...DEFAULT_STATE };
     const text = await streamToString(result.stream);
-    if (!text.trim()) return DEFAULT_STATE;
-    const parsed = JSON.parse(text) as Partial<LockState>;
-    return { locked: Boolean(parsed.locked) };
+    if (!text.trim()) return { ...DEFAULT_STATE };
+    const parsed: unknown = JSON.parse(text);
+    return normalize(parsed);
   } catch (err) {
-    // Missing blob → default unlocked. Log other errors for diagnostics.
     if (err instanceof Error && err.name !== "BlobNotFoundError") {
       console.error("readLockState error:", err);
     }
-    return DEFAULT_STATE;
+    return { ...DEFAULT_STATE };
   }
 }
 
@@ -52,9 +76,13 @@ export async function writeLockState(state: LockState): Promise<void> {
   });
 }
 
-export async function toggleLockState(): Promise<LockState> {
+export async function toggleLockKind(kind: LockKind): Promise<LockState> {
   const current = await readLockState();
-  const next: LockState = { locked: !current.locked };
+  const next: LockState = { ...current, [kind]: !current[kind] };
   await writeLockState(next);
   return next;
+}
+
+export function isLockKind(value: unknown): value is LockKind {
+  return value === "r1" || value === "r2" || value === "awards";
 }

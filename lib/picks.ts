@@ -8,6 +8,7 @@ import {
 } from "./bracket";
 
 export const BLOB_PATHNAME = "picks.txt";
+export const ROUND2_BLOB_PATHNAME = "picks-r2.txt";
 export const VALID_GAMES = [4, 5, 6, 7] as const;
 export type Games = (typeof VALID_GAMES)[number];
 
@@ -31,9 +32,9 @@ export interface Submission {
 
 // ---------- Blob I/O ----------
 
-export async function readPicksRaw(): Promise<string> {
+export async function readPicksRaw(pathname: string = BLOB_PATHNAME): Promise<string> {
   try {
-    const result = await get(BLOB_PATHNAME, { access: "private", useCache: false });
+    const result = await get(pathname, { access: "private", useCache: false });
     if (!result || result.statusCode === 304 || !result.stream) return "";
     const reader = result.stream.getReader();
     const chunks: Uint8Array[] = [];
@@ -60,8 +61,11 @@ export async function readPicksRaw(): Promise<string> {
   }
 }
 
-export async function writePicksRaw(contents: string): Promise<void> {
-  await put(BLOB_PATHNAME, contents, {
+export async function writePicksRaw(
+  contents: string,
+  pathname: string = BLOB_PATHNAME
+): Promise<void> {
+  await put(pathname, contents, {
     access: "private",
     allowOverwrite: true,
     addRandomSuffix: false,
@@ -72,10 +76,13 @@ export async function writePicksRaw(contents: string): Promise<void> {
 
 // Append a single submission line. Vercel Blob has no true append —
 // we read current contents and write back with the new line added.
-export async function appendSubmissionLine(line: string): Promise<void> {
-  const current = await readPicksRaw();
+export async function appendSubmissionLine(
+  line: string,
+  pathname: string = BLOB_PATHNAME
+): Promise<void> {
+  const current = await readPicksRaw(pathname);
   const next = current.length > 0 && !current.endsWith("\n") ? current + "\n" + line + "\n" : current + line + "\n";
-  await writePicksRaw(next);
+  await writePicksRaw(next, pathname);
 }
 
 // ---------- Line format ----------
