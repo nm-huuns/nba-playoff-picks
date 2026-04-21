@@ -36,6 +36,9 @@ export async function POST(req: NextRequest) {
     name,
     mvp: result.mvp,
     roy: result.roy,
+    mip: result.mip,
+    smoy: result.smoy,
+    coy: result.coy,
     allNBA: result.allNBA,
   });
 

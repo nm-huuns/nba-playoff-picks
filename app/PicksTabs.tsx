@@ -34,10 +34,28 @@ export default function PicksTabs({
   locks: LockState;
 }) {
   const [active, setActive] = useState<TabKey>("r1");
+  const [name, setName] = useState("");
   const isLocked = locks[active];
 
   return (
     <div className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium mb-1" htmlFor="name">
+          Your name
+        </label>
+        <input
+          id="name"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          maxLength={50}
+          required
+          className="w-full sm:w-64 rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+          placeholder="Name here"
+        />
+        <p className="text-xs text-gray-500 mt-1">Used across all tabs.</p>
+      </div>
+
       <nav
         className="flex gap-1 border-b border-gray-200 dark:border-gray-800"
         role="tablist"
@@ -81,11 +99,16 @@ export default function PicksTabs({
         {isLocked ? (
           <LockedBanner tab={active} />
         ) : active === "r1" ? (
-          <PicksForm matchups={matchups} eastTeams={eastTeams} westTeams={westTeams} />
+          <PicksForm
+            name={name}
+            matchups={matchups}
+            eastTeams={eastTeams}
+            westTeams={westTeams}
+          />
         ) : active === "r2" ? (
-          <Round2Form matchups={round2Matchups} />
+          <Round2Form name={name} matchups={round2Matchups} />
         ) : (
-          <AwardsForm />
+          <AwardsForm name={name} />
         )}
       </div>
     </div>

@@ -13,15 +13,16 @@ type PicksMap = Record<string, PickState>;
 const GAMES_OPTIONS = [4, 5, 6, 7];
 
 export default function PicksForm({
+  name,
   matchups,
   eastTeams,
   westTeams,
 }: {
+  name: string;
   matchups: Matchup[];
   eastTeams: Team[];
   westTeams: Team[];
 }) {
-  const [name, setName] = useState("");
   const [picks, setPicks] = useState<PicksMap>({});
   const [eastWinner, setEastWinner] = useState<string>("");
   const [westWinner, setWestWinner] = useState<string>("");
@@ -115,22 +116,6 @@ export default function PicksForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      <div>
-        <label className="block text-sm font-medium mb-1" htmlFor="name">
-          Your name
-        </label>
-        <input
-          id="name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={50}
-          required
-          className="w-full sm:w-64 rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
-          placeholder="Name here"
-        />
-      </div>
-
       {!allReady && (
         <div className="rounded border border-yellow-500/60 bg-yellow-50 dark:bg-yellow-950/30 px-4 py-3 text-sm">
           The bracket isn&apos;t fully configured yet. Fill in the team names in{" "}

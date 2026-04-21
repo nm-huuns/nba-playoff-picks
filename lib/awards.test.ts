@@ -15,6 +15,9 @@ function validSubmission(): AwardsSubmission {
     name: "Sunny",
     mvp: "Nikola Jokic",
     roy: "Cooper Flagg",
+    mip: "Scottie Barnes",
+    smoy: "Malik Beasley",
+    coy: "Kenny Atkinson",
     allNBA: {
       first: ["Nikola Jokic", "Shai Gilgeous-Alexander", "Luka Doncic", "Giannis Antetokounmpo", "Jayson Tatum"],
       second: ["Anthony Edwards", "Tyrese Haliburton", "LeBron James", "Kevin Durant", "Victor Wembanyama"],
@@ -29,6 +32,9 @@ function validBody(overrides: Record<string, unknown> = {}) {
     name: s.name,
     mvp: s.mvp,
     roy: s.roy,
+    mip: s.mip,
+    smoy: s.smoy,
+    coy: s.coy,
     allNBA: s.allNBA,
     ...overrides,
   };
@@ -82,6 +88,26 @@ describe("formatAwardsLine & parseAwardsLine", () => {
     expect(parseAwardsLine(`${TIMESTAMP} | name | {not-json}`)).toBeNull();
     expect(parseAwardsLine(`${TIMESTAMP} | name | {"mvp":"x"}`)).toBeNull(); // missing allNBA
   });
+
+  it("tolerates legacy lines missing mip/smoy/coy", () => {
+    const legacyPayload = {
+      mvp: "Nikola Jokic",
+      roy: "Cooper Flagg",
+      allNBA: {
+        first: ["A1", "A2", "A3", "A4", "A5"],
+        second: ["B1", "B2", "B3", "B4", "B5"],
+        third: ["C1", "C2", "C3", "C4", "C5"],
+      },
+    };
+    const legacyLine = `${TIMESTAMP} | Sunny | ${JSON.stringify(legacyPayload)}`;
+    const parsed = parseAwardsLine(legacyLine);
+    expect(parsed).not.toBeNull();
+    expect(parsed?.mvp).toBe("Nikola Jokic");
+    expect(parsed?.roy).toBe("Cooper Flagg");
+    expect(parsed?.mip).toBe("");
+    expect(parsed?.smoy).toBe("");
+    expect(parsed?.coy).toBe("");
+  });
 });
 
 describe("parseAwardsFile", () => {
@@ -101,6 +127,9 @@ describe("validateAwardsSubmission", () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.mvp).toBe("Nikola Jokic");
+      expect(result.mip).toBe("Scottie Barnes");
+      expect(result.smoy).toBe("Malik Beasley");
+      expect(result.coy).toBe("Kenny Atkinson");
       expect(result.allNBA.first).toHaveLength(5);
     }
   });
@@ -125,8 +154,38 @@ describe("validateAwardsSubmission", () => {
     expect(result).toMatchObject({ ok: false, error: expect.stringMatching(/rookie/i) });
   });
 
+  it("rejects missing MIP", () => {
+    const result = validateAwardsSubmission(validBody({ mip: "  " }));
+    expect(result).toMatchObject({ ok: false, error: expect.stringMatching(/improved/i) });
+  });
+
+  it("rejects missing 6MOY", () => {
+    const result = validateAwardsSubmission(validBody({ smoy: "" }));
+    expect(result).toMatchObject({ ok: false, error: expect.stringMatching(/sixth/i) });
+  });
+
+  it("rejects missing COY", () => {
+    const result = validateAwardsSubmission(validBody({ coy: "  " }));
+    expect(result).toMatchObject({ ok: false, error: expect.stringMatching(/coach/i) });
+  });
+
   it("rejects overlong MVP name", () => {
     const result = validateAwardsSubmission(validBody({ mvp: "x".repeat(61) }));
+    expect(result.ok).toBe(false);
+  });
+
+  it("rejects overlong MIP name", () => {
+    const result = validateAwardsSubmission(validBody({ mip: "x".repeat(61) }));
+    expect(result.ok).toBe(false);
+  });
+
+  it("rejects overlong 6MOY name", () => {
+    const result = validateAwardsSubmission(validBody({ smoy: "x".repeat(61) }));
+    expect(result.ok).toBe(false);
+  });
+
+  it("rejects overlong COY name", () => {
+    const result = validateAwardsSubmission(validBody({ coy: "x".repeat(61) }));
     expect(result.ok).toBe(false);
   });
 

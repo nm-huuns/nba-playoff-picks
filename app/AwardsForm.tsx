@@ -20,10 +20,12 @@ const TEAM_LABELS: Record<TeamKey, string> = {
   third: "All-NBA 3rd team",
 };
 
-export default function AwardsForm() {
-  const [name, setName] = useState("");
+export default function AwardsForm({ name }: { name: string }) {
   const [mvp, setMvp] = useState("");
   const [roy, setRoy] = useState("");
+  const [mip, setMip] = useState("");
+  const [smoy, setSmoy] = useState("");
+  const [coy, setCoy] = useState("");
   const [allNBA, setAllNBA] = useState<AllNbaState>({
     first: emptyTeam(),
     second: emptyTeam(),
@@ -47,6 +49,9 @@ export default function AwardsForm() {
     if (!name.trim()) return "Please enter your name";
     if (!mvp.trim()) return "Enter your MVP pick";
     if (!roy.trim()) return "Enter your Rookie of the Year pick";
+    if (!mip.trim()) return "Enter your Most Improved Player pick";
+    if (!smoy.trim()) return "Enter your Sixth Man of the Year pick";
+    if (!coy.trim()) return "Enter your Coach of the Year pick";
     for (const key of ["first", "second", "third"] as TeamKey[]) {
       for (let i = 0; i < TEAM_SIZE; i++) {
         if (!allNBA[key][i].trim()) {
@@ -72,6 +77,9 @@ export default function AwardsForm() {
       name: name.trim(),
       mvp: mvp.trim(),
       roy: roy.trim(),
+      mip: mip.trim(),
+      smoy: smoy.trim(),
+      coy: coy.trim(),
       allNBA: {
         first: allNBA.first.map((s) => s.trim()),
         second: allNBA.second.map((s) => s.trim()),
@@ -92,6 +100,9 @@ export default function AwardsForm() {
         setSuccess(true);
         setMvp("");
         setRoy("");
+        setMip("");
+        setSmoy("");
+        setCoy("");
         setAllNBA({
           first: emptyTeam(),
           second: emptyTeam(),
@@ -107,22 +118,6 @@ export default function AwardsForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      <div>
-        <label className="block text-sm font-medium mb-1" htmlFor="awards-name">
-          Your name
-        </label>
-        <input
-          id="awards-name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={50}
-          required
-          className="w-full sm:w-64 rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
-          placeholder="Name here"
-        />
-      </div>
-
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <label className="block text-sm font-medium mb-1" htmlFor="awards-mvp">
@@ -139,7 +134,7 @@ export default function AwardsForm() {
             }}
             maxLength={60}
             className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
-            placeholder="e.g. Nikola Jokic"
+            placeholder="Player name"
           />
         </div>
         <div>
@@ -157,7 +152,61 @@ export default function AwardsForm() {
             }}
             maxLength={60}
             className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
-            placeholder="e.g. Cooper Flagg"
+            placeholder="Player name"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1" htmlFor="awards-mip">
+            Most Improved Player
+          </label>
+          <input
+            id="awards-mip"
+            type="text"
+            value={mip}
+            onChange={(e) => {
+              setMip(e.target.value);
+              setSuccess(false);
+              setError(null);
+            }}
+            maxLength={60}
+            className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+            placeholder="Player name"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1" htmlFor="awards-smoy">
+            Sixth Man of the Year
+          </label>
+          <input
+            id="awards-smoy"
+            type="text"
+            value={smoy}
+            onChange={(e) => {
+              setSmoy(e.target.value);
+              setSuccess(false);
+              setError(null);
+            }}
+            maxLength={60}
+            className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+            placeholder="Player name"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1" htmlFor="awards-coy">
+            Coach of the Year
+          </label>
+          <input
+            id="awards-coy"
+            type="text"
+            value={coy}
+            onChange={(e) => {
+              setCoy(e.target.value);
+              setSuccess(false);
+              setError(null);
+            }}
+            maxLength={60}
+            className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+            placeholder="Coach name"
           />
         </div>
       </div>

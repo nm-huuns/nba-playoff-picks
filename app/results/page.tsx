@@ -148,9 +148,16 @@ function AwardsRow({ submission }: { submission: AwardsSubmission }) {
         <span className="text-xs text-gray-500 font-mono">{submission.timestamp}</span>
       </div>
       <div className="text-xs mb-1">
-        <span className="text-gray-500">MVP:</span> <span className="font-medium">{submission.mvp}</span>
+        <span className="text-gray-500">MVP:</span>{" "}
+        <span className="font-medium">{submission.mvp}</span>
         <span className="text-gray-500"> · ROY:</span>{" "}
         <span className="font-medium">{submission.roy}</span>
+        <span className="text-gray-500"> · MIP:</span>{" "}
+        <span className="font-medium">{submission.mip || "—"}</span>
+        <span className="text-gray-500"> · 6MOY:</span>{" "}
+        <span className="font-medium">{submission.smoy || "—"}</span>
+        <span className="text-gray-500"> · COY:</span>{" "}
+        <span className="font-medium">{submission.coy || "—"}</span>
       </div>
       <dl className="text-xs text-gray-500 space-y-0.5">
         <div>

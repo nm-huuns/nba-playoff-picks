@@ -13,6 +13,9 @@ export interface AwardsSubmission {
   name: string;
   mvp: string;
   roy: string;
+  mip: string;  // Most Improved Player
+  smoy: string; // Sixth Man of the Year
+  coy: string;  // Coach of the Year
   allNBA: AllNbaTeams;
 }
 
@@ -79,7 +82,12 @@ export async function appendAwardsLine(line: string): Promise<void> {
 //   <ISO timestamp> | <name> | <JSON blob>
 //
 // Where <JSON blob> is the exact serialization of:
-//   { mvp, roy, allNBA: { first: string[5], second: string[5], third: string[5] } }
+//   { mvp, roy, mip, smoy, coy, allNBA: { first: string[5], second: string[5], third: string[5] } }
+//
+// `mip`, `smoy`, and `coy` were added after an initial release that only tracked
+// mvp/roy + All-NBA. `parseAwardsLine` tolerates lines written before these fields
+// existed by defaulting any missing field to an empty string; new submissions are
+// required to include all of them via `validateAwardsSubmission`.
 
 function sanitizeName(name: string): string {
   return name.replace(/[|\n\r]/g, " ").trim();
@@ -95,6 +103,9 @@ export function formatAwardsLine(submission: AwardsSubmission): string {
   const payload = {
     mvp: sanitizePlayer(submission.mvp),
     roy: sanitizePlayer(submission.roy),
+    mip: sanitizePlayer(submission.mip),
+    smoy: sanitizePlayer(submission.smoy),
+    coy: sanitizePlayer(submission.coy),
     allNBA: {
       first: submission.allNBA.first.map(sanitizePlayer),
       second: submission.allNBA.second.map(sanitizePlayer),
@@ -125,11 +136,18 @@ export function parseAwardsLine(line: string): AwardsSubmission | null {
     const third = toStrArr(allNBA.third);
     if (!first || !second || !third) return null;
     if (typeof p.mvp !== "string" || typeof p.roy !== "string") return null;
+    // Tolerate legacy lines that predate the mip/smoy/coy fields.
+    const mip = typeof p.mip === "string" ? p.mip : "";
+    const smoy = typeof p.smoy === "string" ? p.smoy : "";
+    const coy = typeof p.coy === "string" ? p.coy : "";
     return {
       timestamp,
       name,
       mvp: p.mvp,
       roy: p.roy,
+      mip,
+      smoy,
+      coy,
       allNBA: { first, second, third },
     };
   } catch {
@@ -149,13 +167,16 @@ export function parseAwardsFile(contents: string): AwardsSubmission[] {
 // ---------- Validation ----------
 
 export type AwardsValidationResult =
-  | { ok: true; mvp: string; roy: string; allNBA: AllNbaTeams }
+  | { ok: true; mvp: string; roy: string; mip: string; smoy: string; coy: string; allNBA: AllNbaTeams }
   | { ok: false; error: string };
 
 interface AwardsSubmitBody {
   name?: unknown;
   mvp?: unknown;
   roy?: unknown;
+  mip?: unknown;
+  smoy?: unknown;
+  coy?: unknown;
   allNBA?: unknown;
 }
 
@@ -176,6 +197,15 @@ function validateTeam(label: string, raw: unknown): string[] | string {
   return cleaned;
 }
 
+function validateSinglePlayerAward(label: string, raw: unknown): string | { error: string } {
+  const value = typeof raw === "string" ? raw.trim() : "";
+  if (value.length === 0) return { error: `${label} is required` };
+  if (value.length > MAX_PLAYER_LENGTH) {
+    return { error: `${label} must be ${MAX_PLAYER_LENGTH} characters or fewer` };
+  }
+  return value;
+}
+
 export function validateAwardsSubmission(body: AwardsSubmitBody): AwardsValidationResult {
   const nameRaw = typeof body.name === "string" ? body.name.trim() : "";
   if (nameRaw.length === 0) return { ok: false, error: "Name is required" };
@@ -183,20 +213,16 @@ export function validateAwardsSubmission(body: AwardsSubmitBody): AwardsValidati
     return { ok: false, error: `Name must be ${MAX_NAME_LENGTH} characters or fewer` };
   }
 
-  const mvpRaw = typeof body.mvp === "string" ? body.mvp.trim() : "";
-  if (mvpRaw.length === 0) return { ok: false, error: "MVP is required" };
-  if (mvpRaw.length > MAX_PLAYER_LENGTH) {
-    return { ok: false, error: `MVP must be ${MAX_PLAYER_LENGTH} characters or fewer` };
-  }
-
-  const royRaw = typeof body.roy === "string" ? body.roy.trim() : "";
-  if (royRaw.length === 0) return { ok: false, error: "Rookie of the Year is required" };
-  if (royRaw.length > MAX_PLAYER_LENGTH) {
-    return {
-      ok: false,
-      error: `Rookie of the Year must be ${MAX_PLAYER_LENGTH} characters or fewer`,
-    };
-  }
+  const mvp = validateSinglePlayerAward("MVP", body.mvp);
+  if (typeof mvp !== "string") return { ok: false, error: mvp.error };
+  const roy = validateSinglePlayerAward("Rookie of the Year", body.roy);
+  if (typeof roy !== "string") return { ok: false, error: roy.error };
+  const mip = validateSinglePlayerAward("Most Improved Player", body.mip);
+  if (typeof mip !== "string") return { ok: false, error: mip.error };
+  const smoy = validateSinglePlayerAward("Sixth Man of the Year", body.smoy);
+  if (typeof smoy !== "string") return { ok: false, error: smoy.error };
+  const coy = validateSinglePlayerAward("Coach of the Year", body.coy);
+  if (typeof coy !== "string") return { ok: false, error: coy.error };
 
   if (!body.allNBA || typeof body.allNBA !== "object") {
     return { ok: false, error: "allNBA is required" };
@@ -212,8 +238,11 @@ export function validateAwardsSubmission(body: AwardsSubmitBody): AwardsValidati
 
   return {
     ok: true,
-    mvp: mvpRaw,
-    roy: royRaw,
+    mvp,
+    roy,
+    mip,
+    smoy,
+    coy,
     allNBA: { first, second, third },
   };
 }

@@ -12,8 +12,13 @@ type PicksMap = Record<string, PickState>;
 
 const GAMES_OPTIONS = [4, 5, 6, 7];
 
-export default function Round2Form({ matchups }: { matchups: Round2Matchup[] }) {
-  const [name, setName] = useState("");
+export default function Round2Form({
+  name,
+  matchups,
+}: {
+  name: string;
+  matchups: Round2Matchup[];
+}) {
   const [picks, setPicks] = useState<PicksMap>({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -90,22 +95,6 @@ export default function Round2Form({ matchups }: { matchups: Round2Matchup[] }) 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      <div>
-        <label className="block text-sm font-medium mb-1" htmlFor="r2-name">
-          Your name
-        </label>
-        <input
-          id="r2-name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={50}
-          required
-          className="w-full sm:w-64 rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
-          placeholder="Name here"
-        />
-      </div>
-
       {matchups.length === 0 && (
         <div className="rounded border border-yellow-500/60 bg-yellow-50 dark:bg-yellow-950/30 px-4 py-3 text-sm">
           Round 2 hasn&apos;t been configured yet. Add a <code>round2</code> block to{" "}
