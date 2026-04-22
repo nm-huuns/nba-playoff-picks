@@ -118,6 +118,10 @@ export default function AwardsForm({ name }: { name: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="rounded italic border border-grey-300 bg-grey-50 px-4 py-3 text-sm text-grey-900 dark:border-grey-700 dark:bg-grey-950/40 dark:text-grey-200">
+        <span aria-label="Caution" role="img">⚠️</span> The following players are ineligible — Anthony Edwards, Steph Curry, Devin Booker, LeBron James.
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <label className="block text-sm font-medium mb-1" htmlFor="awards-mvp">
@@ -207,6 +211,19 @@ export default function AwardsForm({ name }: { name: string }) {
             maxLength={60}
             className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
             placeholder="Coach name"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1" htmlFor="awards-dpoy">
+            Defensive Player of the Year
+          </label>
+          <input
+            id="awards-dpoy"
+            type="text"
+            value="Victor Wembanyama"
+            readOnly
+            disabled
+            className="w-full grey rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm cursor-not-allowed"
           />
         </div>
       </div>
