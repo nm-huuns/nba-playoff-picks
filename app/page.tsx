@@ -7,14 +7,45 @@ import {
   type BracketConfig,
 } from "@/lib/bracket";
 import { readLockState } from "@/lib/lock";
+import { parsePicksFile, readPicksRaw, ROUND2_BLOB_PATHNAME } from "@/lib/picks";
+import { parseRound2File } from "@/lib/round2";
+import { parseAwardsFile, readAwardsRaw } from "@/lib/awards";
+import { readResultsState } from "@/lib/results";
+import { buildLeaderboard } from "@/lib/scoring";
 import PicksTabs from "./PicksTabs";
 
 const bracket = bracketData as BracketConfig;
 
+function hasAnyResults(results: Awaited<ReturnType<typeof readResultsState>>): boolean {
+  if (results.r1.conferenceWinners.east || results.r1.conferenceWinners.west) return true;
+  for (const s of Object.values(results.r1.series)) if (s.winner) return true;
+  for (const s of Object.values(results.r2.series)) if (s.winner) return true;
+  const a = results.awards;
+  if (a.mvp || a.roy || a.mip || a.smoy || a.coy) return true;
+  for (const team of [a.allNBA.first, a.allNBA.second, a.allNBA.third]) {
+    if (team.some((p) => p)) return true;
+  }
+  return false;
+}
+
 export default async function Home() {
   const matchups = getMatchups(bracket);
   const round2Matchups = getRound2Matchups(bracket);
-  const locks = await readLockState();
+  const [locks, r1Raw, r2Raw, awardsRaw, results] = await Promise.all([
+    readLockState(),
+    readPicksRaw().catch(() => ""),
+    readPicksRaw(ROUND2_BLOB_PATHNAME).catch(() => ""),
+    readAwardsRaw().catch(() => ""),
+    readResultsState(),
+  ]);
+
+  const leaderboard = buildLeaderboard({
+    r1: parsePicksFile(r1Raw),
+    r2: parseRound2File(r2Raw),
+    awards: parseAwardsFile(awardsRaw),
+    results,
+  });
+  const resultsEntered = hasAnyResults(results);
 
   return (
     <main className="max-w-5xl mx-auto py-12 px-4 w-full">
@@ -50,6 +81,8 @@ export default async function Home() {
         eastTeams={bracket.east}
         westTeams={bracket.west}
         locks={locks}
+        leaderboard={leaderboard}
+        resultsEntered={resultsEntered}
       />
     </main>
   );

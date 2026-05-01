@@ -3,11 +3,13 @@
 import { useState } from "react";
 import type { LockState } from "@/lib/lock";
 import type { Matchup, Round2Matchup, Team } from "@/lib/bracket";
+import type { LeaderboardEntry } from "@/lib/scoring";
 import PicksForm from "./PicksForm";
 import Round2Form from "./Round2Form";
 import AwardsForm from "./AwardsForm";
+import Leaderboard from "./Leaderboard";
 
-type TabKey = "r1" | "r2" | "awards";
+type TabKey = "r1" | "r2" | "awards" | "leaderboard";
 
 interface TabDef {
   key: TabKey;
@@ -18,6 +20,7 @@ const TABS: TabDef[] = [
   { key: "r1", label: "Round 1" },
   { key: "r2", label: "Round 2" },
   { key: "awards", label: "Award Winners" },
+  { key: "leaderboard", label: "Leaderboard" },
 ];
 
 export default function PicksTabs({
@@ -26,16 +29,19 @@ export default function PicksTabs({
   eastTeams,
   westTeams,
   locks,
+  leaderboard,
+  resultsEntered,
 }: {
   matchups: Matchup[];
   round2Matchups: Round2Matchup[];
   eastTeams: Team[];
   westTeams: Team[];
   locks: LockState;
+  leaderboard: LeaderboardEntry[];
+  resultsEntered: boolean;
 }) {
   const [active, setActive] = useState<TabKey>("r1");
   const [name, setName] = useState("");
-  const isLocked = locks[active];
 
   return (
     <div className="space-y-6">
@@ -80,7 +86,7 @@ export default function PicksTabs({
               }
             >
               {t.label}
-              {locks[t.key] && (
+              {t.key !== "leaderboard" && locks[t.key] && (
                 <span className="ml-2 text-xs text-red-600" aria-label="locked">
                   (locked)
                 </span>
@@ -96,7 +102,9 @@ export default function PicksTabs({
         aria-labelledby={`tab-${active}`}
         className="pt-2"
       >
-        {isLocked ? (
+        {active === "leaderboard" ? (
+          <Leaderboard entries={leaderboard} hasResults={resultsEntered} />
+        ) : locks[active] ? (
           <LockedBanner tab={active} />
         ) : active === "r1" ? (
           <PicksForm
@@ -115,7 +123,7 @@ export default function PicksTabs({
   );
 }
 
-function LockedBanner({ tab }: { tab: TabKey }) {
+function LockedBanner({ tab }: { tab: Exclude<TabKey, "leaderboard"> }) {
   const label =
     tab === "r1" ? "Round 1" : tab === "r2" ? "Round 2" : "Award Winners";
   return (

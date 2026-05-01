@@ -1,0 +1,206 @@
+import { describe, it, expect } from "vitest";
+import { buildLeaderboard, scoreAwards, scoreRound1, scoreRound2 } from "./scoring";
+import type { ResultsState } from "./results";
+import { emptyResultsState } from "./results";
+import type { Submission as Round1Submission } from "./picks";
+import type { Round2Submission } from "./round2";
+import type { AwardsSubmission } from "./awards";
+
+const TS = "2026-04-20T12:00:00Z";
+
+function r1(name: string, overrides: Partial<Round1Submission> = {}): Round1Submission {
+  return {
+    timestamp: TS,
+    name,
+    picks: [
+      { seriesId: "E-1v8", winner: "Detroit", games: 5 },
+      { seriesId: "E-4v5", winner: "Cleveland", games: 6 },
+    ],
+    conferenceWinners: { east: "Boston", west: "OKC" },
+    ...overrides,
+  };
+}
+
+function r2(name: string, overrides: Partial<Round2Submission> = {}): Round2Submission {
+  return {
+    timestamp: TS,
+    name,
+    picks: [{ matchupId: "E-semi-1", winner: "Boston", games: 7 }],
+    ...overrides,
+  };
+}
+
+function aw(name: string, overrides: Partial<AwardsSubmission> = {}): AwardsSubmission {
+  return {
+    timestamp: TS,
+    name,
+    mvp: "Jokic",
+    roy: "Flagg",
+    mip: "Barnes",
+    smoy: "Beasley",
+    coy: "Atkinson",
+    allNBA: {
+      first: ["A", "B", "C", "D", "E"],
+      second: ["F", "G", "H", "I", "J"],
+      third: ["K", "L", "M", "N", "O"],
+    },
+    ...overrides,
+  };
+}
+
+function fullResults(): ResultsState {
+  const r = emptyResultsState();
+  r.r1.conferenceWinners = { east: "Boston", west: "OKC" };
+  r.r1.series["E-1v8"] = { winner: "Detroit", games: 5 };
+  r.r1.series["E-4v5"] = { winner: "Cleveland", games: 5 }; // games mismatch
+  r.r2.series["E-semi-1"] = { winner: "Boston", games: 7 };
+  r.awards = {
+    mvp: "Jokic",
+    roy: "Flagg",
+    mip: "Barnes",
+    smoy: "Beasley",
+    coy: "Atkinson",
+    allNBA: {
+      first: ["A", "B", "C", "D", "E"],
+      second: ["F", "G", "X", "I", "J"], // 4 of 5
+      third: ["K", "L", "M", "N", "O"],
+    },
+  };
+  return r;
+}
+
+describe("scoreRound1", () => {
+  it("awards 1 pt for series winner and 2 pts extra for correct games", () => {
+    const result = scoreRound1(r1("Sunny"), fullResults());
+    // E-1v8: winner+games = 3; E-4v5: winner only = 1
+    expect(result.series).toBe(4);
+    expect(result.conference).toBe(4); // both conf winners correct
+  });
+
+  it("scores 0 for incorrect winner", () => {
+    const sub = r1("Sunny", {
+      picks: [
+        { seriesId: "E-1v8", winner: "Orlando", games: 5 },
+        { seriesId: "E-4v5", winner: "Toronto", games: 6 },
+      ],
+    });
+    expect(scoreRound1(sub, fullResults()).series).toBe(0);
+  });
+
+  it("skips undecided series", () => {
+    const r = emptyResultsState();
+    expect(scoreRound1(r1("Sunny"), r).series).toBe(0);
+    expect(scoreRound1(r1("Sunny"), r).conference).toBe(0);
+  });
+
+  it("scores per-conference: only east correct", () => {
+    const r = emptyResultsState();
+    r.r1.conferenceWinners = { east: "Boston", west: "" };
+    expect(scoreRound1(r1("Sunny"), r).conference).toBe(2);
+  });
+});
+
+describe("scoreRound2", () => {
+  it("awards 3 pts for winner+games match", () => {
+    expect(scoreRound2(r2("Sunny"), fullResults())).toBe(3);
+  });
+
+  it("awards 1 pt for winner only", () => {
+    const r = fullResults();
+    r.r2.series["E-semi-1"] = { winner: "Boston", games: 5 };
+    expect(scoreRound2(r2("Sunny"), r)).toBe(1);
+  });
+
+  it("returns 0 when result is undecided", () => {
+    expect(scoreRound2(r2("Sunny"), emptyResultsState())).toBe(0);
+  });
+});
+
+describe("scoreAwards", () => {
+  it("awards 1 pt per correct single-entity award", () => {
+    const result = scoreAwards(aw("Sunny"), fullResults());
+    expect(result.single).toBe(5);
+  });
+
+  it("awards 1 pt per correct All-NBA player on the right team", () => {
+    // First team 5/5; second team 4/5 (G,H pair includes one mismatch); third 5/5
+    // fullResults second is [F,G,X,I,J], submission second is [F,G,H,I,J] → 4 match
+    const result = scoreAwards(aw("Sunny"), fullResults());
+    expect(result.allNba).toBe(5 + 4 + 5);
+  });
+
+  it("does not credit a right player on the wrong team", () => {
+    const sub = aw("Sunny", {
+      allNBA: {
+        first: ["F", "B", "C", "D", "E"], // F is on the actual 2nd team
+        second: ["A", "G", "X", "I", "J"], // A is on the actual 1st team
+        third: ["K", "L", "M", "N", "O"],
+      },
+    });
+    const r = scoreAwards(sub, fullResults());
+    // first: B,C,D,E correct = 4; second: G,X,I,J = X matches actual X = 4; third: 5
+    expect(r.allNba).toBe(4 + 4 + 5);
+  });
+
+  it("skips blank single-entity results", () => {
+    const r = fullResults();
+    r.awards.mvp = "";
+    const result = scoreAwards(aw("Sunny"), r);
+    expect(result.single).toBe(4);
+  });
+});
+
+describe("buildLeaderboard", () => {
+  it("sorts by total descending and breaks ties by name ascending", () => {
+    const subs = {
+      r1: [r1("Alice"), r1("Bob")],
+      r2: [r2("Alice"), r2("Bob")],
+      awards: [aw("Alice"), aw("Bob")],
+      results: fullResults(),
+    };
+    const board = buildLeaderboard(subs);
+    expect(board).toHaveLength(2);
+    // Both have identical picks, so equal totals; tie-break alphabetical.
+    expect(board[0].name).toBe("Alice");
+    expect(board[1].name).toBe("Bob");
+    expect(board[0].total).toBe(board[1].total);
+  });
+
+  it("uses the most recent submission per section per name", () => {
+    const old = r1("Alice", {
+      timestamp: "2026-04-19T00:00:00Z",
+      picks: [
+        { seriesId: "E-1v8", winner: "Orlando", games: 4 }, // wrong
+        { seriesId: "E-4v5", winner: "Toronto", games: 4 }, // wrong
+      ],
+    });
+    const recent = r1("Alice"); // correct picks
+    const board = buildLeaderboard({
+      r1: [old, recent],
+      r2: [],
+      awards: [],
+      results: fullResults(),
+    });
+    expect(board[0].breakdown.r1Series).toBe(4);
+  });
+
+  it("returns 0 totals when nothing matches the (empty) results", () => {
+    const board = buildLeaderboard({
+      r1: [r1("Alice")],
+      r2: [],
+      awards: [],
+      results: emptyResultsState(),
+    });
+    expect(board[0].total).toBe(0);
+  });
+
+  it("includes a name that only submitted to one section", () => {
+    const board = buildLeaderboard({
+      r1: [r1("Alice")],
+      r2: [],
+      awards: [],
+      results: fullResults(),
+    });
+    expect(board.map((e) => e.name)).toContain("Alice");
+  });
+});

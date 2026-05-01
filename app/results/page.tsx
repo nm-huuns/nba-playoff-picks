@@ -1,7 +1,11 @@
 export const dynamic = "force-dynamic";
 
 import bracketData from "@/bracket.json";
-import { type BracketConfig } from "@/lib/bracket";
+import {
+  getMatchups,
+  getRound2Matchups,
+  type BracketConfig,
+} from "@/lib/bracket";
 import {
   parsePicksFile,
   readPicksRaw,
@@ -14,20 +18,25 @@ import {
   type AwardsSubmission,
 } from "@/lib/awards";
 import { readLockState } from "@/lib/lock";
+import { readResultsState } from "@/lib/results";
 import LockToggle from "./LockToggle";
+import ResultsForm from "./ResultsForm";
 
 const bracket = bracketData as BracketConfig;
 
 const MAX_ROWS = 20;
 
 export default async function Results() {
-  const [r1Raw, r2Raw, awardsRaw, locks] = await Promise.all([
+  const [r1Raw, r2Raw, awardsRaw, locks, results] = await Promise.all([
     readPicksRaw().catch(() => ""),
     readPicksRaw(ROUND2_BLOB_PATHNAME).catch(() => ""),
     readAwardsRaw().catch(() => ""),
     readLockState(),
+    readResultsState(),
   ]);
 
+  const matchups = getMatchups(bracket);
+  const round2Matchups = getRound2Matchups(bracket);
   const r1Submissions = parsePicksFile(r1Raw).slice(-MAX_ROWS).reverse();
   const r2Submissions = parseRound2File(r2Raw).slice(-MAX_ROWS).reverse();
   const awardsSubmissions = parseAwardsFile(awardsRaw).slice(-MAX_ROWS).reverse();
@@ -48,6 +57,17 @@ export default async function Results() {
           <LockToggle kind="r2" label="Round 2" initialLocked={locks.r2} />
           <LockToggle kind="awards" label="Award Winners" initialLocked={locks.awards} />
         </div>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="text-base font-semibold mb-3">Actual results (admin)</h2>
+        <ResultsForm
+          matchups={matchups}
+          round2Matchups={round2Matchups}
+          eastTeams={bracket.east.map((t) => t.team).filter(Boolean)}
+          westTeams={bracket.west.map((t) => t.team).filter(Boolean)}
+          initialState={results}
+        />
       </section>
 
       <section className="mb-10">

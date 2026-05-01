@@ -223,7 +223,7 @@ export default function AwardsForm({ name }: { name: string }) {
             value="Victor Wembanyama"
             readOnly
             disabled
-            className="w-full grey rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm cursor-not-allowed"
+            className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm cursor-not-allowed"
           />
         </div>
       </div>

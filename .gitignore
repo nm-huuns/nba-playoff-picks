@@ -36,6 +36,14 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Vercel Blob snapshots pulled down for local editing — never commit user data
+/awards.txt
+/picks.txt
+/picks-r2.txt
+/lock.json
+/results.json
+*.bak
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
