@@ -39,10 +39,13 @@ export default async function Home() {
     readResultsState(),
   ]);
 
+  const r1Submissions = parsePicksFile(r1Raw);
+  const r2Submissions = parseRound2File(r2Raw);
+  const awardsSubmissions = parseAwardsFile(awardsRaw);
   const leaderboard = buildLeaderboard({
-    r1: parsePicksFile(r1Raw),
-    r2: parseRound2File(r2Raw),
-    awards: parseAwardsFile(awardsRaw),
+    r1: r1Submissions,
+    r2: r2Submissions,
+    awards: awardsSubmissions,
     results,
   });
   const resultsEntered = hasAnyResults(results);
@@ -83,6 +86,9 @@ export default async function Home() {
         locks={locks}
         leaderboard={leaderboard}
         resultsEntered={resultsEntered}
+        r1Submissions={r1Submissions}
+        r2Submissions={r2Submissions}
+        awardsSubmissions={awardsSubmissions}
       />
     </main>
   );

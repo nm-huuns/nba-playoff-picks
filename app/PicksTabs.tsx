@@ -4,12 +4,20 @@ import { useState } from "react";
 import type { LockState } from "@/lib/lock";
 import type { Matchup, Round2Matchup, Team } from "@/lib/bracket";
 import type { LeaderboardEntry } from "@/lib/scoring";
+import type { Submission as Round1Submission } from "@/lib/picks";
+import type { Round2Submission } from "@/lib/round2";
+import type { AwardsSubmission } from "@/lib/awards";
 import PicksForm from "./PicksForm";
 import Round2Form from "./Round2Form";
 import AwardsForm from "./AwardsForm";
 import Leaderboard from "./Leaderboard";
+import {
+  LockedR1ListView,
+  LockedR2ListView,
+  LockedAwardsListView,
+} from "./LockedSubmissionView";
 
-type TabKey = "r1" | "r2" | "awards" | "leaderboard";
+type TabKey = "r1" | "r2" | "awards" | "scores";
 
 interface TabDef {
   key: TabKey;
@@ -17,10 +25,10 @@ interface TabDef {
 }
 
 const TABS: TabDef[] = [
+  { key: "scores", label: "Scores" },
   { key: "r1", label: "Round 1" },
   { key: "r2", label: "Round 2" },
   { key: "awards", label: "Award Winners" },
-  { key: "leaderboard", label: "Leaderboard" },
 ];
 
 export default function PicksTabs({
@@ -31,6 +39,9 @@ export default function PicksTabs({
   locks,
   leaderboard,
   resultsEntered,
+  r1Submissions,
+  r2Submissions,
+  awardsSubmissions,
 }: {
   matchups: Matchup[];
   round2Matchups: Round2Matchup[];
@@ -39,28 +50,33 @@ export default function PicksTabs({
   locks: LockState;
   leaderboard: LeaderboardEntry[];
   resultsEntered: boolean;
+  r1Submissions: Round1Submission[];
+  r2Submissions: Round2Submission[];
+  awardsSubmissions: AwardsSubmission[];
 }) {
-  const [active, setActive] = useState<TabKey>("r1");
+  const [active, setActive] = useState<TabKey>("scores");
   const [name, setName] = useState("");
 
   return (
     <div className="space-y-6">
-      <div>
-        <label className="block text-sm font-medium mb-1" htmlFor="name">
-          Your name
-        </label>
-        <input
-          id="name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          maxLength={50}
-          required
-          className="w-full sm:w-64 rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
-          placeholder="Name here"
-        />
-        <p className="text-xs text-gray-500 mt-1">Used across all tabs.</p>
-      </div>
+      {active !== "scores" && !locks[active] && (
+        <div>
+          <label className="block text-sm font-medium mb-1" htmlFor="name">
+            Your name
+          </label>
+          <input
+            id="name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={50}
+            required
+            className="w-full sm:w-64 rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+            placeholder="Name here"
+          />
+          <p className="text-xs text-gray-500 mt-1">Used across all tabs.</p>
+        </div>
+      )}
 
       <nav
         className="flex gap-1 border-b border-gray-200 dark:border-gray-800"
@@ -86,7 +102,7 @@ export default function PicksTabs({
               }
             >
               {t.label}
-              {t.key !== "leaderboard" && locks[t.key] && (
+              {t.key !== "scores" && locks[t.key] && (
                 <span className="ml-2 text-xs text-red-600" aria-label="locked">
                   (locked)
                 </span>
@@ -102,10 +118,16 @@ export default function PicksTabs({
         aria-labelledby={`tab-${active}`}
         className="pt-2"
       >
-        {active === "leaderboard" ? (
+        {active === "scores" ? (
           <Leaderboard entries={leaderboard} hasResults={resultsEntered} />
         ) : locks[active] ? (
-          <LockedBanner tab={active} />
+          active === "r1" ? (
+            <LockedR1ListView submissions={r1Submissions} />
+          ) : active === "r2" ? (
+            <LockedR2ListView submissions={r2Submissions} />
+          ) : (
+            <LockedAwardsListView submissions={awardsSubmissions} />
+          )
         ) : active === "r1" ? (
           <PicksForm
             name={name}
@@ -123,15 +145,3 @@ export default function PicksTabs({
   );
 }
 
-function LockedBanner({ tab }: { tab: Exclude<TabKey, "leaderboard"> }) {
-  const label =
-    tab === "r1" ? "Round 1" : tab === "r2" ? "Round 2" : "Award Winners";
-  return (
-    <div className="rounded border border-red-500/60 bg-red-50 dark:bg-red-950/30 px-4 py-4 text-sm">
-      <p className="font-medium mb-1">{label} picks are locked</p>
-      <p className="text-gray-600 dark:text-gray-400">
-        Submissions for this section are closed. Check back when it re-opens.
-      </p>
-    </div>
-  );
-}
