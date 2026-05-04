@@ -129,6 +129,20 @@ describe("scoreAwards", () => {
     expect(result.allNba).toBe(5 + 4 + 5);
   });
 
+  it("scores All-NBA regardless of position within a team", () => {
+    // Picked 1st team in reversed order vs actual; should still be 5/5.
+    const sub = aw("Sunny", {
+      allNBA: {
+        first: ["E", "D", "C", "B", "A"],
+        second: ["F", "G", "H", "I", "J"],
+        third: ["K", "L", "M", "N", "O"],
+      },
+    });
+    const r = scoreAwards(sub, fullResults());
+    // 1st: 5/5 set match. 2nd: F,G,I,J in actual = 4. 3rd: 5.
+    expect(r.allNba).toBe(5 + 4 + 5);
+  });
+
   it("does not credit a right player on the wrong team", () => {
     const sub = aw("Sunny", {
       allNBA: {

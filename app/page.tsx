@@ -75,6 +75,13 @@ export default async function Home() {
               <li>2 points for picking the conference winner</li>
             </ul>
           </div>
+          <div>
+            <p className="font-medium">Award winners</p>
+            <ul className="list-disc pl-5 mt-1 space-y-1">
+              <li>1 point each for MVP, Rookie of the Year, Most Improved Player, Sixth Man of the Year, and Coach of the Year</li>
+              <li>1 point per player placed on the correct All-NBA team (1st, 2nd, or 3rd)</li>
+            </ul>
+          </div>
         </div>
       </section>
 
@@ -89,6 +96,7 @@ export default async function Home() {
         r1Submissions={r1Submissions}
         r2Submissions={r2Submissions}
         awardsSubmissions={awardsSubmissions}
+        results={results}
       />
     </main>
   );

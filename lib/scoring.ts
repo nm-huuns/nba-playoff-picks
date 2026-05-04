@@ -76,13 +76,12 @@ function scoreSingleAward(pick: string, result: string): number {
 }
 
 function scoreAllNbaTeam(picked: string[], actual: string[]): number {
-  let pts = 0;
-  for (let i = 0; i < picked.length; i++) {
-    const a = actual[i];
-    if (!a) continue;
-    if (picked[i] === a) pts += POINTS.allNbaPlayer;
-  }
-  return pts;
+  const actualSet = new Set(actual.filter((a) => a.length > 0));
+  if (actualSet.size === 0) return 0;
+  const uniqueCorrect = new Set(
+    picked.filter((p) => p.length > 0 && actualSet.has(p))
+  );
+  return uniqueCorrect.size * POINTS.allNbaPlayer;
 }
 
 export function scoreAwards(

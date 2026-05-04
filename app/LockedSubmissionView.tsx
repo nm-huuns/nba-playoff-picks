@@ -1,6 +1,7 @@
 import type { Submission as Round1Submission } from "@/lib/picks";
 import type { Round2Submission } from "@/lib/round2";
 import type { AwardsSubmission } from "@/lib/awards";
+import type { ResultsState } from "@/lib/results";
 
 type Section = "r1" | "r2" | "awards";
 
@@ -12,11 +13,18 @@ const SECTION_LABEL: Record<Section, string> = {
 
 const GREY = "text-gray-500 dark:text-gray-500";
 const GREY_HEADING = "text-gray-600 dark:text-gray-400";
+const CORRECT = "font-bold text-gray-900 dark:text-gray-100";
+
+function pluralPts(n: number): string {
+  return `${n} ${n === 1 ? "pt" : "pts"}`;
+}
 
 export function LockedR1ListView({
   submissions,
+  r1Results,
 }: {
   submissions: Round1Submission[];
+  r1Results: ResultsState["r1"];
 }) {
   const latest = latestByName(submissions);
   if (latest.length === 0) return <EmptyBanner section="r1" />;
@@ -27,25 +35,63 @@ export function LockedR1ListView({
           {sub.conferenceWinners && (
             <div className={`text-sm ${GREY}`}>
               <span className={GREY_HEADING}>Conference winners — </span>
-              <span>East: {sub.conferenceWinners.east}</span>
+              <ConfWinnerSpan
+                side="East"
+                pick={sub.conferenceWinners.east}
+                actual={r1Results.conferenceWinners.east}
+              />
               <span className="mx-2">·</span>
-              <span>West: {sub.conferenceWinners.west}</span>
+              <ConfWinnerSpan
+                side="West"
+                pick={sub.conferenceWinners.west}
+                actual={r1Results.conferenceWinners.west}
+              />
             </div>
           )}
           <ul className={`mt-2 space-y-1 text-sm ${GREY}`}>
-            {sub.picks.map((p) => (
-              <li key={p.seriesId}>
-                <span className="font-mono">{p.seriesId}</span>
-                <span className="mx-2">·</span>
-                <span>{p.winner}</span>
-                <span className="mx-2">·</span>
-                <span>{p.games} games</span>
-              </li>
-            ))}
+            {sub.picks.map((p) => {
+              const actual = r1Results.series[p.seriesId];
+              const hasResult = !!(actual && actual.winner);
+              const winnerCorrect = hasResult && p.winner === actual.winner;
+              const gamesCorrect =
+                winnerCorrect && actual.games !== 0 && p.games === actual.games;
+              const points = (winnerCorrect ? 1 : 0) + (gamesCorrect ? 2 : 0);
+              return (
+                <li key={p.seriesId}>
+                  <span className="font-mono">{p.seriesId}</span>
+                  <span className="mx-2">·</span>
+                  <span className={winnerCorrect ? CORRECT : ""}>{p.winner}</span>
+                  <span className="mx-2">·</span>
+                  <span className={gamesCorrect ? CORRECT : ""}>{p.games} games</span>
+                  {hasResult && <span> ({pluralPts(points)})</span>}
+                </li>
+              );
+            })}
           </ul>
         </Card>
       ))}
     </ListWrapper>
+  );
+}
+
+function ConfWinnerSpan({
+  side,
+  pick,
+  actual,
+}: {
+  side: "East" | "West";
+  pick: string;
+  actual: string;
+}) {
+  const hasResult = actual.length > 0;
+  const correct = hasResult && pick === actual;
+  const points = correct ? 2 : 0;
+  return (
+    <>
+      <span className={GREY_HEADING}>{side}: </span>
+      <span className={correct ? CORRECT : ""}>{pick}</span>
+      {hasResult && <span> ({pluralPts(points)})</span>}
+    </>
   );
 }
 
@@ -79,8 +125,10 @@ export function LockedR2ListView({
 
 export function LockedAwardsListView({
   submissions,
+  awardsResults,
 }: {
   submissions: AwardsSubmission[];
+  awardsResults: ResultsState["awards"];
 }) {
   const latest = latestByName(submissions);
   if (latest.length === 0) return <EmptyBanner section="awards" />;
@@ -89,16 +137,16 @@ export function LockedAwardsListView({
       {latest.map((sub) => (
         <Card key={sub.name} name={sub.name} timestamp={sub.timestamp}>
           <dl className={`grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2 ${GREY}`}>
-            <Row label="MVP" value={sub.mvp} />
-            <Row label="Rookie of the Year" value={sub.roy} />
-            <Row label="Most Improved Player" value={sub.mip} />
-            <Row label="Sixth Man of the Year" value={sub.smoy} />
-            <Row label="Coach of the Year" value={sub.coy} />
+            <Row label="MVP" value={sub.mvp} actual={awardsResults.mvp} />
+            <Row label="Rookie of the Year" value={sub.roy} actual={awardsResults.roy} />
+            <Row label="Most Improved Player" value={sub.mip} actual={awardsResults.mip} />
+            <Row label="Sixth Man of the Year" value={sub.smoy} actual={awardsResults.smoy} />
+            <Row label="Coach of the Year" value={sub.coy} actual={awardsResults.coy} />
           </dl>
           <div className={`mt-3 space-y-1 text-sm ${GREY}`}>
-            <TeamRow label="All-NBA 1st team" players={sub.allNBA.first} />
-            <TeamRow label="All-NBA 2nd team" players={sub.allNBA.second} />
-            <TeamRow label="All-NBA 3rd team" players={sub.allNBA.third} />
+            <TeamRow label="All-NBA 1st team" players={sub.allNBA.first} actual={awardsResults.allNBA.first} />
+            <TeamRow label="All-NBA 2nd team" players={sub.allNBA.second} actual={awardsResults.allNBA.second} />
+            <TeamRow label="All-NBA 3rd team" players={sub.allNBA.third} actual={awardsResults.allNBA.third} />
           </div>
         </Card>
       ))}
@@ -156,20 +204,63 @@ function EmptyBanner({ section }: { section: Section }) {
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Row({
+  label,
+  value,
+  actual,
+}: {
+  label: string;
+  value: string;
+  actual: string;
+}) {
+  const hasResult = actual.length > 0;
+  const correct = hasResult && value === actual;
+  const points = correct ? 1 : 0;
   return (
     <div>
       <dt className={`inline ${GREY_HEADING}`}>{label}: </dt>
-      <dd className="inline">{value || "—"}</dd>
+      <dd className="inline">
+        <span className={correct ? CORRECT : ""}>{value || "—"}</span>
+        {hasResult && <span> ({pluralPts(points)})</span>}
+      </dd>
     </div>
   );
 }
 
-function TeamRow({ label, players }: { label: string; players: string[] }) {
+function TeamRow({
+  label,
+  players,
+  actual,
+}: {
+  label: string;
+  players: string[];
+  actual: string[];
+}) {
+  const actualSet = new Set(actual.filter((a) => a.length > 0));
+  const hasResult = actualSet.size > 0;
+  const rendered = players.map((p) => ({
+    text: p,
+    correct: hasResult && p.length > 0 && actualSet.has(p),
+  }));
+  const teamPoints = new Set(
+    players.filter((p) => p.length > 0 && actualSet.has(p))
+  ).size;
   return (
     <div>
       <span className={GREY_HEADING}>{label}: </span>
-      <span>{players.filter(Boolean).join(", ") || "—"}</span>
+      {rendered.length === 0 || rendered.every((r) => !r.text) ? (
+        <span>—</span>
+      ) : (
+        rendered
+          .filter((r) => r.text)
+          .map((r, i, arr) => (
+            <span key={i}>
+              <span className={r.correct ? CORRECT : ""}>{r.text}</span>
+              {i < arr.length - 1 && <span>, </span>}
+            </span>
+          ))
+      )}
+      {hasResult && <span> ({pluralPts(teamPoints)})</span>}
     </div>
   );
 }
