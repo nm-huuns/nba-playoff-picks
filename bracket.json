@@ -22,12 +22,12 @@
   ],
   "round2": {
     "east": [
-      { "id": "E-semi-1", "teamA": "", "teamB": "" },
-      { "id": "E-semi-2", "teamA": "", "teamB": "" }
+      { "id": "E-semi-1", "teamA": "Detroit Pistons", "teamB": "Cleveland Cavaliers" },
+      { "id": "E-semi-2", "teamA": "New York Knicks", "teamB": "Philadelphia 76ers" }
     ],
     "west": [
-      { "id": "W-semi-1", "teamA": "", "teamB": "" },
-      { "id": "W-semi-2", "teamA": "", "teamB": "" }
+      { "id": "W-semi-1", "teamA": "OKC Thunder", "teamB": "LA Lakers" },
+      { "id": "W-semi-2", "teamA": "San Antonio Spurs", "teamB": "Minnesota Timberwolves" }
     ]
   }
 }
