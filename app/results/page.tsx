@@ -104,9 +104,10 @@ export default async function Results() {
                     <span className="font-medium">West:</span> {s.conferenceWinners.west}
                   </div>
                 )}
-                <div className="text-xs text-gray-500 font-mono break-all">
-                  {s.picks.map((p) => `${p.seriesId}: ${p.winner} in ${p.games}`).join(" · ")}
-                </div>
+                <PickGrid
+                  east={s.picks.filter((p) => p.seriesId.startsWith("E-")).map((p) => ({ id: p.seriesId, winner: p.winner, games: p.games }))}
+                  west={s.picks.filter((p) => p.seriesId.startsWith("W-")).map((p) => ({ id: p.seriesId, winner: p.winner, games: p.games }))}
+                />
               </li>
             ))}
           </ul>
@@ -151,11 +152,10 @@ function R2Row({ submission }: { submission: Round2Submission }) {
         <span className="font-medium">{submission.name}</span>
         <span className="text-xs text-gray-500 font-mono">{submission.timestamp}</span>
       </div>
-      <div className="text-xs text-gray-500 font-mono break-all">
-        {submission.picks
-          .map((p) => `${p.matchupId}: ${p.winner} in ${p.games}`)
-          .join(" · ")}
-      </div>
+      <PickGrid
+        east={submission.picks.filter((p) => p.matchupId.startsWith("E-")).map((p) => ({ id: p.matchupId, winner: p.winner, games: p.games }))}
+        west={submission.picks.filter((p) => p.matchupId.startsWith("W-")).map((p) => ({ id: p.matchupId, winner: p.winner, games: p.games }))}
+      />
     </li>
   );
 }
@@ -194,5 +194,45 @@ function AwardsRow({ submission }: { submission: AwardsSubmission }) {
         </div>
       </dl>
     </li>
+  );
+}
+
+function PickGrid({
+  east,
+  west,
+}: {
+  east: { id: string; winner: string; games: number }[];
+  west: { id: string; winner: string; games: number }[];
+}) {
+  return (
+    <div className="grid gap-x-6 gap-y-1 text-xs sm:grid-cols-2">
+      <PickColumn label="East" picks={east} />
+      <PickColumn label="West" picks={west} />
+    </div>
+  );
+}
+
+function PickColumn({
+  label,
+  picks,
+}: {
+  label: string;
+  picks: { id: string; winner: string; games: number }[];
+}) {
+  return (
+    <div>
+      <div className="text-[10px] uppercase tracking-wide text-gray-500 mb-1">
+        {label}
+      </div>
+      <ul className="space-y-0.5">
+        {picks.map((p) => (
+          <li key={p.id} className="flex items-baseline gap-2">
+            <span className="font-mono text-gray-500 w-16 shrink-0">{p.id}</span>
+            <span className="font-medium">{p.winner}</span>
+            <span className="text-gray-500">in {p.games}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
