@@ -27,12 +27,12 @@ export default function Leaderboard({
           <tr className="text-left text-xs uppercase tracking-wide text-gray-500">
             <th className="py-2 pr-3">#</th>
             <th className="py-2 pr-3">Name</th>
+            <th className="py-2 pr-3 text-right font-semibold">Total</th>
             <th className="py-2 pr-3 text-right">R1 series</th>
             <th className="py-2 pr-3 text-right">R1 conf</th>
             <th className="py-2 pr-3 text-right">R2</th>
             <th className="py-2 pr-3 text-right">Awards</th>
             <th className="py-2 pr-3 text-right">All-NBA</th>
-            <th className="py-2 pr-3 text-right font-semibold">Total</th>
           </tr>
         </thead>
         <tbody>
@@ -43,12 +43,12 @@ export default function Leaderboard({
             >
               <td className="py-2 pr-3 text-gray-500">{i + 1}</td>
               <td className="py-2 pr-3 font-medium">{e.name}</td>
+              <td className="py-2 pr-3 text-right tabular-nums font-semibold">{e.total}</td>
               <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.r1Series}</td>
               <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.r1ConferenceWinners}</td>
               <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.r2Series}</td>
               <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.awardsSingle}</td>
               <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.awardsAllNba}</td>
-              <td className="py-2 pr-3 text-right tabular-nums font-semibold">{e.total}</td>
             </tr>
           ))}
         </tbody>
