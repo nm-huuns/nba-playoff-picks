@@ -10,6 +10,7 @@ export interface BracketConfig {
   east: Team[];
   west: Team[];
   round2?: Round2Config;
+  round3?: Round3Config;
 }
 
 export interface Round2Config {
@@ -24,6 +25,27 @@ export interface Round2MatchupConfig {
 }
 
 export interface Round2Matchup {
+  id: string;
+  conference: Conference;
+  teamA: string;
+  teamB: string;
+}
+
+// Round 3 (Conference Finals) — one matchup per conference. The config shape
+// mirrors Round 2 so the same admin/edit/parse patterns apply; the only
+// practical difference is that each conference array has exactly one entry.
+export interface Round3Config {
+  east: Round3MatchupConfig[];
+  west: Round3MatchupConfig[];
+}
+
+export interface Round3MatchupConfig {
+  id: string;     // e.g. "E-cf-1"
+  teamA: string;
+  teamB: string;
+}
+
+export interface Round3Matchup {
   id: string;
   conference: Conference;
   teamA: string;
@@ -124,4 +146,37 @@ export function getRound2MatchupById(
   id: string
 ): Round2Matchup | undefined {
   return getRound2Matchups(config).find((m) => m.id === id);
+}
+
+// ---------- Round 3 helpers ----------
+
+export function getRound3Matchups(config: BracketConfig): Round3Matchup[] {
+  const r3 = config.round3;
+  if (!r3) return [];
+  const east: Round3Matchup[] = r3.east.map((m) => ({
+    id: m.id,
+    conference: "East" as Conference,
+    teamA: m.teamA,
+    teamB: m.teamB,
+  }));
+  const west: Round3Matchup[] = r3.west.map((m) => ({
+    id: m.id,
+    conference: "West" as Conference,
+    teamA: m.teamA,
+    teamB: m.teamB,
+  }));
+  return [...east, ...west];
+}
+
+export function isRound3Complete(config: BracketConfig): boolean {
+  const ms = getRound3Matchups(config);
+  if (ms.length === 0) return false;
+  return ms.every((m) => m.teamA.length > 0 && m.teamB.length > 0);
+}
+
+export function getRound3MatchupById(
+  config: BracketConfig,
+  id: string
+): Round3Matchup | undefined {
+  return getRound3Matchups(config).find((m) => m.id === id);
 }

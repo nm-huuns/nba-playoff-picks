@@ -4,11 +4,18 @@ import bracketData from "@/bracket.json";
 import {
   getMatchups,
   getRound2Matchups,
+  getRound3Matchups,
   type BracketConfig,
 } from "@/lib/bracket";
 import { readLockState } from "@/lib/lock";
-import { parsePicksFile, readPicksRaw, ROUND2_BLOB_PATHNAME } from "@/lib/picks";
+import {
+  parsePicksFile,
+  readPicksRaw,
+  ROUND2_BLOB_PATHNAME,
+  ROUND3_BLOB_PATHNAME,
+} from "@/lib/picks";
 import { parseRound2File } from "@/lib/round2";
+import { parseRound3File } from "@/lib/round3";
 import { parseAwardsFile, readAwardsRaw } from "@/lib/awards";
 import { readResultsState } from "@/lib/results";
 import { buildLeaderboard } from "@/lib/scoring";
@@ -31,20 +38,24 @@ function hasAnyResults(results: Awaited<ReturnType<typeof readResultsState>>): b
 export default async function Home() {
   const matchups = getMatchups(bracket);
   const round2Matchups = getRound2Matchups(bracket);
-  const [locks, r1Raw, r2Raw, awardsRaw, results] = await Promise.all([
+  const round3Matchups = getRound3Matchups(bracket);
+  const [locks, r1Raw, r2Raw, r3Raw, awardsRaw, results] = await Promise.all([
     readLockState(),
     readPicksRaw().catch(() => ""),
     readPicksRaw(ROUND2_BLOB_PATHNAME).catch(() => ""),
+    readPicksRaw(ROUND3_BLOB_PATHNAME).catch(() => ""),
     readAwardsRaw().catch(() => ""),
     readResultsState(),
   ]);
 
   const r1Submissions = parsePicksFile(r1Raw);
   const r2Submissions = parseRound2File(r2Raw);
+  const r3Submissions = parseRound3File(r3Raw);
   const awardsSubmissions = parseAwardsFile(awardsRaw);
   const leaderboard = buildLeaderboard({
     r1: r1Submissions,
     r2: r2Submissions,
+    r3: r3Submissions,
     awards: awardsSubmissions,
     results,
   });
@@ -88,6 +99,7 @@ export default async function Home() {
       <PicksTabs
         matchups={matchups}
         round2Matchups={round2Matchups}
+        round3Matchups={round3Matchups}
         eastTeams={bracket.east}
         westTeams={bracket.west}
         locks={locks}
@@ -95,6 +107,7 @@ export default async function Home() {
         resultsEntered={resultsEntered}
         r1Submissions={r1Submissions}
         r2Submissions={r2Submissions}
+        r3Submissions={r3Submissions}
         awardsSubmissions={awardsSubmissions}
         results={results}
       />

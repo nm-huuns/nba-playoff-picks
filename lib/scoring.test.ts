@@ -1,9 +1,16 @@
 import { describe, it, expect } from "vitest";
-import { buildLeaderboard, scoreAwards, scoreRound1, scoreRound2 } from "./scoring";
+import {
+  buildLeaderboard,
+  scoreAwards,
+  scoreRound1,
+  scoreRound2,
+  scoreRound3,
+} from "./scoring";
 import type { ResultsState } from "./results";
 import { emptyResultsState } from "./results";
 import type { Submission as Round1Submission } from "./picks";
 import type { Round2Submission } from "./round2";
+import type { Round3Submission } from "./round3";
 import type { AwardsSubmission } from "./awards";
 
 const TS = "2026-04-20T12:00:00Z";
@@ -26,6 +33,15 @@ function r2(name: string, overrides: Partial<Round2Submission> = {}): Round2Subm
     timestamp: TS,
     name,
     picks: [{ matchupId: "E-semi-1", winner: "Boston", games: 7 }],
+    ...overrides,
+  };
+}
+
+function r3(name: string, overrides: Partial<Round3Submission> = {}): Round3Submission {
+  return {
+    timestamp: TS,
+    name,
+    picks: [{ matchupId: "E-cf-1", winner: "Boston", games: 6 }],
     ...overrides,
   };
 }
@@ -54,6 +70,7 @@ function fullResults(): ResultsState {
   r.r1.series["E-1v8"] = { winner: "Detroit", games: 5 };
   r.r1.series["E-4v5"] = { winner: "Cleveland", games: 5 }; // games mismatch
   r.r2.series["E-semi-1"] = { winner: "Boston", games: 7 };
+  r.r3.series["E-cf-1"] = { winner: "Boston", games: 6 };
   r.awards = {
     mvp: "Jokic",
     roy: "Flagg",
@@ -116,6 +133,22 @@ describe("scoreRound2", () => {
   });
 });
 
+describe("scoreRound3", () => {
+  it("awards 3 pts for winner+games match", () => {
+    expect(scoreRound3(r3("Sunny"), fullResults())).toBe(3);
+  });
+
+  it("awards 1 pt for winner only", () => {
+    const r = fullResults();
+    r.r3.series["E-cf-1"] = { winner: "Boston", games: 5 };
+    expect(scoreRound3(r3("Sunny"), r)).toBe(1);
+  });
+
+  it("returns 0 when result is undecided", () => {
+    expect(scoreRound3(r3("Sunny"), emptyResultsState())).toBe(0);
+  });
+});
+
 describe("scoreAwards", () => {
   it("awards 1 pt per correct single-entity award", () => {
     const result = scoreAwards(aw("Sunny"), fullResults());
@@ -169,6 +202,7 @@ describe("buildLeaderboard", () => {
     const subs = {
       r1: [r1("Alice"), r1("Bob")],
       r2: [r2("Alice"), r2("Bob")],
+      r3: [r3("Alice"), r3("Bob")],
       awards: [aw("Alice"), aw("Bob")],
       results: fullResults(),
     };
@@ -192,6 +226,7 @@ describe("buildLeaderboard", () => {
     const board = buildLeaderboard({
       r1: [old, recent],
       r2: [],
+      r3: [],
       awards: [],
       results: fullResults(),
     });
@@ -202,6 +237,7 @@ describe("buildLeaderboard", () => {
     const board = buildLeaderboard({
       r1: [r1("Alice")],
       r2: [],
+      r3: [],
       awards: [],
       results: emptyResultsState(),
     });
@@ -212,6 +248,7 @@ describe("buildLeaderboard", () => {
     const board = buildLeaderboard({
       r1: [r1("Alice")],
       r2: [],
+      r3: [],
       awards: [],
       results: fullResults(),
     });

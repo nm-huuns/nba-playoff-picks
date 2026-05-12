@@ -31,6 +31,7 @@ export default function Leaderboard({
             <th className="py-2 pr-3 text-right">R1 series</th>
             <th className="py-2 pr-3 text-right">R1 conf</th>
             <th className="py-2 pr-3 text-right">R2</th>
+            <th className="py-2 pr-3 text-right">R3</th>
             <th className="py-2 pr-3 text-right">Awards</th>
             <th className="py-2 pr-3 text-right">All-NBA</th>
           </tr>
@@ -47,6 +48,7 @@ export default function Leaderboard({
               <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.r1Series}</td>
               <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.r1ConferenceWinners}</td>
               <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.r2Series}</td>
+              <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.r3Series}</td>
               <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.awardsSingle}</td>
               <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.awardsAllNba}</td>
             </tr>

@@ -1,13 +1,15 @@
 import type { Submission as Round1Submission } from "@/lib/picks";
 import type { Round2Submission } from "@/lib/round2";
+import type { Round3Submission } from "@/lib/round3";
 import type { AwardsSubmission } from "@/lib/awards";
 import type { ResultsState } from "@/lib/results";
 
-type Section = "r1" | "r2" | "awards";
+type Section = "r1" | "r2" | "r3" | "awards";
 
 const SECTION_LABEL: Record<Section, string> = {
   r1: "Round 1",
   r2: "Round 2",
+  r3: "Round 3",
   awards: "Award Winners",
 };
 
@@ -97,8 +99,10 @@ function ConfWinnerSpan({
 
 export function LockedR2ListView({
   submissions,
+  r2Results,
 }: {
   submissions: Round2Submission[];
+  r2Results: ResultsState["r2"];
 }) {
   const latest = latestByName(submissions);
   if (latest.length === 0) return <EmptyBanner section="r2" />;
@@ -107,15 +111,63 @@ export function LockedR2ListView({
       {latest.map((sub) => (
         <Card key={sub.name} name={sub.name} timestamp={sub.timestamp}>
           <ul className={`space-y-1 text-sm ${GREY}`}>
-            {sub.picks.map((p) => (
-              <li key={p.matchupId}>
-                <span className="font-mono">{p.matchupId}</span>
-                <span className="mx-2">·</span>
-                <span>{p.winner}</span>
-                <span className="mx-2">·</span>
-                <span>{p.games} games</span>
-              </li>
-            ))}
+            {sub.picks.map((p) => {
+              const actual = r2Results.series[p.matchupId];
+              const hasResult = !!(actual && actual.winner);
+              const winnerCorrect = hasResult && p.winner === actual.winner;
+              const gamesCorrect =
+                winnerCorrect && actual.games !== 0 && p.games === actual.games;
+              const points = (winnerCorrect ? 1 : 0) + (gamesCorrect ? 2 : 0);
+              return (
+                <li key={p.matchupId}>
+                  <span className="font-mono">{p.matchupId}</span>
+                  <span className="mx-2">·</span>
+                  <span className={winnerCorrect ? CORRECT : ""}>{p.winner}</span>
+                  <span className="mx-2">·</span>
+                  <span className={gamesCorrect ? CORRECT : ""}>{p.games} games</span>
+                  {hasResult && <span> ({pluralPts(points)})</span>}
+                </li>
+              );
+            })}
+          </ul>
+        </Card>
+      ))}
+    </ListWrapper>
+  );
+}
+
+export function LockedR3ListView({
+  submissions,
+  r3Results,
+}: {
+  submissions: Round3Submission[];
+  r3Results: ResultsState["r3"];
+}) {
+  const latest = latestByName(submissions);
+  if (latest.length === 0) return <EmptyBanner section="r3" />;
+  return (
+    <ListWrapper section="r3" count={latest.length}>
+      {latest.map((sub) => (
+        <Card key={sub.name} name={sub.name} timestamp={sub.timestamp}>
+          <ul className={`space-y-1 text-sm ${GREY}`}>
+            {sub.picks.map((p) => {
+              const actual = r3Results.series[p.matchupId];
+              const hasResult = !!(actual && actual.winner);
+              const winnerCorrect = hasResult && p.winner === actual.winner;
+              const gamesCorrect =
+                winnerCorrect && actual.games !== 0 && p.games === actual.games;
+              const points = (winnerCorrect ? 1 : 0) + (gamesCorrect ? 2 : 0);
+              return (
+                <li key={p.matchupId}>
+                  <span className="font-mono">{p.matchupId}</span>
+                  <span className="mx-2">·</span>
+                  <span className={winnerCorrect ? CORRECT : ""}>{p.winner}</span>
+                  <span className="mx-2">·</span>
+                  <span className={gamesCorrect ? CORRECT : ""}>{p.games} games</span>
+                  {hasResult && <span> ({pluralPts(points)})</span>}
+                </li>
+              );
+            })}
           </ul>
         </Card>
       ))}

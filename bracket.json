@@ -29,5 +29,13 @@
       { "id": "W-semi-1", "teamA": "OKC Thunder", "teamB": "LA Lakers" },
       { "id": "W-semi-2", "teamA": "San Antonio Spurs", "teamB": "Minnesota Timberwolves" }
     ]
+  },
+  "round3": {
+    "east": [
+      { "id": "E-cf-1", "teamA": "", "teamB": "" }
+    ],
+    "west": [
+      { "id": "W-cf-1", "teamA": "", "teamB": "" }
+    ]
   }
 }

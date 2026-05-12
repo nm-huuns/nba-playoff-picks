@@ -2,16 +2,17 @@ import { put, get } from "@vercel/blob";
 
 export const LOCK_BLOB_PATHNAME = "lock.json";
 
-export type LockKind = "r1" | "r2" | "awards";
-export const LOCK_KINDS: LockKind[] = ["r1", "r2", "awards"];
+export type LockKind = "r1" | "r2" | "r3" | "awards";
+export const LOCK_KINDS: LockKind[] = ["r1", "r2", "r3", "awards"];
 
 export interface LockState {
   r1: boolean;
   r2: boolean;
+  r3: boolean;
   awards: boolean;
 }
 
-const DEFAULT_STATE: LockState = { r1: false, r2: false, awards: false };
+const DEFAULT_STATE: LockState = { r1: false, r2: false, r3: false, awards: false };
 
 async function streamToString(stream: ReadableStream<Uint8Array>): Promise<string> {
   const reader = stream.getReader();
@@ -36,16 +37,17 @@ function normalize(raw: unknown): LockState {
   if (!raw || typeof raw !== "object") return { ...DEFAULT_STATE };
   const obj = raw as Record<string, unknown>;
   const hasPerKind =
-    "r1" in obj || "r2" in obj || "awards" in obj;
+    "r1" in obj || "r2" in obj || "r3" in obj || "awards" in obj;
   if (hasPerKind) {
     return {
       r1: Boolean(obj.r1),
       r2: Boolean(obj.r2),
+      r3: Boolean(obj.r3),
       awards: Boolean(obj.awards),
     };
   }
   if ("locked" in obj) {
-    return { r1: Boolean(obj.locked), r2: false, awards: false };
+    return { r1: Boolean(obj.locked), r2: false, r3: false, awards: false };
   }
   return { ...DEFAULT_STATE };
 }
@@ -84,5 +86,5 @@ export async function toggleLockKind(kind: LockKind): Promise<LockState> {
 }
 
 export function isLockKind(value: unknown): value is LockKind {
-  return value === "r1" || value === "r2" || value === "awards";
+  return value === "r1" || value === "r2" || value === "r3" || value === "awards";
 }

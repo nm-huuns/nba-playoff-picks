@@ -4,14 +4,17 @@ import bracketData from "@/bracket.json";
 import {
   getMatchups,
   getRound2Matchups,
+  getRound3Matchups,
   type BracketConfig,
 } from "@/lib/bracket";
 import {
   parsePicksFile,
   readPicksRaw,
   ROUND2_BLOB_PATHNAME,
+  ROUND3_BLOB_PATHNAME,
 } from "@/lib/picks";
 import { parseRound2File, type Round2Submission } from "@/lib/round2";
+import { parseRound3File, type Round3Submission } from "@/lib/round3";
 import {
   parseAwardsFile,
   readAwardsRaw,
@@ -27,9 +30,10 @@ const bracket = bracketData as BracketConfig;
 const MAX_ROWS = 20;
 
 export default async function Results() {
-  const [r1Raw, r2Raw, awardsRaw, locks, results] = await Promise.all([
+  const [r1Raw, r2Raw, r3Raw, awardsRaw, locks, results] = await Promise.all([
     readPicksRaw().catch(() => ""),
     readPicksRaw(ROUND2_BLOB_PATHNAME).catch(() => ""),
+    readPicksRaw(ROUND3_BLOB_PATHNAME).catch(() => ""),
     readAwardsRaw().catch(() => ""),
     readLockState(),
     readResultsState(),
@@ -37,8 +41,10 @@ export default async function Results() {
 
   const matchups = getMatchups(bracket);
   const round2Matchups = getRound2Matchups(bracket);
+  const round3Matchups = getRound3Matchups(bracket);
   const r1Submissions = parsePicksFile(r1Raw).slice(-MAX_ROWS).reverse();
   const r2Submissions = parseRound2File(r2Raw).slice(-MAX_ROWS).reverse();
+  const r3Submissions = parseRound3File(r3Raw).slice(-MAX_ROWS).reverse();
   const awardsSubmissions = parseAwardsFile(awardsRaw).slice(-MAX_ROWS).reverse();
 
   return (
@@ -52,9 +58,10 @@ export default async function Results() {
 
       <section className="mb-8">
         <h2 className="text-base font-semibold mb-3">Submission locks</h2>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <LockToggle kind="r1" label="Round 1" initialLocked={locks.r1} />
           <LockToggle kind="r2" label="Round 2" initialLocked={locks.r2} />
+          <LockToggle kind="r3" label="Round 3" initialLocked={locks.r3} />
           <LockToggle kind="awards" label="Award Winners" initialLocked={locks.awards} />
         </div>
       </section>
@@ -64,6 +71,7 @@ export default async function Results() {
         <ResultsForm
           matchups={matchups}
           round2Matchups={round2Matchups}
+          round3Matchups={round3Matchups}
           eastTeams={bracket.east.map((t) => t.team).filter(Boolean)}
           westTeams={bracket.west.map((t) => t.team).filter(Boolean)}
           initialState={results}
@@ -128,6 +136,20 @@ export default async function Results() {
         )}
       </section>
 
+      <section className="mb-10">
+        <h2 className="text-lg font-semibold mb-4">Round 3 — recent submissions</h2>
+
+        {r3Submissions.length === 0 ? (
+          <p className="text-sm text-gray-500">No Round 3 submissions yet.</p>
+        ) : (
+          <ul className="space-y-3 text-sm">
+            {r3Submissions.map((s, i) => (
+              <R3Row key={`r3-${s.timestamp}-${i}`} submission={s} />
+            ))}
+          </ul>
+        )}
+      </section>
+
       <section>
         <h2 className="text-lg font-semibold mb-4">Award Winners — recent submissions</h2>
 
@@ -146,6 +168,21 @@ export default async function Results() {
 }
 
 function R2Row({ submission }: { submission: Round2Submission }) {
+  return (
+    <li className="border border-gray-200 dark:border-gray-800 rounded p-3">
+      <div className="flex items-baseline justify-between gap-4 mb-2">
+        <span className="font-medium">{submission.name}</span>
+        <span className="text-xs text-gray-500 font-mono">{submission.timestamp}</span>
+      </div>
+      <PickGrid
+        east={submission.picks.filter((p) => p.matchupId.startsWith("E-")).map((p) => ({ id: p.matchupId, winner: p.winner, games: p.games }))}
+        west={submission.picks.filter((p) => p.matchupId.startsWith("W-")).map((p) => ({ id: p.matchupId, winner: p.winner, games: p.games }))}
+      />
+    </li>
+  );
+}
+
+function R3Row({ submission }: { submission: Round3Submission }) {
   return (
     <li className="border border-gray-200 dark:border-gray-800 rounded p-3">
       <div className="flex items-baseline justify-between gap-4 mb-2">
