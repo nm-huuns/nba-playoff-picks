@@ -97,15 +97,13 @@ export default function Round3Form({
     <form onSubmit={handleSubmit} className="space-y-8">
       {matchups.length === 0 && (
         <div className="rounded border border-yellow-500/60 bg-yellow-50 dark:bg-yellow-950/30 px-4 py-3 text-sm">
-          Round 3 hasn&apos;t been configured yet. Add a <code>round3</code> block to{" "}
-          <code>bracket.json</code> to enable submissions.
+          Round 3 hasn&apos;t been configured yet.
         </div>
       )}
 
       {matchups.length > 0 && !allReady && (
         <div className="rounded border border-yellow-500/60 bg-yellow-50 dark:bg-yellow-950/30 px-4 py-3 text-sm">
-          Round 3 matchups aren&apos;t fully filled in yet. Waiting on the admin to populate the
-          conference final teams in <code>bracket.json</code>.
+          Round 3 matchups aren&apos;t fully filled in yet.
         </div>
       )}
 
