@@ -32,10 +32,10 @@
   },
   "round3": {
     "east": [
-      { "id": "E-cf-1", "teamA": "", "teamB": "" }
+      { "id": "E-cf-1", "teamA": "New York Knicks", "teamB": "Cleveland Cavaliers" }
     ],
     "west": [
-      { "id": "W-cf-1", "teamA": "", "teamB": "" }
+      { "id": "W-cf-1", "teamA": "OKC Thunder", "teamB": "San Antonio Spurs" }
     ]
   }
 }
