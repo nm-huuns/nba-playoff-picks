@@ -37,5 +37,6 @@
     "west": [
       { "id": "W-cf-1", "teamA": "OKC Thunder", "teamB": "San Antonio Spurs" }
     ]
-  }
+  },
+  "finals": { "id": "F-1", "teamA": "San Antonio Spurs", "teamB": "New York Knicks" }
 }

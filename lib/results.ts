@@ -33,6 +33,9 @@ export interface ResultsState {
   r3: {
     series: Record<string, SeriesResult>;
   };
+  finals: {
+    series: Record<string, SeriesResult>;
+  };
   awards: AwardsResults;
 }
 
@@ -52,6 +55,9 @@ export function emptyResultsState(): ResultsState {
       series: {},
     },
     r3: {
+      series: {},
+    },
+    finals: {
       series: {},
     },
     awards: {
@@ -119,6 +125,7 @@ function normalize(raw: unknown): ResultsState {
   const r1cw = (r1.conferenceWinners as Record<string, unknown> | undefined) ?? {};
   const r2 = (root.r2 as Record<string, unknown> | undefined) ?? {};
   const r3 = (root.r3 as Record<string, unknown> | undefined) ?? {};
+  const finals = (root.finals as Record<string, unknown> | undefined) ?? {};
   const aw = (root.awards as Record<string, unknown> | undefined) ?? {};
   const allNBA = (aw.allNBA as Record<string, unknown> | undefined) ?? {};
 
@@ -135,6 +142,9 @@ function normalize(raw: unknown): ResultsState {
     },
     r3: {
       series: normalizeSeriesMap(r3.series),
+    },
+    finals: {
+      series: normalizeSeriesMap(finals.series),
     },
     awards: {
       mvp: typeof aw.mvp === "string" ? aw.mvp : "",
@@ -211,6 +221,10 @@ export function validateResultsState(raw: unknown): ResultsValidationResult {
   }
   for (const [id, s] of Object.entries(state.r3.series)) {
     const err = validateSeries(`r3.${id}`, s);
+    if (err) return { ok: false, error: err };
+  }
+  for (const [id, s] of Object.entries(state.finals.series)) {
+    const err = validateSeries(`finals.${id}`, s);
     if (err) return { ok: false, error: err };
   }
   return { ok: true, state };

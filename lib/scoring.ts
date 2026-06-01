@@ -1,6 +1,7 @@
 import type { Submission as Round1Submission } from "./picks";
 import type { Round2Submission } from "./round2";
 import type { Round3Submission } from "./round3";
+import type { FinalsSubmission } from "./finals";
 import type { AwardsSubmission } from "./awards";
 import type { ResultsState } from "./results";
 
@@ -17,6 +18,7 @@ export interface ScoreBreakdown {
   r1ConferenceWinners: number;
   r2Series: number;
   r3Series: number;
+  finalsSeries: number;
   awardsSingle: number;
   awardsAllNba: number;
   total: number;
@@ -83,6 +85,17 @@ export function scoreRound3(
   return series;
 }
 
+export function scoreFinals(
+  submission: FinalsSubmission,
+  results: ResultsState
+): number {
+  let series = 0;
+  for (const p of submission.picks) {
+    series += scoreSeries(p.winner, p.games, results.finals.series[p.matchupId]);
+  }
+  return series;
+}
+
 function scoreSingleAward(pick: string, result: string): number {
   if (!result) return 0;
   return pick === result ? POINTS.singleAward : 0;
@@ -126,10 +139,11 @@ export function buildLeaderboard(input: {
   r1: Round1Submission[];
   r2: Round2Submission[];
   r3: Round3Submission[];
+  finals: FinalsSubmission[];
   awards: AwardsSubmission[];
   results: ResultsState;
 }): LeaderboardEntry[] {
-  const { r1, r2, r3, awards, results } = input;
+  const { r1, r2, r3, finals, awards, results } = input;
 
   const lastBy = <T extends { name: string; timestamp: string }>(
     items: T[]
@@ -149,12 +163,14 @@ export function buildLeaderboard(input: {
   const r1ByName = lastBy(r1);
   const r2ByName = lastBy(r2);
   const r3ByName = lastBy(r3);
+  const finalsByName = lastBy(finals);
   const awardsByName = lastBy(awards);
 
   const allNames = new Set<string>([
     ...r1ByName.keys(),
     ...r2ByName.keys(),
     ...r3ByName.keys(),
+    ...finalsByName.keys(),
     ...awardsByName.keys(),
   ]);
 
@@ -163,6 +179,7 @@ export function buildLeaderboard(input: {
     const r1s = r1ByName.get(name);
     const r2s = r2ByName.get(name);
     const r3s = r3ByName.get(name);
+    const fs = finalsByName.get(name);
     const aws = awardsByName.get(name);
 
     const r1Score = r1s
@@ -170,6 +187,7 @@ export function buildLeaderboard(input: {
       : { series: 0, conference: 0 };
     const r2Score = r2s ? scoreRound2(r2s, results) : 0;
     const r3Score = r3s ? scoreRound3(r3s, results) : 0;
+    const finalsScore = fs ? scoreFinals(fs, results) : 0;
     const awScore = aws
       ? scoreAwards(aws, results)
       : { single: 0, allNba: 0 };
@@ -179,6 +197,7 @@ export function buildLeaderboard(input: {
       r1ConferenceWinners: r1Score.conference,
       r2Series: r2Score,
       r3Series: r3Score,
+      finalsSeries: finalsScore,
       awardsSingle: awScore.single,
       awardsAllNba: awScore.allNba,
       total:
@@ -186,6 +205,7 @@ export function buildLeaderboard(input: {
         r1Score.conference +
         r2Score +
         r3Score +
+        finalsScore +
         awScore.single +
         awScore.allNba,
     };

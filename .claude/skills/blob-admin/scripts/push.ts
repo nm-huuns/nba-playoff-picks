@@ -6,9 +6,9 @@
 //   set -a && source .env.local && set +a && \
 //     npx tsx .claude/skills/blob-admin/scripts/push.ts <name>
 //
-// <name> ∈ picks | r2 | awards | lock | results
+// <name> ∈ picks | r2 | r3 | finals | awards | lock | results
 //
-// Plain-text blobs (picks, r2, awards) are uploaded byte-for-byte.
+// Plain-text blobs (picks, r2, r3, finals, awards) are uploaded byte-for-byte.
 // JSON blobs (lock, results) are JSON.parse'd locally first; the helper
 // re-stringifies them on write, so byte-equality won't hold for those —
 // the script falls back to a structural-equality check instead.
@@ -19,6 +19,8 @@ import {
   readPicksRaw,
   writePicksRaw,
   ROUND2_BLOB_PATHNAME,
+  ROUND3_BLOB_PATHNAME,
+  FINALS_BLOB_PATHNAME,
 } from "@/lib/picks";
 import { readAwardsRaw, writeAwardsRaw } from "@/lib/awards";
 import { readLockState, writeLockState, type LockState } from "@/lib/lock";
@@ -28,7 +30,7 @@ import {
   type ResultsState,
 } from "@/lib/results";
 
-const NAMES = ["picks", "r2", "awards", "lock", "results"] as const;
+const NAMES = ["picks", "r2", "r3", "finals", "awards", "lock", "results"] as const;
 type Name = (typeof NAMES)[number];
 
 const cwd = process.cwd();
@@ -42,6 +44,8 @@ const name = arg as Name;
 const FILES: Record<Name, string> = {
   picks: "picks.txt",
   r2: "picks-r2.txt",
+  r3: "picks-r3.txt",
+  finals: "picks-finals.txt",
   awards: "awards.txt",
   lock: "lock.json",
   results: "results.json",
@@ -72,6 +76,22 @@ async function pushAndVerify(): Promise<void> {
     const after = await readPicksRaw(ROUND2_BLOB_PATHNAME);
     console.log(
       `picks-r2.txt uploaded — byte match=${localContent === after}, size=${after.length}`
+    );
+    return;
+  }
+  if (name === "r3") {
+    await writePicksRaw(localContent, ROUND3_BLOB_PATHNAME);
+    const after = await readPicksRaw(ROUND3_BLOB_PATHNAME);
+    console.log(
+      `picks-r3.txt uploaded — byte match=${localContent === after}, size=${after.length}`
+    );
+    return;
+  }
+  if (name === "finals") {
+    await writePicksRaw(localContent, FINALS_BLOB_PATHNAME);
+    const after = await readPicksRaw(FINALS_BLOB_PATHNAME);
+    console.log(
+      `picks-finals.txt uploaded — byte match=${localContent === after}, size=${after.length}`
     );
     return;
   }

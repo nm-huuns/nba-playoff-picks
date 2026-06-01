@@ -10,6 +10,7 @@ import {
 export const BLOB_PATHNAME = "picks.txt";
 export const ROUND2_BLOB_PATHNAME = "picks-r2.txt";
 export const ROUND3_BLOB_PATHNAME = "picks-r3.txt";
+export const FINALS_BLOB_PATHNAME = "picks-finals.txt";
 export const VALID_GAMES = [4, 5, 6, 7] as const;
 export type Games = (typeof VALID_GAMES)[number];
 

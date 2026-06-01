@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { LockState } from "@/lib/lock";
 import type {
+  FinalsMatchup,
   Matchup,
   Round2Matchup,
   Round3Matchup,
@@ -12,21 +13,24 @@ import type { LeaderboardEntry } from "@/lib/scoring";
 import type { Submission as Round1Submission } from "@/lib/picks";
 import type { Round2Submission } from "@/lib/round2";
 import type { Round3Submission } from "@/lib/round3";
+import type { FinalsSubmission } from "@/lib/finals";
 import type { AwardsSubmission } from "@/lib/awards";
 import type { ResultsState } from "@/lib/results";
 import PicksForm from "./PicksForm";
 import Round2Form from "./Round2Form";
 import Round3Form from "./Round3Form";
+import FinalsForm from "./FinalsForm";
 import AwardsForm from "./AwardsForm";
 import Leaderboard from "./Leaderboard";
 import {
   LockedR1ListView,
   LockedR2ListView,
   LockedR3ListView,
+  LockedFinalsListView,
   LockedAwardsListView,
 } from "./LockedSubmissionView";
 
-type TabKey = "r1" | "r2" | "r3" | "awards" | "scores";
+type TabKey = "r1" | "r2" | "r3" | "finals" | "awards" | "scores";
 
 interface TabDef {
   key: TabKey;
@@ -38,6 +42,7 @@ const TABS: TabDef[] = [
   { key: "r1", label: "1st Round" },
   { key: "r2", label: "2nd Round" },
   { key: "r3", label: "Conference Finals" },
+  { key: "finals", label: "Finals" },
   { key: "awards", label: "Awards" },
 ];
 
@@ -45,6 +50,7 @@ export default function PicksTabs({
   matchups,
   round2Matchups,
   round3Matchups,
+  finalsMatchups,
   eastTeams,
   westTeams,
   locks,
@@ -53,12 +59,14 @@ export default function PicksTabs({
   r1Submissions,
   r2Submissions,
   r3Submissions,
+  finalsSubmissions,
   awardsSubmissions,
   results,
 }: {
   matchups: Matchup[];
   round2Matchups: Round2Matchup[];
   round3Matchups: Round3Matchup[];
+  finalsMatchups: FinalsMatchup[];
   eastTeams: Team[];
   westTeams: Team[];
   locks: LockState;
@@ -67,6 +75,7 @@ export default function PicksTabs({
   r1Submissions: Round1Submission[];
   r2Submissions: Round2Submission[];
   r3Submissions: Round3Submission[];
+  finalsSubmissions: FinalsSubmission[];
   awardsSubmissions: AwardsSubmission[];
   results: ResultsState;
 }) {
@@ -143,6 +152,11 @@ export default function PicksTabs({
             <LockedR2ListView submissions={r2Submissions} r2Results={results.r2} />
           ) : active === "r3" ? (
             <LockedR3ListView submissions={r3Submissions} r3Results={results.r3} />
+          ) : active === "finals" ? (
+            <LockedFinalsListView
+              submissions={finalsSubmissions}
+              finalsResults={results.finals}
+            />
           ) : (
             <LockedAwardsListView
               submissions={awardsSubmissions}
@@ -160,6 +174,8 @@ export default function PicksTabs({
           <Round2Form name={name} matchups={round2Matchups} />
         ) : active === "r3" ? (
           <Round3Form name={name} matchups={round3Matchups} />
+        ) : active === "finals" ? (
+          <FinalsForm name={name} matchups={finalsMatchups} />
         ) : (
           <AwardsForm name={name} />
         )}

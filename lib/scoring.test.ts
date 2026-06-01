@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   buildLeaderboard,
   scoreAwards,
+  scoreFinals,
   scoreRound1,
   scoreRound2,
   scoreRound3,
@@ -11,6 +12,7 @@ import { emptyResultsState } from "./results";
 import type { Submission as Round1Submission } from "./picks";
 import type { Round2Submission } from "./round2";
 import type { Round3Submission } from "./round3";
+import type { FinalsSubmission } from "./finals";
 import type { AwardsSubmission } from "./awards";
 
 const TS = "2026-04-20T12:00:00Z";
@@ -46,6 +48,18 @@ function r3(name: string, overrides: Partial<Round3Submission> = {}): Round3Subm
   };
 }
 
+function finals(
+  name: string,
+  overrides: Partial<FinalsSubmission> = {}
+): FinalsSubmission {
+  return {
+    timestamp: TS,
+    name,
+    picks: [{ matchupId: "F-1", winner: "Boston", games: 5 }],
+    ...overrides,
+  };
+}
+
 function aw(name: string, overrides: Partial<AwardsSubmission> = {}): AwardsSubmission {
   return {
     timestamp: TS,
@@ -71,6 +85,7 @@ function fullResults(): ResultsState {
   r.r1.series["E-4v5"] = { winner: "Cleveland", games: 5 }; // games mismatch
   r.r2.series["E-semi-1"] = { winner: "Boston", games: 7 };
   r.r3.series["E-cf-1"] = { winner: "Boston", games: 6 };
+  r.finals.series["F-1"] = { winner: "Boston", games: 5 };
   r.awards = {
     mvp: "Jokic",
     roy: "Flagg",
@@ -149,6 +164,22 @@ describe("scoreRound3", () => {
   });
 });
 
+describe("scoreFinals", () => {
+  it("awards 3 pts for winner+games match", () => {
+    expect(scoreFinals(finals("Sunny"), fullResults())).toBe(3);
+  });
+
+  it("awards 1 pt for winner only", () => {
+    const r = fullResults();
+    r.finals.series["F-1"] = { winner: "Boston", games: 7 };
+    expect(scoreFinals(finals("Sunny"), r)).toBe(1);
+  });
+
+  it("returns 0 when result is undecided", () => {
+    expect(scoreFinals(finals("Sunny"), emptyResultsState())).toBe(0);
+  });
+});
+
 describe("scoreAwards", () => {
   it("awards 1 pt per correct single-entity award", () => {
     const result = scoreAwards(aw("Sunny"), fullResults());
@@ -203,6 +234,7 @@ describe("buildLeaderboard", () => {
       r1: [r1("Alice"), r1("Bob")],
       r2: [r2("Alice"), r2("Bob")],
       r3: [r3("Alice"), r3("Bob")],
+      finals: [finals("Alice"), finals("Bob")],
       awards: [aw("Alice"), aw("Bob")],
       results: fullResults(),
     };
@@ -227,6 +259,7 @@ describe("buildLeaderboard", () => {
       r1: [old, recent],
       r2: [],
       r3: [],
+      finals: [],
       awards: [],
       results: fullResults(),
     });
@@ -238,6 +271,7 @@ describe("buildLeaderboard", () => {
       r1: [r1("Alice")],
       r2: [],
       r3: [],
+      finals: [],
       awards: [],
       results: emptyResultsState(),
     });
@@ -249,6 +283,7 @@ describe("buildLeaderboard", () => {
       r1: [r1("Alice")],
       r2: [],
       r3: [],
+      finals: [],
       awards: [],
       results: fullResults(),
     });
