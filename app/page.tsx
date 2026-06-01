@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import bracketData from "@/bracket.json";
 import {
+  getFinalsMatchups,
   getMatchups,
   getRound2Matchups,
   getRound3Matchups,
@@ -11,11 +12,13 @@ import { readLockState } from "@/lib/lock";
 import {
   parsePicksFile,
   readPicksRaw,
+  FINALS_BLOB_PATHNAME,
   ROUND2_BLOB_PATHNAME,
   ROUND3_BLOB_PATHNAME,
 } from "@/lib/picks";
 import { parseRound2File } from "@/lib/round2";
 import { parseRound3File } from "@/lib/round3";
+import { parseFinalsFile } from "@/lib/finals";
 import { parseAwardsFile, readAwardsRaw } from "@/lib/awards";
 import { readResultsState } from "@/lib/results";
 import { buildLeaderboard } from "@/lib/scoring";
@@ -39,11 +42,13 @@ export default async function Home() {
   const matchups = getMatchups(bracket);
   const round2Matchups = getRound2Matchups(bracket);
   const round3Matchups = getRound3Matchups(bracket);
-  const [locks, r1Raw, r2Raw, r3Raw, awardsRaw, results] = await Promise.all([
+  const finalsMatchups = getFinalsMatchups(bracket);
+  const [locks, r1Raw, r2Raw, r3Raw, finalsRaw, awardsRaw, results] = await Promise.all([
     readLockState(),
     readPicksRaw().catch(() => ""),
     readPicksRaw(ROUND2_BLOB_PATHNAME).catch(() => ""),
     readPicksRaw(ROUND3_BLOB_PATHNAME).catch(() => ""),
+    readPicksRaw(FINALS_BLOB_PATHNAME).catch(() => ""),
     readAwardsRaw().catch(() => ""),
     readResultsState(),
   ]);
@@ -51,11 +56,13 @@ export default async function Home() {
   const r1Submissions = parsePicksFile(r1Raw);
   const r2Submissions = parseRound2File(r2Raw);
   const r3Submissions = parseRound3File(r3Raw);
+  const finalsSubmissions = parseFinalsFile(finalsRaw);
   const awardsSubmissions = parseAwardsFile(awardsRaw);
   const leaderboard = buildLeaderboard({
     r1: r1Submissions,
     r2: r2Submissions,
     r3: r3Submissions,
+    finals: finalsSubmissions,
     awards: awardsSubmissions,
     results,
   });
@@ -100,6 +107,7 @@ export default async function Home() {
         matchups={matchups}
         round2Matchups={round2Matchups}
         round3Matchups={round3Matchups}
+        finalsMatchups={finalsMatchups}
         eastTeams={bracket.east}
         westTeams={bracket.west}
         locks={locks}
@@ -108,6 +116,7 @@ export default async function Home() {
         r1Submissions={r1Submissions}
         r2Submissions={r2Submissions}
         r3Submissions={r3Submissions}
+        finalsSubmissions={finalsSubmissions}
         awardsSubmissions={awardsSubmissions}
         results={results}
       />

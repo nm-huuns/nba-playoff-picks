@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import type { Matchup, Round2Matchup, Round3Matchup } from "@/lib/bracket";
+import type {
+  FinalsMatchup,
+  Matchup,
+  Round2Matchup,
+  Round3Matchup,
+} from "@/lib/bracket";
 import type { ResultsState, SeriesResult } from "@/lib/results";
 
 const TEAM_SIZE = 5;
@@ -11,6 +16,7 @@ export default function ResultsForm({
   matchups,
   round2Matchups,
   round3Matchups,
+  finalsMatchups,
   eastTeams,
   westTeams,
   initialState,
@@ -18,6 +24,7 @@ export default function ResultsForm({
   matchups: Matchup[];
   round2Matchups: Round2Matchup[];
   round3Matchups: Round3Matchup[];
+  finalsMatchups: FinalsMatchup[];
   eastTeams: string[];
   westTeams: string[];
   initialState: ResultsState;
@@ -28,7 +35,7 @@ export default function ResultsForm({
   const [savedAt, setSavedAt] = useState<string | null>(null);
 
   function setSeries(
-    section: "r1" | "r2" | "r3",
+    section: "r1" | "r2" | "r3" | "finals",
     id: string,
     update: Partial<SeriesResult>
   ) {
@@ -191,6 +198,29 @@ export default function ResultsForm({
                   teams={teams}
                   result={result}
                   onChange={(update) => setSeries("r3", m.id, update)}
+                />
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      <section className="rounded border border-gray-200 dark:border-gray-800 p-4 space-y-4">
+        <h3 className="text-sm font-semibold">Finals</h3>
+        {finalsMatchups.length === 0 ? (
+          <p className="text-xs text-gray-500">No Finals matchup configured yet.</p>
+        ) : (
+          <div className="grid gap-3 md:grid-cols-2">
+            {finalsMatchups.map((m) => {
+              const result = state.finals.series[m.id] ?? { winner: "", games: 0 };
+              const teams = [m.teamA, m.teamB].filter(Boolean);
+              return (
+                <SeriesRow
+                  key={m.id}
+                  id={m.id}
+                  teams={teams}
+                  result={result}
+                  onChange={(update) => setSeries("finals", m.id, update)}
                 />
               );
             })}

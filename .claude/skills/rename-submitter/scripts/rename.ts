@@ -1,5 +1,5 @@
 #!/usr/bin/env -S npx tsx
-// Rename a submitter across picks.txt, picks-r2.txt, awards.txt.
+// Rename a submitter across picks.txt, picks-r2.txt, picks-r3.txt, awards.txt.
 //
 // Usage (from project root):
 //   set -a && source .env.local && set +a && \
@@ -9,6 +9,7 @@ import { copyFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import * as picks from "@/lib/picks";
 import * as r2lib from "@/lib/round2";
+import * as r3lib from "@/lib/round3";
 import * as awards from "@/lib/awards";
 
 const cwd = process.cwd();
@@ -33,14 +34,16 @@ main().catch((e) => {
 async function main(): Promise<void> {
 const r1Raw = await picks.readPicksRaw();
 const r2Raw = await picks.readPicksRaw(picks.ROUND2_BLOB_PATHNAME);
+const r3Raw = await picks.readPicksRaw(picks.ROUND3_BLOB_PATHNAME);
 const awRaw = await awards.readAwardsRaw();
 
 const r1Subs = picks.parsePicksFile(r1Raw);
 const r2Subs = r2lib.parseRound2File(r2Raw);
+const r3Subs = r3lib.parseRound3File(r3Raw);
 const awSubs = awards.parseAwardsFile(awRaw);
 
 console.log(
-  `Loaded: picks.txt (${r1Subs.length} subs) · picks-r2.txt (${r2Subs.length} subs) · awards.txt (${awSubs.length} subs)`
+  `Loaded: picks.txt (${r1Subs.length} subs) · picks-r2.txt (${r2Subs.length} subs) · picks-r3.txt (${r3Subs.length} subs) · awards.txt (${awSubs.length} subs)`
 );
 
 interface Named { name: string }
@@ -49,13 +52,14 @@ const matchCount = (subs: Named[]) =>
 
 const r1N = matchCount(r1Subs);
 const r2N = matchCount(r2Subs);
+const r3N = matchCount(r3Subs);
 const awN = matchCount(awSubs);
 
 console.log(
-  `Matches for "${OLD}": picks.txt=${r1N} · picks-r2.txt=${r2N} · awards.txt=${awN}`
+  `Matches for "${OLD}": picks.txt=${r1N} · picks-r2.txt=${r2N} · picks-r3.txt=${r3N} · awards.txt=${awN}`
 );
 
-if (r1N + r2N + awN === 0) {
+if (r1N + r2N + r3N + awN === 0) {
   console.log("Nothing to rename.");
   process.exit(0);
 }
@@ -93,6 +97,20 @@ if (r2N > 0) {
   });
 }
 
+if (r3N > 0) {
+  const out =
+    r3Subs.map((s) => r3lib.formatRound3Line(rename(s))).join("\n") + "\n";
+  if (r3lib.parseRound3File(out).length !== r3Subs.length) {
+    throw new Error("picks-r3.txt: parse-roundtrip count mismatch");
+  }
+  writes.push({
+    label: "picks-r3.txt",
+    localPath: resolve(cwd, "picks-r3.txt"),
+    content: out,
+    verify: async () => picks.readPicksRaw(picks.ROUND3_BLOB_PATHNAME),
+  });
+}
+
 if (awN > 0) {
   const out =
     awSubs.map((s) => awards.formatAwardsLine(rename(s))).join("\n") + "\n";
@@ -122,6 +140,7 @@ console.log("Backed up + wrote locally: " + writes.map((w) => w.label).join(", "
 for (const w of writes) {
   if (w.label === "picks.txt") await picks.writePicksRaw(w.content);
   else if (w.label === "picks-r2.txt") await picks.writePicksRaw(w.content, picks.ROUND2_BLOB_PATHNAME);
+  else if (w.label === "picks-r3.txt") await picks.writePicksRaw(w.content, picks.ROUND3_BLOB_PATHNAME);
   else if (w.label === "awards.txt") await awards.writeAwardsRaw(w.content);
 }
 console.log("Uploaded: " + writes.map((w) => w.label).join(", "));

@@ -11,6 +11,7 @@ export interface BracketConfig {
   west: Team[];
   round2?: Round2Config;
   round3?: Round3Config;
+  finals?: FinalsConfig;
 }
 
 export interface Round2Config {
@@ -48,6 +49,20 @@ export interface Round3MatchupConfig {
 export interface Round3Matchup {
   id: string;
   conference: Conference;
+  teamA: string;
+  teamB: string;
+}
+
+// NBA Finals — a single matchup with no conference split. Shape is a single
+// object (not an array) since there is only ever one championship series.
+export interface FinalsConfig {
+  id: string;     // e.g. "F-1"
+  teamA: string;
+  teamB: string;
+}
+
+export interface FinalsMatchup {
+  id: string;
   teamA: string;
   teamB: string;
 }
@@ -179,4 +194,28 @@ export function getRound3MatchupById(
   id: string
 ): Round3Matchup | undefined {
   return getRound3Matchups(config).find((m) => m.id === id);
+}
+
+// ---------- Finals helpers ----------
+//
+// Returns an array (length 0 or 1) so call sites can iterate uniformly. The
+// underlying config is a single object, but the array shape mirrors R2/R3.
+
+export function getFinalsMatchups(config: BracketConfig): FinalsMatchup[] {
+  const f = config.finals;
+  if (!f) return [];
+  return [{ id: f.id, teamA: f.teamA, teamB: f.teamB }];
+}
+
+export function isFinalsComplete(config: BracketConfig): boolean {
+  const ms = getFinalsMatchups(config);
+  if (ms.length === 0) return false;
+  return ms.every((m) => m.teamA.length > 0 && m.teamB.length > 0);
+}
+
+export function getFinalsMatchupById(
+  config: BracketConfig,
+  id: string
+): FinalsMatchup | undefined {
+  return getFinalsMatchups(config).find((m) => m.id === id);
 }
