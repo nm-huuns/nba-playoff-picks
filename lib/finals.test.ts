@@ -23,6 +23,8 @@ function validSubmission(): FinalsSubmission {
   return {
     timestamp: TIMESTAMP,
     name: "Sunny",
+    champion: "Spurs",
+    championGames: 6,
     games: { G1: "Spurs", G2: "Spurs", G3: "Knicks", G4: "Spurs", G5: "Knicks", G6: "Spurs" },
     mvp: "Victor Wembanyama",
     pointsLeader: "Victor Wembanyama",
@@ -35,6 +37,8 @@ function validBody(overrides: Record<string, unknown> = {}) {
   const s = validSubmission();
   return {
     name: s.name,
+    champion: s.champion,
+    championGames: s.championGames,
     games: s.games,
     mvp: s.mvp,
     pointsLeader: s.pointsLeader,

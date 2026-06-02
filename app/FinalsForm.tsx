@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { FinalsMatchup } from "@/lib/bracket";
-import { GAME_KEYS, REQUIRED_GAME_KEYS, type GameKey, type GamePicks } from "@/lib/finals";
+import { GAME_KEYS, REQUIRED_GAME_KEYS, VALID_CHAMPION_GAMES, type GameKey, type GamePicks } from "@/lib/finals";
 
 type PlayerField = "mvp" | "pointsLeader" | "reboundsLeader" | "assistsLeader";
 
@@ -21,6 +21,8 @@ export default function FinalsForm({
   matchups: FinalsMatchup[];
 }) {
   const matchup = matchups[0];
+  const [champion, setChampion] = useState<string>("");
+  const [championGames, setChampionGames] = useState<number>(0);
   const [games, setGames] = useState<GamePicks>({});
   const [players, setPlayers] = useState<Record<PlayerField, string>>({
     mvp: "",
@@ -52,6 +54,9 @@ export default function FinalsForm({
   function findMissing(): string | null {
     if (!ready) return "Finals bracket is not fully configured yet";
     if (!name.trim()) return "Please enter your name";
+    if (!champion) return "Pick a series champion";
+    if (!VALID_CHAMPION_GAMES.includes(championGames as (typeof VALID_CHAMPION_GAMES)[number]))
+      return "Pick a series length (4–7 games)";
     for (const k of REQUIRED_GAME_KEYS) {
       if (!games[k]) return `Pick a winner for ${k}`;
     }
@@ -74,6 +79,8 @@ export default function FinalsForm({
 
     const body = {
       name: name.trim(),
+      champion,
+      championGames,
       games,
       mvp: players.mvp.trim(),
       pointsLeader: players.pointsLeader.trim(),
@@ -92,6 +99,8 @@ export default function FinalsForm({
         setError(data.error ?? "Submission failed");
       } else {
         setSuccess(true);
+        setChampion("");
+        setChampionGames(0);
         setGames({});
         setPlayers({ mvp: "", pointsLeader: "", reboundsLeader: "", assistsLeader: "" });
       }
@@ -112,6 +121,40 @@ export default function FinalsForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      <section className="space-y-3">
+        <h2 className="text-base font-semibold">Championship pick</h2>
+        <div className="flex flex-wrap gap-4">
+          <div className="space-y-1">
+            <label className="block text-xs text-gray-500" htmlFor="finals-champion">Champion</label>
+            <select
+              id="finals-champion"
+              value={champion}
+              onChange={(e) => { setChampion(e.target.value); setSuccess(false); setError(null); }}
+              className="rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+            >
+              <option value="">— select team —</option>
+              {[matchup.teamA, matchup.teamB].map((team) => (
+                <option key={team} value={team}>{team}</option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-1">
+            <label className="block text-xs text-gray-500" htmlFor="finals-champion-games">In how many games?</label>
+            <select
+              id="finals-champion-games"
+              value={championGames === 0 ? "" : championGames}
+              onChange={(e) => { setChampionGames(Number(e.target.value)); setSuccess(false); setError(null); }}
+              className="rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+            >
+              <option value="">— select —</option>
+              {VALID_CHAMPION_GAMES.map((g) => (
+                <option key={g} value={g}>{g}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </section>
+
       <section className="space-y-3">
         <h2 className="text-base font-semibold">Game-by-game results</h2>
         <div className="overflow-x-auto">

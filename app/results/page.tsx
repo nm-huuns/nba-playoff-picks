@@ -227,6 +227,15 @@ function FinalsRow({ submission }: { submission: FinalsSubmission }) {
         <span className="font-medium">{submission.name}</span>
         <span className="text-xs text-gray-500 font-mono">{submission.timestamp}</span>
       </div>
+      {submission.champion && (
+        <div className="text-xs mb-1">
+          <span className="text-gray-500">Champion — </span>
+          <span className="font-medium">{submission.champion}</span>
+          {submission.championGames > 0 && (
+            <span className="text-gray-500"> in {submission.championGames}</span>
+          )}
+        </div>
+      )}
       <div className="text-xs mb-1">
         <span className="text-gray-500">Games — </span>
         {gamesPicked.length === 0

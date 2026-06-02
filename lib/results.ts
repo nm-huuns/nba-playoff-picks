@@ -11,6 +11,8 @@ export interface SeriesResult {
 }
 
 export interface FinalsResults {
+  champion: string;        // empty = not yet decided
+  championGames: number;   // 0 = not yet decided; otherwise 4..7
   games: GamePicks;        // actual winner per game; missing = not yet played/decided
   mvp: string;
   pointsLeader: string;
@@ -65,6 +67,8 @@ export function emptyResultsState(): ResultsState {
       series: {},
     },
     finals: {
+      champion: "",
+      championGames: 0,
       games: {},
       mvp: "",
       pointsLeader: "",
@@ -166,6 +170,8 @@ function normalize(raw: unknown): ResultsState {
       series: normalizeSeriesMap(r3.series),
     },
     finals: {
+      champion: typeof finals.champion === "string" ? finals.champion : "",
+      championGames: typeof finals.championGames === "number" ? finals.championGames : 0,
       games: normalizeGamePicks(finals.games),
       mvp: typeof finals.mvp === "string" ? finals.mvp : "",
       pointsLeader: typeof finals.pointsLeader === "string" ? finals.pointsLeader : "",

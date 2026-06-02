@@ -36,6 +36,8 @@ export async function POST(req: NextRequest) {
   const line = formatFinalsLine({
     timestamp,
     name,
+    champion: result.champion,
+    championGames: result.championGames,
     games: result.games,
     mvp: result.mvp,
     pointsLeader: result.pointsLeader,

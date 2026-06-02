@@ -55,6 +55,8 @@ function finals(
   return {
     timestamp: TS,
     name,
+    champion: "Boston",
+    championGames: 5,
     games: { G1: "Boston", G2: "Boston", G3: "Denver", G4: "Boston", G5: "Boston" },
     mvp: "Tatum",
     pointsLeader: "Tatum",
@@ -90,6 +92,8 @@ function fullResults(): ResultsState {
   r.r2.series["E-semi-1"] = { winner: "Boston", games: 7 };
   r.r3.series["E-cf-1"] = { winner: "Boston", games: 6 };
   r.finals = {
+    champion: "Boston",
+    championGames: 5,
     games: { G1: "Boston", G2: "Boston", G3: "Denver", G4: "Boston", G5: "Boston" },
     mvp: "Tatum",
     pointsLeader: "Tatum",
@@ -175,9 +179,15 @@ describe("scoreRound3", () => {
 });
 
 describe("scoreFinals", () => {
-  it("awards 1 pt per correct game + 1 pt per correct award", () => {
-    // fixture matches all 5 recorded games + all 4 awards = 9
-    expect(scoreFinals(finals("Sunny"), fullResults())).toBe(9);
+  it("awards champion+games pts + 1 pt per correct game + 1 pt per correct award", () => {
+    // champion correct (1pt) + games correct (2pts) + 5 recorded games (5pts) + 4 awards (4pts) = 12
+    expect(scoreFinals(finals("Sunny"), fullResults())).toBe(12);
+  });
+
+  it("awards 1pt for correct champion without correct games", () => {
+    const r = fullResults();
+    r.finals.championGames = 6; // mismatch
+    expect(scoreFinals(finals("Sunny"), r)).toBe(1 + 5 + 4); // 10
   });
 
   it("only scores games with a recorded result", () => {

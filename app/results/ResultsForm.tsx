@@ -237,6 +237,28 @@ export default function ResultsForm({
               <>
                 <div className="space-y-2">
                   <h4 className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                    Champion
+                  </h4>
+                  <SeriesRow
+                    id="champion"
+                    teams={teams}
+                    result={{ winner: state.finals.champion, games: state.finals.championGames }}
+                    onChange={(update) => {
+                      setState((prev) => ({
+                        ...prev,
+                        finals: {
+                          ...prev.finals,
+                          ...(update.winner !== undefined ? { champion: update.winner } : {}),
+                          ...(update.games !== undefined ? { championGames: update.games } : {}),
+                        },
+                      }));
+                      setSavedAt(null);
+                      setError(null);
+                    }}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-xs font-medium uppercase tracking-wide text-gray-500">
                     Game winners
                   </h4>
                   <div className="grid gap-2 sm:grid-cols-2">

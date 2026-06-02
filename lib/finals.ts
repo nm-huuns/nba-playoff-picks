@@ -15,9 +15,14 @@ export const REQUIRED_GAME_KEYS: GameKey[] = ["G1", "G2", "G3", "G4"];
 // Per-game winner picks. Each value is a team name; missing key = no pick.
 export type GamePicks = Partial<Record<GameKey, string>>;
 
+export const VALID_CHAMPION_GAMES = [4, 5, 6, 7] as const;
+export type ChampionGames = (typeof VALID_CHAMPION_GAMES)[number];
+
 export interface FinalsSubmission {
   timestamp: string; // ISO-8601
   name: string;
+  champion: string;
+  championGames: number; // 4..7
   games: GamePicks;
   mvp: string;
   pointsLeader: string;
@@ -51,6 +56,8 @@ export function formatFinalsLine(submission: FinalsSubmission): string {
     }
   }
   const payload = {
+    champion: sanitizeName(submission.champion),
+    championGames: submission.championGames,
     games,
     mvp: sanitizePlayer(submission.mvp),
     pointsLeader: sanitizePlayer(submission.pointsLeader),
@@ -79,9 +86,12 @@ export function parseFinalsLine(line: string): FinalsSubmission | null {
       if (typeof v === "string" && v.length > 0) games[k] = v;
     }
     const str = (v: unknown): string => (typeof v === "string" ? v : "");
+    const num = (v: unknown): number => (typeof v === "number" ? v : 0);
     return {
       timestamp,
       name,
+      champion: str(p.champion),
+      championGames: num(p.championGames),
       games,
       mvp: str(p.mvp),
       pointsLeader: str(p.pointsLeader),
@@ -107,6 +117,8 @@ export function parseFinalsFile(contents: string): FinalsSubmission[] {
 export type FinalsValidationResult =
   | {
       ok: true;
+      champion: string;
+      championGames: number;
       games: GamePicks;
       mvp: string;
       pointsLeader: string;
@@ -117,6 +129,8 @@ export type FinalsValidationResult =
 
 interface FinalsSubmitBody {
   name?: unknown;
+  champion?: unknown;
+  championGames?: unknown;
   games?: unknown;
   mvp?: unknown;
   pointsLeader?: unknown;
@@ -150,6 +164,17 @@ export function validateFinalsSubmission(
   const matchup = getFinalsMatchups(config)[0];
   const allowedTeams = [matchup.teamA, matchup.teamB];
 
+  // Series champion + games (required, same scoring rules as R1/R2/R3).
+  const championRaw = typeof body.champion === "string" ? body.champion.trim() : "";
+  if (!championRaw) return { ok: false, error: "Pick a series champion" };
+  if (!allowedTeams.includes(championRaw)) {
+    return { ok: false, error: `Champion must be one of: ${allowedTeams.join(", ")}` };
+  }
+  const championGamesRaw = typeof body.championGames === "number" ? body.championGames : 0;
+  if (!VALID_CHAMPION_GAMES.includes(championGamesRaw as ChampionGames)) {
+    return { ok: false, error: "Series length must be 4, 5, 6, or 7 games" };
+  }
+
   // Per-game winners. G1–G4 required; G5–G7 optional. Each pick must be one of
   // the two Finals teams. No series-coherence check — a "dumb" 2-2 is allowed.
   const rawGames =
@@ -179,5 +204,5 @@ export function validateFinalsSubmission(
   const assistsLeader = validatePlayer("Assists leader", body.assistsLeader);
   if (typeof assistsLeader !== "string") return { ok: false, error: assistsLeader.error };
 
-  return { ok: true, games, mvp, pointsLeader, reboundsLeader, assistsLeader };
+  return { ok: true, champion: championRaw, championGames: championGamesRaw, games, mvp, pointsLeader, reboundsLeader, assistsLeader };
 }

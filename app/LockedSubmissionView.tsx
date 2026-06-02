@@ -197,8 +197,25 @@ export function LockedFinalsListView({
     <ListWrapper section="finals" count={latest.length}>
       {latest.map((sub) => {
         const gameKeysPicked = GAME_KEYS.filter((k) => sub.games[k]);
+        const championCorrect = !!finalsResults.champion && sub.champion === finalsResults.champion;
+        const gamesCorrect = championCorrect && finalsResults.championGames !== 0 && sub.championGames === finalsResults.championGames;
+        const championPts = (championCorrect ? 1 : 0) + (gamesCorrect ? 2 : 0);
+        const hasChampionResult = !!finalsResults.champion;
         return (
           <Card key={sub.name} name={sub.name} timestamp={sub.timestamp}>
+            {sub.champion && (
+              <div className={`text-sm mb-2 ${GREY}`}>
+                <span className={GREY_HEADING}>Champion — </span>
+                <span className={championCorrect ? CORRECT : ""}>{sub.champion}</span>
+                {sub.championGames > 0 && (
+                  <>
+                    <span className="mx-1">in</span>
+                    <span className={gamesCorrect ? CORRECT : ""}>{sub.championGames}</span>
+                  </>
+                )}
+                {hasChampionResult && <span> ({pluralPts(championPts)})</span>}
+              </div>
+            )}
             <div className={`text-sm ${GREY}`}>
               <span className={GREY_HEADING}>Games — </span>
               {gameKeysPicked.length === 0 ? (

@@ -88,15 +88,23 @@ export function scoreRound3(
   return series;
 }
 
-// Finals scoring: 1 pt for each game whose winner you predicted correctly (only
-// games with an actual recorded result count), plus 1 pt each for Finals MVP
-// and the points / rebounds / assists series leaders.
+// Finals scoring: 1 pt correct champion + 2 pts correct games (same as other
+// rounds), plus 1 pt per correctly-predicted played game, plus 1 pt each for
+// Finals MVP and the points / rebounds / assists series leaders.
 export function scoreFinals(
   submission: FinalsSubmission,
   results: ResultsState
 ): number {
   const f = results.finals;
   let total = 0;
+
+  // Champion series pick (same rules as R1/R2/R3).
+  if (f.champion && submission.champion === f.champion) {
+    total += POINTS.seriesWinner;
+    if (f.championGames !== 0 && submission.championGames === f.championGames) {
+      total += POINTS.seriesGames;
+    }
+  }
 
   for (const k of GAME_KEYS) {
     const actual = f.games[k];
