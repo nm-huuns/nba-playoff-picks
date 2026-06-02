@@ -17,11 +17,7 @@ import {
 } from "@/lib/picks";
 import { parseRound2File, type Round2Submission } from "@/lib/round2";
 import { parseRound3File, type Round3Submission } from "@/lib/round3";
-<<<<<<< HEAD
 import { parseFinalsFile, GAME_KEYS, type FinalsSubmission } from "@/lib/finals";
-=======
-import { parseFinalsFile, type FinalsSubmission } from "@/lib/finals";
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
 import {
   parseAwardsFile,
   readAwardsRaw,
@@ -224,17 +220,13 @@ function R3Row({ submission }: { submission: Round3Submission }) {
 }
 
 function FinalsRow({ submission }: { submission: FinalsSubmission }) {
-<<<<<<< HEAD
   const gamesPicked = GAME_KEYS.filter((k) => submission.games[k]);
-=======
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
   return (
     <li className="border border-gray-200 dark:border-gray-800 rounded p-3">
       <div className="flex items-baseline justify-between gap-4 mb-2">
         <span className="font-medium">{submission.name}</span>
         <span className="text-xs text-gray-500 font-mono">{submission.timestamp}</span>
       </div>
-<<<<<<< HEAD
       <div className="text-xs mb-1">
         <span className="text-gray-500">Games — </span>
         {gamesPicked.length === 0
@@ -251,17 +243,6 @@ function FinalsRow({ submission }: { submission: FinalsSubmission }) {
         <span className="text-gray-500"> · Ast:</span>{" "}
         <span className="font-medium">{submission.assistsLeader || "—"}</span>
       </div>
-=======
-      <ul className="space-y-0.5 text-xs">
-        {submission.picks.map((p) => (
-          <li key={p.matchupId} className="flex items-baseline gap-2">
-            <span className="font-mono text-gray-500 w-16 shrink-0">{p.matchupId}</span>
-            <span className="font-medium">{p.winner}</span>
-            <span className="text-gray-500">in {p.games}</span>
-          </li>
-        ))}
-      </ul>
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
     </li>
   );
 }

@@ -2,10 +2,7 @@ import type { Submission as Round1Submission } from "./picks";
 import type { Round2Submission } from "./round2";
 import type { Round3Submission } from "./round3";
 import type { FinalsSubmission } from "./finals";
-<<<<<<< HEAD
 import { GAME_KEYS } from "./finals";
-=======
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
 import type { AwardsSubmission } from "./awards";
 import type { ResultsState } from "./results";
 
@@ -91,17 +88,13 @@ export function scoreRound3(
   return series;
 }
 
-<<<<<<< HEAD
 // Finals scoring: 1 pt for each game whose winner you predicted correctly (only
 // games with an actual recorded result count), plus 1 pt each for Finals MVP
 // and the points / rebounds / assists series leaders.
-=======
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
 export function scoreFinals(
   submission: FinalsSubmission,
   results: ResultsState
 ): number {
-<<<<<<< HEAD
   const f = results.finals;
   let total = 0;
 
@@ -116,13 +109,6 @@ export function scoreFinals(
   if (f.assistsLeader && submission.assistsLeader === f.assistsLeader) total += POINTS.finalsAward;
 
   return total;
-=======
-  let series = 0;
-  for (const p of submission.picks) {
-    series += scoreSeries(p.winner, p.games, results.finals.series[p.matchupId]);
-  }
-  return series;
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
 }
 
 function scoreSingleAward(pick: string, result: string): number {

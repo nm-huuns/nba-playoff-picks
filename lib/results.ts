@@ -42,13 +42,7 @@ export interface ResultsState {
   r3: {
     series: Record<string, SeriesResult>;
   };
-<<<<<<< HEAD
   finals: FinalsResults;
-=======
-  finals: {
-    series: Record<string, SeriesResult>;
-  };
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
   awards: AwardsResults;
 }
 
@@ -71,15 +65,11 @@ export function emptyResultsState(): ResultsState {
       series: {},
     },
     finals: {
-<<<<<<< HEAD
       games: {},
       mvp: "",
       pointsLeader: "",
       reboundsLeader: "",
       assistsLeader: "",
-=======
-      series: {},
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
     },
     awards: {
       mvp: "",
@@ -176,15 +166,11 @@ function normalize(raw: unknown): ResultsState {
       series: normalizeSeriesMap(r3.series),
     },
     finals: {
-<<<<<<< HEAD
       games: normalizeGamePicks(finals.games),
       mvp: typeof finals.mvp === "string" ? finals.mvp : "",
       pointsLeader: typeof finals.pointsLeader === "string" ? finals.pointsLeader : "",
       reboundsLeader: typeof finals.reboundsLeader === "string" ? finals.reboundsLeader : "",
       assistsLeader: typeof finals.assistsLeader === "string" ? finals.assistsLeader : "",
-=======
-      series: normalizeSeriesMap(finals.series),
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
     },
     awards: {
       mvp: typeof aw.mvp === "string" ? aw.mvp : "",
@@ -263,15 +249,8 @@ export function validateResultsState(raw: unknown): ResultsValidationResult {
     const err = validateSeries(`r3.${id}`, s);
     if (err) return { ok: false, error: err };
   }
-<<<<<<< HEAD
   // Finals results are permissive: every field is optional ("not yet decided").
   // normalize() already coerced games to valid {GameKey: string} and the four
   // player fields to strings, so there's nothing further to reject.
-=======
-  for (const [id, s] of Object.entries(state.finals.series)) {
-    const err = validateSeries(`finals.${id}`, s);
-    if (err) return { ok: false, error: err };
-  }
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
   return { ok: true, state };
 }

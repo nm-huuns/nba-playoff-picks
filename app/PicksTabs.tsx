@@ -39,8 +39,8 @@ interface TabDef {
 
 const TABS: TabDef[] = [
   { key: "scores", label: "Points" },
-  { key: "awards", label: "Awards" },
   { key: "finals", label: "Finals" },
+  { key: "awards", label: "Awards" },
   { key: "r3", label: "Conference Finals" },
   { key: "r2", label: "2nd Round" },
   { key: "r1", label: "1st Round" },

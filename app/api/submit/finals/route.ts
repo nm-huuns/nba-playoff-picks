@@ -33,7 +33,6 @@ export async function POST(req: NextRequest) {
 
   const name = ((body as { name?: unknown }).name as string).trim();
   const timestamp = new Date().toISOString();
-<<<<<<< HEAD
   const line = formatFinalsLine({
     timestamp,
     name,
@@ -43,9 +42,6 @@ export async function POST(req: NextRequest) {
     reboundsLeader: result.reboundsLeader,
     assistsLeader: result.assistsLeader,
   });
-=======
-  const line = formatFinalsLine({ timestamp, name, picks: result.picks });
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
 
   try {
     await appendSubmissionLine(line, FINALS_BLOB_PATHNAME);

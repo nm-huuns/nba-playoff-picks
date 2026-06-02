@@ -55,15 +55,11 @@ function finals(
   return {
     timestamp: TS,
     name,
-<<<<<<< HEAD
     games: { G1: "Boston", G2: "Boston", G3: "Denver", G4: "Boston", G5: "Boston" },
     mvp: "Tatum",
     pointsLeader: "Tatum",
     reboundsLeader: "Gobert",
     assistsLeader: "Murray",
-=======
-    picks: [{ matchupId: "F-1", winner: "Boston", games: 5 }],
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
     ...overrides,
   };
 }
@@ -93,7 +89,6 @@ function fullResults(): ResultsState {
   r.r1.series["E-4v5"] = { winner: "Cleveland", games: 5 }; // games mismatch
   r.r2.series["E-semi-1"] = { winner: "Boston", games: 7 };
   r.r3.series["E-cf-1"] = { winner: "Boston", games: 6 };
-<<<<<<< HEAD
   r.finals = {
     games: { G1: "Boston", G2: "Boston", G3: "Denver", G4: "Boston", G5: "Boston" },
     mvp: "Tatum",
@@ -101,9 +96,6 @@ function fullResults(): ResultsState {
     reboundsLeader: "Gobert",
     assistsLeader: "Murray",
   };
-=======
-  r.finals.series["F-1"] = { winner: "Boston", games: 5 };
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
   r.awards = {
     mvp: "Jokic",
     roy: "Flagg",
@@ -183,7 +175,6 @@ describe("scoreRound3", () => {
 });
 
 describe("scoreFinals", () => {
-<<<<<<< HEAD
   it("awards 1 pt per correct game + 1 pt per correct award", () => {
     // fixture matches all 5 recorded games + all 4 awards = 9
     expect(scoreFinals(finals("Sunny"), fullResults())).toBe(9);
@@ -204,19 +195,6 @@ describe("scoreFinals", () => {
   });
 
   it("returns 0 when nothing is recorded", () => {
-=======
-  it("awards 3 pts for winner+games match", () => {
-    expect(scoreFinals(finals("Sunny"), fullResults())).toBe(3);
-  });
-
-  it("awards 1 pt for winner only", () => {
-    const r = fullResults();
-    r.finals.series["F-1"] = { winner: "Boston", games: 7 };
-    expect(scoreFinals(finals("Sunny"), r)).toBe(1);
-  });
-
-  it("returns 0 when result is undecided", () => {
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
     expect(scoreFinals(finals("Sunny"), emptyResultsState())).toBe(0);
   });
 });

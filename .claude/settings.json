@@ -3,14 +3,12 @@
     "allow": [
       "Bash(npx tsc *)",
       "Bash(echo \"exit=$?\")",
-<<<<<<< HEAD
       "Edit(/.claude/skills/blob-admin/**)",
       "Edit(/.claude/skills/add-section/**)",
       "Bash(npx tsx *)",
-      "Bash(git restore *)"
-=======
-      "Edit(/.claude/skills/blob-admin/**)"
->>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
+      "Bash(git restore *)",
+      "Bash(grep -rln *)",
+      "Bash(grep -rn *)"
     ]
   }
 }
