@@ -33,7 +33,15 @@ export async function POST(req: NextRequest) {
 
   const name = ((body as { name?: unknown }).name as string).trim();
   const timestamp = new Date().toISOString();
-  const line = formatFinalsLine({ timestamp, name, picks: result.picks });
+  const line = formatFinalsLine({
+    timestamp,
+    name,
+    games: result.games,
+    mvp: result.mvp,
+    pointsLeader: result.pointsLeader,
+    reboundsLeader: result.reboundsLeader,
+    assistsLeader: result.assistsLeader,
+  });
 
   try {
     await appendSubmissionLine(line, FINALS_BLOB_PATHNAME);

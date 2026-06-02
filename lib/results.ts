@@ -1,12 +1,21 @@
 import { put, get } from "@vercel/blob";
 import type { Games } from "./picks";
 import { VALID_GAMES } from "./picks";
+import { GAME_KEYS, type GameKey, type GamePicks } from "./finals";
 
 export const RESULTS_BLOB_PATHNAME = "results.json";
 
 export interface SeriesResult {
   winner: string; // empty string = not yet decided
   games: number;  // 0 = not yet decided; otherwise 4..7
+}
+
+export interface FinalsResults {
+  games: GamePicks;        // actual winner per game; missing = not yet played/decided
+  mvp: string;
+  pointsLeader: string;
+  reboundsLeader: string;
+  assistsLeader: string;
 }
 
 export interface AwardsResults {
@@ -33,9 +42,7 @@ export interface ResultsState {
   r3: {
     series: Record<string, SeriesResult>;
   };
-  finals: {
-    series: Record<string, SeriesResult>;
-  };
+  finals: FinalsResults;
   awards: AwardsResults;
 }
 
@@ -58,7 +65,11 @@ export function emptyResultsState(): ResultsState {
       series: {},
     },
     finals: {
-      series: {},
+      games: {},
+      mvp: "",
+      pointsLeader: "",
+      reboundsLeader: "",
+      assistsLeader: "",
     },
     awards: {
       mvp: "",
@@ -116,6 +127,17 @@ function normalizeStringArr(raw: unknown): string[] {
   return out;
 }
 
+function normalizeGamePicks(raw: unknown): GamePicks {
+  if (!raw || typeof raw !== "object") return {};
+  const obj = raw as Record<string, unknown>;
+  const out: GamePicks = {};
+  for (const k of GAME_KEYS) {
+    const v = obj[k];
+    if (typeof v === "string" && v.length > 0) out[k as GameKey] = v;
+  }
+  return out;
+}
+
 function normalize(raw: unknown): ResultsState {
   const empty = emptyResultsState();
   if (!raw || typeof raw !== "object") return empty;
@@ -144,7 +166,11 @@ function normalize(raw: unknown): ResultsState {
       series: normalizeSeriesMap(r3.series),
     },
     finals: {
-      series: normalizeSeriesMap(finals.series),
+      games: normalizeGamePicks(finals.games),
+      mvp: typeof finals.mvp === "string" ? finals.mvp : "",
+      pointsLeader: typeof finals.pointsLeader === "string" ? finals.pointsLeader : "",
+      reboundsLeader: typeof finals.reboundsLeader === "string" ? finals.reboundsLeader : "",
+      assistsLeader: typeof finals.assistsLeader === "string" ? finals.assistsLeader : "",
     },
     awards: {
       mvp: typeof aw.mvp === "string" ? aw.mvp : "",
@@ -223,9 +249,8 @@ export function validateResultsState(raw: unknown): ResultsValidationResult {
     const err = validateSeries(`r3.${id}`, s);
     if (err) return { ok: false, error: err };
   }
-  for (const [id, s] of Object.entries(state.finals.series)) {
-    const err = validateSeries(`finals.${id}`, s);
-    if (err) return { ok: false, error: err };
-  }
+  // Finals results are permissive: every field is optional ("not yet decided").
+  // normalize() already coerced games to valid {GameKey: string} and the four
+  // player fields to strings, so there's nothing further to reject.
   return { ok: true, state };
 }

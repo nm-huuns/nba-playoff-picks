@@ -81,7 +81,7 @@ export default async function Home() {
         <h2 className="text-base font-semibold mb-2">Scoring rules</h2>
         <div className="text-sm space-y-3 text-gray-700 dark:text-gray-300">
           <div>
-            <p className="font-medium">Playoff rounds</p>
+            <p className="font-medium">Playoff rounds (1st Round through Conference Finals)</p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               <li>1 point for picking the correct series winner</li>
               <li>2 extra points for picking the correct number of games</li>
@@ -91,6 +91,14 @@ export default async function Home() {
             <p className="font-medium">Conference winner (Round 1 only)</p>
             <ul className="list-disc pl-5 mt-1 space-y-1">
               <li>2 points for picking the conference winner</li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-medium">Finals</p>
+            <ul className="list-disc pl-5 mt-1 space-y-1">
+              <li>1 point for each game whose winner you pick correctly (games actually played)</li>
+              <li>1 point for the correct Finals MVP</li>
+              <li>1 point each for the correct series points, rebounds, and assists leader</li>
             </ul>
           </div>
           <div>

@@ -2,6 +2,7 @@ import type { Submission as Round1Submission } from "@/lib/picks";
 import type { Round2Submission } from "@/lib/round2";
 import type { Round3Submission } from "@/lib/round3";
 import type { FinalsSubmission } from "@/lib/finals";
+import { GAME_KEYS } from "@/lib/finals";
 import type { AwardsSubmission } from "@/lib/awards";
 import type { ResultsState } from "@/lib/results";
 
@@ -186,32 +187,57 @@ export function LockedFinalsListView({
 }) {
   const latest = latestByName(submissions);
   if (latest.length === 0) return <EmptyBanner section="finals" />;
+  const awardRows: { label: string; field: "mvp" | "pointsLeader" | "reboundsLeader" | "assistsLeader" }[] = [
+    { label: "MVP", field: "mvp" },
+    { label: "Points leader", field: "pointsLeader" },
+    { label: "Rebounds leader", field: "reboundsLeader" },
+    { label: "Assists leader", field: "assistsLeader" },
+  ];
   return (
     <ListWrapper section="finals" count={latest.length}>
-      {latest.map((sub) => (
-        <Card key={sub.name} name={sub.name} timestamp={sub.timestamp}>
-          <ul className={`space-y-1 text-sm ${GREY}`}>
-            {sub.picks.map((p) => {
-              const actual = finalsResults.series[p.matchupId];
-              const hasResult = !!(actual && actual.winner);
-              const winnerCorrect = hasResult && p.winner === actual.winner;
-              const gamesCorrect =
-                winnerCorrect && actual.games !== 0 && p.games === actual.games;
-              const points = (winnerCorrect ? 1 : 0) + (gamesCorrect ? 2 : 0);
-              return (
-                <li key={p.matchupId}>
-                  <span className="font-mono">{p.matchupId}</span>
-                  <span className="mx-2">·</span>
-                  <span className={winnerCorrect ? CORRECT : ""}>{p.winner}</span>
-                  <span className="mx-2">·</span>
-                  <span className={gamesCorrect ? CORRECT : ""}>{p.games} games</span>
-                  {hasResult && <span> ({pluralPts(points)})</span>}
-                </li>
-              );
-            })}
-          </ul>
-        </Card>
-      ))}
+      {latest.map((sub) => {
+        const gameKeysPicked = GAME_KEYS.filter((k) => sub.games[k]);
+        return (
+          <Card key={sub.name} name={sub.name} timestamp={sub.timestamp}>
+            <div className={`text-sm ${GREY}`}>
+              <span className={GREY_HEADING}>Games — </span>
+              {gameKeysPicked.length === 0 ? (
+                <span>—</span>
+              ) : (
+                gameKeysPicked.map((k, i) => {
+                  const actual = finalsResults.games[k];
+                  const hasResult = !!actual;
+                  const correct = hasResult && sub.games[k] === actual;
+                  return (
+                    <span key={k}>
+                      {i > 0 && <span className="mx-1">·</span>}
+                      <span className="font-mono text-xs">{k}</span>{" "}
+                      <span className={correct ? CORRECT : ""}>{sub.games[k]}</span>
+                      {correct && <span> ✓</span>}
+                    </span>
+                  );
+                })
+              )}
+            </div>
+            <dl className={`mt-2 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2 ${GREY}`}>
+              {awardRows.map(({ label, field }) => {
+                const actual = finalsResults[field];
+                const hasResult = !!actual;
+                const correct = hasResult && sub[field] === actual;
+                return (
+                  <div key={field}>
+                    <dt className={`inline ${GREY_HEADING}`}>{label}: </dt>
+                    <dd className="inline">
+                      <span className={correct ? CORRECT : ""}>{sub[field] || "—"}</span>
+                      {correct && <span> ✓</span>}
+                    </dd>
+                  </div>
+                );
+              })}
+            </dl>
+          </Card>
+        );
+      })}
     </ListWrapper>
   );
 }

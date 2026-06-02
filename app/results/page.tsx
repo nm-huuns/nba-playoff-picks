@@ -17,7 +17,7 @@ import {
 } from "@/lib/picks";
 import { parseRound2File, type Round2Submission } from "@/lib/round2";
 import { parseRound3File, type Round3Submission } from "@/lib/round3";
-import { parseFinalsFile, type FinalsSubmission } from "@/lib/finals";
+import { parseFinalsFile, GAME_KEYS, type FinalsSubmission } from "@/lib/finals";
 import {
   parseAwardsFile,
   readAwardsRaw,
@@ -220,21 +220,29 @@ function R3Row({ submission }: { submission: Round3Submission }) {
 }
 
 function FinalsRow({ submission }: { submission: FinalsSubmission }) {
+  const gamesPicked = GAME_KEYS.filter((k) => submission.games[k]);
   return (
     <li className="border border-gray-200 dark:border-gray-800 rounded p-3">
       <div className="flex items-baseline justify-between gap-4 mb-2">
         <span className="font-medium">{submission.name}</span>
         <span className="text-xs text-gray-500 font-mono">{submission.timestamp}</span>
       </div>
-      <ul className="space-y-0.5 text-xs">
-        {submission.picks.map((p) => (
-          <li key={p.matchupId} className="flex items-baseline gap-2">
-            <span className="font-mono text-gray-500 w-16 shrink-0">{p.matchupId}</span>
-            <span className="font-medium">{p.winner}</span>
-            <span className="text-gray-500">in {p.games}</span>
-          </li>
-        ))}
-      </ul>
+      <div className="text-xs mb-1">
+        <span className="text-gray-500">Games — </span>
+        {gamesPicked.length === 0
+          ? "—"
+          : gamesPicked.map((k) => `${k}: ${submission.games[k]}`).join(" · ")}
+      </div>
+      <div className="text-xs">
+        <span className="text-gray-500">MVP:</span>{" "}
+        <span className="font-medium">{submission.mvp || "—"}</span>
+        <span className="text-gray-500"> · Pts:</span>{" "}
+        <span className="font-medium">{submission.pointsLeader || "—"}</span>
+        <span className="text-gray-500"> · Reb:</span>{" "}
+        <span className="font-medium">{submission.reboundsLeader || "—"}</span>
+        <span className="text-gray-500"> · Ast:</span>{" "}
+        <span className="font-medium">{submission.assistsLeader || "—"}</span>
+      </div>
     </li>
   );
 }

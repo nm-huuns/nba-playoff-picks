@@ -55,7 +55,11 @@ function finals(
   return {
     timestamp: TS,
     name,
-    picks: [{ matchupId: "F-1", winner: "Boston", games: 5 }],
+    games: { G1: "Boston", G2: "Boston", G3: "Denver", G4: "Boston", G5: "Boston" },
+    mvp: "Tatum",
+    pointsLeader: "Tatum",
+    reboundsLeader: "Gobert",
+    assistsLeader: "Murray",
     ...overrides,
   };
 }
@@ -85,7 +89,13 @@ function fullResults(): ResultsState {
   r.r1.series["E-4v5"] = { winner: "Cleveland", games: 5 }; // games mismatch
   r.r2.series["E-semi-1"] = { winner: "Boston", games: 7 };
   r.r3.series["E-cf-1"] = { winner: "Boston", games: 6 };
-  r.finals.series["F-1"] = { winner: "Boston", games: 5 };
+  r.finals = {
+    games: { G1: "Boston", G2: "Boston", G3: "Denver", G4: "Boston", G5: "Boston" },
+    mvp: "Tatum",
+    pointsLeader: "Tatum",
+    reboundsLeader: "Gobert",
+    assistsLeader: "Murray",
+  };
   r.awards = {
     mvp: "Jokic",
     roy: "Flagg",
@@ -165,17 +175,26 @@ describe("scoreRound3", () => {
 });
 
 describe("scoreFinals", () => {
-  it("awards 3 pts for winner+games match", () => {
-    expect(scoreFinals(finals("Sunny"), fullResults())).toBe(3);
+  it("awards 1 pt per correct game + 1 pt per correct award", () => {
+    // fixture matches all 5 recorded games + all 4 awards = 9
+    expect(scoreFinals(finals("Sunny"), fullResults())).toBe(9);
   });
 
-  it("awards 1 pt for winner only", () => {
-    const r = fullResults();
-    r.finals.series["F-1"] = { winner: "Boston", games: 7 };
+  it("only scores games with a recorded result", () => {
+    const r = emptyResultsState();
+    r.finals.games = { G1: "Boston", G2: "Denver" }; // G1 matches fixture, G2 doesn't
     expect(scoreFinals(finals("Sunny"), r)).toBe(1);
   });
 
-  it("returns 0 when result is undecided", () => {
+  it("scores each Finals award independently", () => {
+    const r = emptyResultsState();
+    r.finals.mvp = "Tatum"; // matches
+    r.finals.assistsLeader = "Murray"; // matches
+    r.finals.pointsLeader = "Jokic"; // no match
+    expect(scoreFinals(finals("Sunny"), r)).toBe(2);
+  });
+
+  it("returns 0 when nothing is recorded", () => {
     expect(scoreFinals(finals("Sunny"), emptyResultsState())).toBe(0);
   });
 });

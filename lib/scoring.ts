@@ -2,6 +2,7 @@ import type { Submission as Round1Submission } from "./picks";
 import type { Round2Submission } from "./round2";
 import type { Round3Submission } from "./round3";
 import type { FinalsSubmission } from "./finals";
+import { GAME_KEYS } from "./finals";
 import type { AwardsSubmission } from "./awards";
 import type { ResultsState } from "./results";
 
@@ -11,6 +12,8 @@ export const POINTS = {
   conferenceWinner: 2,
   singleAward: 1,
   allNbaPlayer: 1, // 1 pt per player placed on the correct team
+  finalsGame: 1,   // 1 pt per correctly-predicted Finals game
+  finalsAward: 1,  // 1 pt each for Finals MVP + points/rebounds/assists leader
 } as const;
 
 export interface ScoreBreakdown {
@@ -85,15 +88,27 @@ export function scoreRound3(
   return series;
 }
 
+// Finals scoring: 1 pt for each game whose winner you predicted correctly (only
+// games with an actual recorded result count), plus 1 pt each for Finals MVP
+// and the points / rebounds / assists series leaders.
 export function scoreFinals(
   submission: FinalsSubmission,
   results: ResultsState
 ): number {
-  let series = 0;
-  for (const p of submission.picks) {
-    series += scoreSeries(p.winner, p.games, results.finals.series[p.matchupId]);
+  const f = results.finals;
+  let total = 0;
+
+  for (const k of GAME_KEYS) {
+    const actual = f.games[k];
+    if (actual && submission.games[k] === actual) total += POINTS.finalsGame;
   }
-  return series;
+
+  if (f.mvp && submission.mvp === f.mvp) total += POINTS.finalsAward;
+  if (f.pointsLeader && submission.pointsLeader === f.pointsLeader) total += POINTS.finalsAward;
+  if (f.reboundsLeader && submission.reboundsLeader === f.reboundsLeader) total += POINTS.finalsAward;
+  if (f.assistsLeader && submission.assistsLeader === f.assistsLeader) total += POINTS.finalsAward;
+
+  return total;
 }
 
 function scoreSingleAward(pick: string, result: string): number {

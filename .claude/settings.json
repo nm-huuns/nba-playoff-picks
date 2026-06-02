@@ -3,7 +3,10 @@
     "allow": [
       "Bash(npx tsc *)",
       "Bash(echo \"exit=$?\")",
-      "Edit(/.claude/skills/blob-admin/**)"
+      "Edit(/.claude/skills/blob-admin/**)",
+      "Edit(/.claude/skills/add-section/**)",
+      "Bash(npx tsx *)",
+      "Bash(git restore *)"
     ]
   }
 }
