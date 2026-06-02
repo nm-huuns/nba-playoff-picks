@@ -38,7 +38,7 @@ export default function ResultsForm({
   const [savedAt, setSavedAt] = useState<string | null>(null);
 
   function setSeries(
-    section: "r1" | "r2" | "r3",
+    section: "r1" | "r2" | "r3" | "finals",
     id: string,
     update: Partial<SeriesResult>
   ) {
@@ -230,6 +230,7 @@ export default function ResultsForm({
         {finalsMatchups.length === 0 ? (
           <p className="text-xs text-gray-500">No Finals matchup configured yet.</p>
         ) : (
+<<<<<<< HEAD
           (() => {
             const m = finalsMatchups[0];
             const teams = [m.teamA, m.teamB].filter(Boolean);
@@ -268,6 +269,23 @@ export default function ResultsForm({
               </>
             );
           })()
+=======
+          <div className="grid gap-3 md:grid-cols-2">
+            {finalsMatchups.map((m) => {
+              const result = state.finals.series[m.id] ?? { winner: "", games: 0 };
+              const teams = [m.teamA, m.teamB].filter(Boolean);
+              return (
+                <SeriesRow
+                  key={m.id}
+                  id={m.id}
+                  teams={teams}
+                  result={result}
+                  onChange={(update) => setSeries("finals", m.id, update)}
+                />
+              );
+            })}
+          </div>
+>>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
         )}
       </section>
 

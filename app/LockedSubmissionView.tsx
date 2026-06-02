@@ -2,7 +2,10 @@ import type { Submission as Round1Submission } from "@/lib/picks";
 import type { Round2Submission } from "@/lib/round2";
 import type { Round3Submission } from "@/lib/round3";
 import type { FinalsSubmission } from "@/lib/finals";
+<<<<<<< HEAD
 import { GAME_KEYS } from "@/lib/finals";
+=======
+>>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
 import type { AwardsSubmission } from "@/lib/awards";
 import type { ResultsState } from "@/lib/results";
 
@@ -187,6 +190,7 @@ export function LockedFinalsListView({
 }) {
   const latest = latestByName(submissions);
   if (latest.length === 0) return <EmptyBanner section="finals" />;
+<<<<<<< HEAD
   const awardRows: { label: string; field: "mvp" | "pointsLeader" | "reboundsLeader" | "assistsLeader" }[] = [
     { label: "MVP", field: "mvp" },
     { label: "Points leader", field: "pointsLeader" },
@@ -238,6 +242,34 @@ export function LockedFinalsListView({
           </Card>
         );
       })}
+=======
+  return (
+    <ListWrapper section="finals" count={latest.length}>
+      {latest.map((sub) => (
+        <Card key={sub.name} name={sub.name} timestamp={sub.timestamp}>
+          <ul className={`space-y-1 text-sm ${GREY}`}>
+            {sub.picks.map((p) => {
+              const actual = finalsResults.series[p.matchupId];
+              const hasResult = !!(actual && actual.winner);
+              const winnerCorrect = hasResult && p.winner === actual.winner;
+              const gamesCorrect =
+                winnerCorrect && actual.games !== 0 && p.games === actual.games;
+              const points = (winnerCorrect ? 1 : 0) + (gamesCorrect ? 2 : 0);
+              return (
+                <li key={p.matchupId}>
+                  <span className="font-mono">{p.matchupId}</span>
+                  <span className="mx-2">·</span>
+                  <span className={winnerCorrect ? CORRECT : ""}>{p.winner}</span>
+                  <span className="mx-2">·</span>
+                  <span className={gamesCorrect ? CORRECT : ""}>{p.games} games</span>
+                  {hasResult && <span> ({pluralPts(points)})</span>}
+                </li>
+              );
+            })}
+          </ul>
+        </Card>
+      ))}
+>>>>>>> 62960904dbe28cdac004589c6455fbd6eb815be9
     </ListWrapper>
   );
 }
