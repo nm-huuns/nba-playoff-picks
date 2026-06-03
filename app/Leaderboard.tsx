@@ -9,7 +9,7 @@ export default function Leaderboard({
 }) {
   if (!hasResults) {
     return (
-      <div className="border-2 border-black px-4 py-4 text-sm text-[#999] dark:border-[#2a2a2a]">
+      <div className="border-2 border-black px-4 py-4 text-sm text-muted dark:border-[#2a2a2a]">
         Results haven&apos;t been entered yet — the leaderboard will populate as
         the admin records actual playoff outcomes.
       </div>
@@ -17,7 +17,7 @@ export default function Leaderboard({
   }
   if (entries.length === 0) {
     return (
-      <p className="text-sm text-[#999]">No submissions to score yet.</p>
+      <p className="text-sm text-muted">No submissions to score yet.</p>
     );
   }
   const topTotal = entries[0]?.total ?? 0;
@@ -25,7 +25,7 @@ export default function Leaderboard({
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-sm">
         <thead>
-          <tr className="text-left text-[0.62rem] uppercase tracking-[0.1em] text-[#aaa] font-extrabold border-b-2 border-black dark:border-white">
+          <tr className="text-left text-[0.62rem] uppercase tracking-[0.1em] text-[#aaa] dark:text-[#bbb] font-extrabold border-b-2 border-black dark:border-white">
             <th className="pb-3 pr-2.5">#</th>
             <th className="pb-3 pr-2.5">Name</th>
             <th className="pb-3 px-2.5 text-right">R1</th>

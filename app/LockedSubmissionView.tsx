@@ -16,8 +16,8 @@ const SECTION_LABEL: Record<Section, string> = {
   awards: "Award Winners",
 };
 
-const GREY = "text-[#999]";
-const GREY_HEADING = "text-[#666]";
+const GREY = "text-muted";
+const GREY_HEADING = "text-[#666] dark:text-[#aaa]";
 const CORRECT = "font-black text-black dark:text-white";
 
 function pluralPts(n: number): string {

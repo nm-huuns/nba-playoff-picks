@@ -146,7 +146,7 @@ function Column({
       <h2 className="text-sm font-extrabold uppercase tracking-[0.06em]">{title}</h2>
 
       {matchups.length === 0 ? (
-        <p className="text-sm text-[#999]">No conference final matchups configured.</p>
+        <p className="text-sm text-muted">No conference final matchups configured.</p>
       ) : (
         <ul className="space-y-3">
           {matchups.map((m) => (
@@ -176,11 +176,11 @@ function MatchupCard({
 
   return (
     <li className="border-[3px] border-black p-5 dark:border-[#2a2a2a]">
-      <div className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 mb-3.5 dark:border-[#2a2a2a]">
+      <div className="text-[0.65rem] font-extrabold text-muted uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 mb-3.5 dark:border-[#2a2a2a]">
         {matchup.id}
       </div>
       {!ready ? (
-        <p className="text-sm text-[#999]">TBD — teams not yet set in bracket.json</p>
+        <p className="text-sm text-muted">TBD — teams not yet set in bracket.json</p>
       ) : (
         <>
           <div className="mb-1">
@@ -203,7 +203,7 @@ function MatchupCard({
           </div>
 
           <div className="flex items-center gap-2 text-sm mt-3.5">
-            <span className="text-[#999] font-bold">In</span>
+            <span className="text-muted font-bold">In</span>
             <select
               value={pick?.games ?? ""}
               onChange={(e) => onChange({ games: Number(e.target.value) })}

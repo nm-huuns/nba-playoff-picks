@@ -77,11 +77,11 @@ export default async function Home() {
             Playoff<br />
             <em className="not-italic text-accent">Picks.</em>
           </h1>
-          <div className="flex items-end gap-4">
-            <div className="text-[0.75rem] font-bold tracking-[0.1em] text-[#555] uppercase pb-1">
+          <div className="flex flex-col items-end gap-1.5 pb-1">
+            <ThemeToggle />
+            <div className="text-[0.75rem] font-bold tracking-[0.1em] text-[#555] dark:text-[#999] uppercase">
               {bracket.season} Season
             </div>
-            <ThemeToggle />
           </div>
         </div>
       </header>

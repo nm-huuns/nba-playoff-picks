@@ -124,7 +124,7 @@ export default function AwardsForm({ name }: { name: string }) {
 
       <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor="awards-mvp">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-1.5" htmlFor="awards-mvp">
             MVP
           </label>
           <input
@@ -142,7 +142,7 @@ export default function AwardsForm({ name }: { name: string }) {
           />
         </div>
         <div>
-          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor="awards-roy">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-1.5" htmlFor="awards-roy">
             Rookie of the Year
           </label>
           <input
@@ -160,7 +160,7 @@ export default function AwardsForm({ name }: { name: string }) {
           />
         </div>
         <div>
-          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor="awards-mip">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-1.5" htmlFor="awards-mip">
             Most Improved Player
           </label>
           <input
@@ -178,7 +178,7 @@ export default function AwardsForm({ name }: { name: string }) {
           />
         </div>
         <div>
-          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor="awards-smoy">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-1.5" htmlFor="awards-smoy">
             Sixth Man of the Year
           </label>
           <input
@@ -196,7 +196,7 @@ export default function AwardsForm({ name }: { name: string }) {
           />
         </div>
         <div>
-          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor="awards-coy">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-1.5" htmlFor="awards-coy">
             Coach of the Year
           </label>
           <input
@@ -214,7 +214,7 @@ export default function AwardsForm({ name }: { name: string }) {
           />
         </div>
         <div>
-          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor="awards-dpoy">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-1.5" htmlFor="awards-dpoy">
             Defensive Player of the Year
           </label>
           <input
@@ -268,11 +268,11 @@ function TeamSection({
 }) {
   return (
     <section className="border-[3px] border-black p-5 space-y-3 dark:border-[#2a2a2a]">
-      <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">{title}</h3>
+      <h3 className="text-[0.65rem] font-extrabold text-muted uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">{title}</h3>
       <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-5">
         {players.map((value, i) => (
           <label key={i} className="block">
-            <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5">
+            <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-1.5">
               Player {i + 1}
             </span>
             <input

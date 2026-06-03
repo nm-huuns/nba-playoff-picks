@@ -104,7 +104,7 @@ export default function PicksTabs({
                 "px-[18px] py-3 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] border-b-4 -mb-1 transition-colors " +
                 (selected
                   ? "border-accent text-black dark:text-white"
-                  : "border-transparent text-[#999] hover:text-black dark:hover:text-white")
+                  : "border-transparent text-muted hover:text-black dark:hover:text-white")
               }
             >
               {t.label}
@@ -120,7 +120,7 @@ export default function PicksTabs({
 
       {active !== "scores" && !locks[active] && (
         <div className="pt-8 pb-4">
-          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-2" htmlFor="name">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-2" htmlFor="name">
             Your name
           </label>
           <input

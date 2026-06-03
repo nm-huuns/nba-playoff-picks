@@ -200,7 +200,7 @@ function Column({
 
       <div className="border-[3px] border-black p-5 dark:border-[#2a2a2a]">
         <label htmlFor={conferenceWinner.id} className="block">
-          <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-2">Conference winner</span>
+          <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-2">Conference winner</span>
           <select
             id={conferenceWinner.id}
             value={conferenceWinner.value}
@@ -247,11 +247,11 @@ function MatchupCard({
 
   return (
     <li className="border-[3px] border-black p-5 dark:border-[#2a2a2a]">
-      <div className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 mb-3.5 dark:border-[#2a2a2a]">
+      <div className="text-[0.65rem] font-extrabold text-muted uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 mb-3.5 dark:border-[#2a2a2a]">
         {matchup.id}
       </div>
       {!ready ? (
-        <p className="text-sm text-[#999]">TBD — team(s) not yet set</p>
+        <p className="text-sm text-muted">TBD — team(s) not yet set</p>
       ) : (
         <>
           <div className="mb-1">
@@ -274,7 +274,7 @@ function MatchupCard({
           </div>
 
           <div className="flex items-center gap-2 text-sm mt-3.5">
-            <span className="text-[#999] font-bold">In</span>
+            <span className="text-muted font-bold">In</span>
             <select
               value={pick?.games ?? ""}
               onChange={(e) => onChange({ games: Number(e.target.value) })}

@@ -125,7 +125,7 @@ export default function FinalsForm({
         <h2 className="text-sm font-extrabold uppercase tracking-[0.06em]">Championship pick</h2>
         <div className="flex flex-wrap gap-4">
           <div className="space-y-1">
-            <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999]" htmlFor="finals-champion">Champion</label>
+            <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted" htmlFor="finals-champion">Champion</label>
             <select
               id="finals-champion"
               value={champion}
@@ -139,7 +139,7 @@ export default function FinalsForm({
             </select>
           </div>
           <div className="space-y-1">
-            <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999]" htmlFor="finals-champion-games">In how many games?</label>
+            <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted" htmlFor="finals-champion-games">In how many games?</label>
             <select
               id="finals-champion-games"
               value={championGames === 0 ? "" : championGames}
@@ -199,7 +199,7 @@ export default function FinalsForm({
         <div className="grid gap-4 sm:grid-cols-2">
           {PLAYER_FIELDS.map(({ key, label }) => (
             <div key={key}>
-              <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor={`finals-${key}`}>
+              <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-1.5" htmlFor={`finals-${key}`}>
                 {label}
               </label>
               <input

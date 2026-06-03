@@ -51,7 +51,7 @@ export default function SubmissionsTabs({
                 "px-[18px] py-3 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] border-b-4 -mb-1 transition-colors " +
                 (selected
                   ? "border-accent text-black dark:text-white"
-                  : "border-transparent text-[#999] hover:text-black dark:hover:text-white")
+                  : "border-transparent text-muted hover:text-black dark:hover:text-white")
               }
             >
               {t.label}
@@ -122,12 +122,12 @@ function R1Panel({ submissions }: { submissions: Round1Submission[] }) {
   return (
     <div>
       <div className="flex items-baseline justify-between mb-4">
-        <span className="text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999]">
+        <span className="text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted">
           {submissions.length} {submissions.length === 1 ? "submission" : "submissions"}
         </span>
         <a
           href="/api/picks"
-          className="text-[0.62rem] font-extrabold uppercase tracking-[0.1em] text-[#999] underline"
+          className="text-[0.62rem] font-extrabold uppercase tracking-[0.1em] text-muted underline"
           target="_blank"
           rel="noreferrer"
         >
@@ -135,20 +135,20 @@ function R1Panel({ submissions }: { submissions: Round1Submission[] }) {
         </a>
       </div>
       {submissions.length === 0 ? (
-        <p className="text-sm text-[#999]">No submissions yet.</p>
+        <p className="text-sm text-muted">No submissions yet.</p>
       ) : (
         <ul className="space-y-3 text-sm">
           {submissions.map((s, i) => (
             <li key={`r1-${s.timestamp}-${i}`} className="border-[3px] border-black p-3">
               <div className="flex items-baseline justify-between gap-4 border-b-2 border-black pb-2 mb-2">
                 <span className="font-black text-sm">{s.name}</span>
-                <span className="text-xs text-[#999] font-mono">{s.timestamp}</span>
+                <span className="text-xs text-muted font-mono">{s.timestamp}</span>
               </div>
               {s.conferenceWinners && (
                 <div className="text-xs mb-2">
-                  <span className="text-[#999]">Conference winners — </span>
+                  <span className="text-muted">Conference winners — </span>
                   <span className="font-extrabold">East:</span> {s.conferenceWinners.east}
-                  <span className="text-[#999]"> · </span>
+                  <span className="text-muted"> · </span>
                   <span className="font-extrabold">West:</span> {s.conferenceWinners.west}
                 </div>
               )}
@@ -174,7 +174,7 @@ function PicksPanel<T>({
   renderRow: (s: T, i: number) => React.ReactNode;
 }) {
   if (submissions.length === 0) {
-    return <p className="text-sm text-[#999]">{empty}</p>;
+    return <p className="text-sm text-muted">{empty}</p>;
   }
   return (
     <ul className="space-y-3 text-sm">
@@ -198,7 +198,7 @@ function PickGridRow({
     <li className="border-[3px] border-black p-3 dark:border-[#2a2a2a]">
       <div className="flex items-baseline justify-between gap-4 border-b-2 border-black pb-2 mb-2 dark:border-[#2a2a2a]">
         <span className="font-black text-sm">{name}</span>
-        <span className="text-xs text-[#999] font-mono">{timestamp}</span>
+        <span className="text-xs text-muted font-mono">{timestamp}</span>
       </div>
       <PickGrid east={east} west={west} />
     </li>
@@ -211,31 +211,31 @@ function FinalsRow({ submission }: { submission: FinalsSubmission }) {
     <li className="border-[3px] border-black p-3 dark:border-[#2a2a2a]">
       <div className="flex items-baseline justify-between gap-4 border-b-2 border-black pb-2 mb-2 dark:border-[#2a2a2a]">
         <span className="font-black text-sm">{submission.name}</span>
-        <span className="text-xs text-[#999] font-mono">{submission.timestamp}</span>
+        <span className="text-xs text-muted font-mono">{submission.timestamp}</span>
       </div>
       {submission.champion && (
         <div className="text-xs mb-1">
-          <span className="text-[#999]">Champion — </span>
+          <span className="text-muted">Champion — </span>
           <span className="font-extrabold">{submission.champion}</span>
           {submission.championGames > 0 && (
-            <span className="text-[#999]"> in {submission.championGames}</span>
+            <span className="text-muted"> in {submission.championGames}</span>
           )}
         </div>
       )}
       <div className="text-xs mb-1">
-        <span className="text-[#999]">Games — </span>
+        <span className="text-muted">Games — </span>
         {gamesPicked.length === 0
           ? "—"
           : gamesPicked.map((k) => `${k}: ${submission.games[k]}`).join(" · ")}
       </div>
       <div className="text-xs">
-        <span className="text-[#999]">MVP:</span>{" "}
+        <span className="text-muted">MVP:</span>{" "}
         <span className="font-extrabold">{submission.mvp || "—"}</span>
-        <span className="text-[#999]"> · Pts:</span>{" "}
+        <span className="text-muted"> · Pts:</span>{" "}
         <span className="font-extrabold">{submission.pointsLeader || "—"}</span>
-        <span className="text-[#999]"> · Reb:</span>{" "}
+        <span className="text-muted"> · Reb:</span>{" "}
         <span className="font-extrabold">{submission.reboundsLeader || "—"}</span>
-        <span className="text-[#999]"> · Ast:</span>{" "}
+        <span className="text-muted"> · Ast:</span>{" "}
         <span className="font-extrabold">{submission.assistsLeader || "—"}</span>
       </div>
     </li>
@@ -247,21 +247,21 @@ function AwardsRow({ submission }: { submission: AwardsSubmission }) {
     <li className="border-[3px] border-black p-3 dark:border-[#2a2a2a]">
       <div className="flex items-baseline justify-between gap-4 border-b-2 border-black pb-2 mb-2 dark:border-[#2a2a2a]">
         <span className="font-black text-sm">{submission.name}</span>
-        <span className="text-xs text-[#999] font-mono">{submission.timestamp}</span>
+        <span className="text-xs text-muted font-mono">{submission.timestamp}</span>
       </div>
       <div className="text-xs mb-1">
-        <span className="text-[#999]">MVP:</span>{" "}
+        <span className="text-muted">MVP:</span>{" "}
         <span className="font-extrabold">{submission.mvp}</span>
-        <span className="text-[#999]"> · ROY:</span>{" "}
+        <span className="text-muted"> · ROY:</span>{" "}
         <span className="font-extrabold">{submission.roy}</span>
-        <span className="text-[#999]"> · MIP:</span>{" "}
+        <span className="text-muted"> · MIP:</span>{" "}
         <span className="font-extrabold">{submission.mip || "—"}</span>
-        <span className="text-[#999]"> · 6MOY:</span>{" "}
+        <span className="text-muted"> · 6MOY:</span>{" "}
         <span className="font-extrabold">{submission.smoy || "—"}</span>
-        <span className="text-[#999]"> · COY:</span>{" "}
+        <span className="text-muted"> · COY:</span>{" "}
         <span className="font-extrabold">{submission.coy || "—"}</span>
       </div>
-      <dl className="text-xs text-[#999] space-y-0.5">
+      <dl className="text-xs text-muted space-y-0.5">
         <div>
           <dt className="inline font-extrabold text-black dark:text-white">1st team: </dt>
           <dd className="inline">{submission.allNBA.first.join(", ")}</dd>
@@ -303,15 +303,15 @@ function PickColumn({
 }) {
   return (
     <div>
-      <div className="text-[0.6rem] font-extrabold uppercase tracking-[0.12em] text-[#999] mb-1">
+      <div className="text-[0.6rem] font-extrabold uppercase tracking-[0.12em] text-muted mb-1">
         {label}
       </div>
       <ul className="space-y-0.5">
         {picks.map((p) => (
           <li key={p.id} className="flex items-baseline gap-2">
-            <span className="font-mono text-[#999] w-16 shrink-0">{p.id}</span>
+            <span className="font-mono text-muted w-16 shrink-0">{p.id}</span>
             <span className="font-extrabold">{p.winner}</span>
-            <span className="text-[#999]">in {p.games}</span>
+            <span className="text-muted">in {p.games}</span>
           </li>
         ))}
       </ul>

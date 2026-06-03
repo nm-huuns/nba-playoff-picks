@@ -47,22 +47,28 @@ export default function LockToggle({
   }
 
   return (
-    <div className="border-2 border-black p-3 flex items-center gap-4 flex-wrap dark:border-[#2a2a2a]">
-      <div className="text-sm min-w-40">
-        <span className="text-[#999] text-[0.72rem] font-extrabold uppercase tracking-[0.06em]">{label}: </span>
-        <strong className={`font-black ${locked ? "text-red-600" : "text-accent"}`}>
-          {locked ? "Locked" : "Open"}
-        </strong>
-      </div>
+    <div className="border-2 border-black p-3 dark:border-[#2a2a2a] flex flex-col items-center gap-2">
+      <div className="text-[0.62rem] font-extrabold uppercase tracking-[0.1em] text-muted">{label}</div>
       <button
         type="button"
         onClick={toggle}
         disabled={busy}
-        className="bg-black text-white px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white dark:text-black"
+        className="flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        {busy ? "…" : locked ? "Unlock" : "Lock"}
+        <div className={`relative w-11 h-6 rounded-full border-2 transition-colors ${
+          locked ? "border-red-500" : "border-green-400"
+        }`}>
+          <div className={`absolute top-[2px] w-4 h-4 rounded-full transition-transform duration-200 ${
+            locked ? "translate-x-[21px] bg-red-500" : "translate-x-[3px] bg-green-400"
+          }`} />
+        </div>
+        <span className={`text-[0.65rem] font-extrabold uppercase tracking-[0.1em] ${
+          locked ? "text-red-500" : "text-green-400"
+        }`}>
+          {busy ? "…" : locked ? "Locked" : "Unlocked"}
+        </span>
       </button>
-      {error && <span className="text-xs font-bold text-red-600">{error}</span>}
+      {error && <p className="text-xs font-bold text-red-600 mt-1">{error}</p>}
     </div>
   );
 }

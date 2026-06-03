@@ -6,18 +6,21 @@
   --background: #ffffff;
   --foreground: #000000;
   --accent: #e87722;
+  --muted: #999999;
 }
 
 .dark {
   --background: #111111;
   --foreground: #ffffff;
   --accent: #f472b6;
+  --muted: #bbbbbb;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
+  --color-muted: var(--muted);
 }
 
 body {

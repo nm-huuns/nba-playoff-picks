@@ -59,11 +59,11 @@ export default async function Results() {
             Playoff<br />
             <em className="not-italic text-accent">Results.</em>
           </h1>
-          <div className="flex items-end gap-4">
-            <div className="text-[0.75rem] font-bold tracking-[0.1em] text-[#555] uppercase pb-1">
+          <div className="flex flex-col items-end gap-1.5 pb-1">
+            <ThemeToggle />
+            <div className="text-[0.75rem] font-bold tracking-[0.1em] text-[#555] dark:text-[#999] uppercase">
               {bracket.season} · Admin
             </div>
-            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -71,18 +71,18 @@ export default async function Results() {
       <main className="max-w-[860px] mx-auto px-6 w-full pb-16">
 
       <section className="mt-8 mb-8">
-        <h2 className="text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-3">Submission locks</h2>
+        <h2 className="text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-3">Submission locks</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          <LockToggle kind="r1" label="Round 1" initialLocked={locks.r1} />
-          <LockToggle kind="r2" label="Round 2" initialLocked={locks.r2} />
-          <LockToggle kind="r3" label="Round 3" initialLocked={locks.r3} />
+          <LockToggle kind="r1" label="1st Round" initialLocked={locks.r1} />
+          <LockToggle kind="r2" label="2nd Round" initialLocked={locks.r2} />
+          <LockToggle kind="r3" label="Conf Finals" initialLocked={locks.r3} />
           <LockToggle kind="finals" label="Finals" initialLocked={locks.finals} />
-          <LockToggle kind="awards" label="Award Winners" initialLocked={locks.awards} />
+          <LockToggle kind="awards" label="Awards" initialLocked={locks.awards} />
         </div>
       </section>
 
       <section className="mb-10">
-        <h2 className="text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-3">Actual results</h2>
+        <h2 className="text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-3">Actual results</h2>
         <ResultsForm
           matchups={matchups}
           round2Matchups={round2Matchups}
@@ -95,7 +95,7 @@ export default async function Results() {
       </section>
 
       <section className="mt-8">
-        <h2 className="text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-4">Recent submissions</h2>
+        <h2 className="text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-4">Recent submissions</h2>
         <SubmissionsTabs
           r1Submissions={r1Submissions}
           r2Submissions={r2Submissions}

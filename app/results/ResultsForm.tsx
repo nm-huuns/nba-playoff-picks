@@ -165,7 +165,7 @@ export default function ResultsForm({
                 "px-[18px] py-3 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] border-b-4 -mb-1 transition-colors " +
                 (selected
                   ? "border-accent text-black dark:text-white"
-                  : "border-transparent text-[#999] hover:text-black dark:hover:text-white")
+                  : "border-transparent text-muted hover:text-black dark:hover:text-white")
               }
             >
               {t.label}
@@ -174,12 +174,12 @@ export default function ResultsForm({
         })}
       </nav>
 
-      <p className="text-xs text-[#999]">
+      <p className="text-xs text-muted">
         Leave a winner blank or games as 0 (—) to mark a result as not yet decided. Scoring will skip blank fields.
       </p>
 
       {activeTab === "r1" && <section className="border-[3px] border-black p-4 space-y-4 dark:border-[#2a2a2a]">
-        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Round 1</h3>
+        <h3 className="text-[0.65rem] font-extrabold text-muted uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Round 1</h3>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <ConferenceWinnerInput
@@ -214,9 +214,9 @@ export default function ResultsForm({
       </section>}
 
       {activeTab === "r2" && <section className="border-[3px] border-black p-4 space-y-4 dark:border-[#2a2a2a]">
-        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Round 2</h3>
+        <h3 className="text-[0.65rem] font-extrabold text-muted uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Round 2</h3>
         {round2Matchups.length === 0 ? (
-          <p className="text-xs text-[#999]">No Round 2 matchups configured yet.</p>
+          <p className="text-xs text-muted">No Round 2 matchups configured yet.</p>
         ) : (
           <div className="grid gap-3 md:grid-cols-2">
             {round2Matchups.map((m) => {
@@ -237,9 +237,9 @@ export default function ResultsForm({
       </section>}
 
       {activeTab === "r3" && <section className="border-[3px] border-black p-4 space-y-4 dark:border-[#2a2a2a]">
-        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Round 3</h3>
+        <h3 className="text-[0.65rem] font-extrabold text-muted uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Round 3</h3>
         {round3Matchups.length === 0 ? (
-          <p className="text-xs text-[#999]">No Round 3 matchups configured yet.</p>
+          <p className="text-xs text-muted">No Round 3 matchups configured yet.</p>
         ) : (
           <div className="grid gap-3 md:grid-cols-2">
             {round3Matchups.map((m) => {
@@ -260,9 +260,9 @@ export default function ResultsForm({
       </section>}
 
       {activeTab === "finals" && <section className="border-[3px] border-black p-4 space-y-4 dark:border-[#2a2a2a]">
-        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Finals</h3>
+        <h3 className="text-[0.65rem] font-extrabold text-muted uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Finals</h3>
         {finalsMatchups.length === 0 ? (
-          <p className="text-xs text-[#999]">No Finals matchup configured yet.</p>
+          <p className="text-xs text-muted">No Finals matchup configured yet.</p>
         ) : (
           (() => {
             const m = finalsMatchups[0];
@@ -270,7 +270,7 @@ export default function ResultsForm({
             return (
               <>
                 <div className="space-y-2">
-                  <h4 className="text-[0.62rem] font-extrabold uppercase tracking-[0.12em] text-[#999]">
+                  <h4 className="text-[0.62rem] font-extrabold uppercase tracking-[0.12em] text-muted">
                     Champion
                   </h4>
                   <SeriesRow
@@ -292,13 +292,13 @@ export default function ResultsForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <h4 className="text-[0.62rem] font-extrabold uppercase tracking-[0.12em] text-[#999]">
+                  <h4 className="text-[0.62rem] font-extrabold uppercase tracking-[0.12em] text-muted">
                     Game winners
                   </h4>
                   <div className="grid gap-2 sm:grid-cols-2">
                     {GAME_KEYS.map((k) => (
                       <label key={k} className="flex items-center gap-2 text-sm">
-                        <span className="font-mono text-[#999] w-8">{k}</span>
+                        <span className="font-mono text-muted w-8">{k}</span>
                         <select
                           value={state.finals.games[k] ?? ""}
                           onChange={(e) => setFinalsGame(k, e.target.value)}
@@ -328,7 +328,7 @@ export default function ResultsForm({
       </section>}
 
       {activeTab === "awards" && <section className="border-[3px] border-black p-4 space-y-4 dark:border-[#2a2a2a]">
-        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Award Winners</h3>
+        <h3 className="text-[0.65rem] font-extrabold text-muted uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Award Winners</h3>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <TextField label="MVP" value={state.awards.mvp} onChange={(v) => setSingleAward("mvp", v)} />
@@ -340,7 +340,7 @@ export default function ResultsForm({
 
         {(["first", "second", "third"] as const).map((team) => (
           <div key={team} className="space-y-2">
-            <h4 className="text-[0.62rem] font-extrabold uppercase tracking-[0.12em] text-[#999]">
+            <h4 className="text-[0.62rem] font-extrabold uppercase tracking-[0.12em] text-muted">
               All-NBA {team === "first" ? "1st" : team === "second" ? "2nd" : "3rd"} team
             </h4>
             <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-5">
@@ -391,7 +391,7 @@ function ConferenceWinnerInput({
 }) {
   return (
     <label className="block">
-      <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5">{label}</span>
+      <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-1.5">{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -421,9 +421,9 @@ function SeriesRow({
 }) {
   return (
     <div className="border-2 border-black p-3 space-y-2 dark:border-[#2a2a2a]">
-      <div className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em]">{id}</div>
+      <div className="text-[0.65rem] font-extrabold text-muted uppercase tracking-[0.12em]">{id}</div>
       <label className="block">
-        <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5">Winner</span>
+        <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-1.5">Winner</span>
         <select
           value={result.winner}
           onChange={(e) => onChange({ winner: e.target.value })}
@@ -438,7 +438,7 @@ function SeriesRow({
         </select>
       </label>
       <label className="block">
-        <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5">Games</span>
+        <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-1.5">Games</span>
         <select
           value={result.games}
           onChange={(e) => onChange({ games: Number(e.target.value) })}
@@ -466,7 +466,7 @@ function TextField({
 }) {
   return (
     <label className="block">
-      <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5">{label}</span>
+      <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-1.5">{label}</span>
       <input
         type="text"
         value={value}
