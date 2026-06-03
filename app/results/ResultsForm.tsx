@@ -352,7 +352,7 @@ export default function ResultsForm({
                   onChange={(e) => setAllNbaPlayer(team, i, e.target.value)}
                   maxLength={60}
                   placeholder={`Player ${i + 1}`}
-                  className="border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold"
+                  className="border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
                 />
               ))}
             </div>
