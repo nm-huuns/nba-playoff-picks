@@ -41,7 +41,7 @@ const TABS: TabDef[] = [
   { key: "scores", label: "Points" },
   { key: "finals", label: "Finals" },
   { key: "awards", label: "Awards" },
-  { key: "r3", label: "Conference Finals" },
+  { key: "r3", label: "Conf Finals" },
   { key: "r2", label: "2nd Round" },
   { key: "r1", label: "1st Round" },
 ];
@@ -101,18 +101,13 @@ export default function PicksTabs({
               id={`tab-${t.key}`}
               onClick={() => setActive(t.key)}
               className={
-                "px-[18px] py-3 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] border-b-4 -mb-1 transition-colors " +
+                "px-2 sm:px-3 py-3 text-[0.62rem] font-extrabold uppercase tracking-[0.06em] border-b-4 -mb-1 transition-colors " +
                 (selected
                   ? "border-accent text-black dark:text-white"
                   : "border-transparent text-muted hover:text-black dark:hover:text-white")
               }
             >
               {t.label}
-              {t.key !== "scores" && locks[t.key] && (
-                <span className="ml-1.5 text-[0.6rem] font-extrabold text-accent uppercase tracking-[0.06em]" aria-label="locked">
-                  locked
-                </span>
-              )}
             </button>
           );
         })}

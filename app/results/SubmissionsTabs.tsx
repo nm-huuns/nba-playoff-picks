@@ -48,7 +48,7 @@ export default function SubmissionsTabs({
               id={`sub-tab-${t.key}`}
               onClick={() => setActive(t.key)}
               className={
-                "px-[18px] py-3 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] border-b-4 -mb-1 transition-colors " +
+                "px-2 sm:px-3 py-3 text-[0.62rem] font-extrabold uppercase tracking-[0.06em] border-b-4 -mb-1 transition-colors " +
                 (selected
                   ? "border-accent text-black dark:text-white"
                   : "border-transparent text-muted hover:text-black dark:hover:text-white")
@@ -125,14 +125,6 @@ function R1Panel({ submissions }: { submissions: Round1Submission[] }) {
         <span className="text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted">
           {submissions.length} {submissions.length === 1 ? "submission" : "submissions"}
         </span>
-        <a
-          href="/api/picks"
-          className="text-[0.62rem] font-extrabold uppercase tracking-[0.1em] text-muted underline"
-          target="_blank"
-          rel="noreferrer"
-        >
-          raw picks.txt
-        </a>
       </div>
       {submissions.length === 0 ? (
         <p className="text-sm text-muted">No submissions yet.</p>

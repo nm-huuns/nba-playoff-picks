@@ -162,7 +162,7 @@ export default function ResultsForm({
               aria-selected={selected}
               onClick={() => setActiveTab(t.key)}
               className={
-                "px-[18px] py-3 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] border-b-4 -mb-1 transition-colors " +
+                "px-2 sm:px-3 py-3 text-[0.62rem] font-extrabold uppercase tracking-[0.06em] border-b-4 -mb-1 transition-colors " +
                 (selected
                   ? "border-accent text-black dark:text-white"
                   : "border-transparent text-muted hover:text-black dark:hover:text-white")

@@ -53,7 +53,7 @@ export default async function Results() {
 
   return (
     <>
-      <header className="bg-black px-6 py-5">
+      <header className="bg-black px-4 sm:px-6 py-5">
         <div className="max-w-[860px] mx-auto flex items-end justify-between">
           <h1 className="text-[2.2rem] font-black leading-none tracking-[-0.05em] text-white">
             Postseason<br />
@@ -68,7 +68,7 @@ export default async function Results() {
         </div>
       </header>
 
-      <main className="max-w-[860px] mx-auto px-6 w-full pb-16">
+      <main className="max-w-[860px] mx-auto px-4 sm:px-6 w-full pb-16">
 
       <section className="mt-8 mb-8">
         <h2 className="text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-muted mb-3">Submission locks</h2>
