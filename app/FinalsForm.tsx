@@ -113,7 +113,7 @@ export default function FinalsForm({
 
   if (!ready) {
     return (
-      <div className="border-2 border-black px-4 py-3 text-sm">
+      <div className="border-2 border-black px-4 py-3 text-sm dark:border-[#2a2a2a]">
         Finals matchup isn&apos;t set yet. Check back once the two teams are confirmed.
       </div>
     );
@@ -130,7 +130,7 @@ export default function FinalsForm({
               id="finals-champion"
               value={champion}
               onChange={(e) => { setChampion(e.target.value); setSuccess(false); setError(null); }}
-              className="border-2 border-black rounded-none bg-white px-2.5 py-2 text-[0.82rem] font-extrabold text-black"
+              className="border-2 border-black rounded-none bg-white px-2.5 py-2 text-[0.82rem] font-extrabold text-black dark:border-white dark:bg-[#1a1a1a] dark:text-white"
             >
               <option value="">— select team —</option>
               {[matchup.teamA, matchup.teamB].map((team) => (
@@ -144,7 +144,7 @@ export default function FinalsForm({
               id="finals-champion-games"
               value={championGames === 0 ? "" : championGames}
               onChange={(e) => { setChampionGames(Number(e.target.value)); setSuccess(false); setError(null); }}
-              className="border-2 border-black rounded-none bg-white px-2.5 py-2 text-[0.82rem] font-extrabold text-black"
+              className="border-2 border-black rounded-none bg-white px-2.5 py-2 text-[0.82rem] font-extrabold text-black dark:border-white dark:bg-[#1a1a1a] dark:text-white"
             >
               <option value="">— select —</option>
               {VALID_CHAMPION_GAMES.map((g) => (
@@ -166,7 +166,7 @@ export default function FinalsForm({
                   <th key={k} className="px-1 text-center">
                     {k}
                     {!REQUIRED_GAME_KEYS.includes(k) && (
-                      <span className="block text-[9px] normal-case text-[#ccc]">opt</span>
+                      <span className="block text-[9px] normal-case text-[#ccc] dark:text-[#333]">opt</span>
                     )}
                   </th>
                 ))}
@@ -208,7 +208,7 @@ export default function FinalsForm({
                 value={players[key]}
                 onChange={(e) => setPlayer(key, e.target.value)}
                 maxLength={60}
-                className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
+                className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
                 placeholder="Player name"
               />
             </div>
@@ -220,7 +220,7 @@ export default function FinalsForm({
         <button
           type="submit"
           disabled={submitting}
-          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white dark:text-black"
         >
           {submitting ? "Submitting…" : "Submit Finals picks"}
         </button>

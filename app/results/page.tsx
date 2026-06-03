@@ -22,6 +22,7 @@ import { parseAwardsFile, readAwardsRaw } from "@/lib/awards";
 import { readLockState } from "@/lib/lock";
 import { readResultsState } from "@/lib/results";
 import LockToggle from "./LockToggle";
+import ThemeToggle from "../ThemeToggle";
 import ResultsForm from "./ResultsForm";
 import SubmissionsTabs from "./SubmissionsTabs";
 
@@ -58,8 +59,11 @@ export default async function Results() {
             Playoff<br />
             <em className="not-italic text-accent">Results.</em>
           </h1>
-          <div className="text-[0.75rem] font-bold tracking-[0.1em] text-[#555] uppercase pb-1">
-            {bracket.season} · Admin
+          <div className="flex items-end gap-4">
+            <div className="text-[0.75rem] font-bold tracking-[0.1em] text-[#555] uppercase pb-1">
+              {bracket.season} · Admin
+            </div>
+            <ThemeToggle />
           </div>
         </div>
       </header>

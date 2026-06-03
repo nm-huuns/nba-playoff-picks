@@ -18,7 +18,7 @@ const SECTION_LABEL: Record<Section, string> = {
 
 const GREY = "text-[#999]";
 const GREY_HEADING = "text-[#666]";
-const CORRECT = "font-black text-black";
+const CORRECT = "font-black text-black dark:text-white";
 
 function pluralPts(n: number): string {
   return `${n} ${n === 1 ? "pt" : "pts"}`;
@@ -319,8 +319,8 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <div className="border-[3px] border-black px-4 py-3">
-      <div className="flex items-baseline justify-between gap-4 border-b-2 border-black pb-2 mb-3">
+    <div className="border-[3px] border-black px-4 py-3 dark:border-[#2a2a2a]">
+      <div className="flex items-baseline justify-between gap-4 border-b-2 border-black pb-2 mb-3 dark:border-[#2a2a2a]">
         <span className="font-black text-sm tracking-[-0.01em]">{name}</span>
         <span className={`text-xs font-mono ${GREY}`}>{timestamp}</span>
       </div>
@@ -331,7 +331,7 @@ function Card({
 
 function EmptyBanner({ section }: { section: Section }) {
   return (
-    <div className="border-2 border-black px-4 py-4 text-sm">
+    <div className="border-2 border-black px-4 py-4 text-sm dark:border-[#2a2a2a]">
       <p className="font-extrabold mb-1">{SECTION_LABEL[section]} picks are locked</p>
       <p className={GREY}>
         No submissions were recorded before this section closed.

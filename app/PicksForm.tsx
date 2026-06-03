@@ -117,7 +117,7 @@ export default function PicksForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {!allReady && (
-        <div className="border-2 border-black px-4 py-3 text-sm">
+        <div className="border-2 border-black px-4 py-3 text-sm dark:border-[#2a2a2a]">
           The bracket isn&apos;t fully configured yet. Fill in the team names in{" "}
           <code>bracket.json</code> to enable submissions.
         </div>
@@ -162,7 +162,7 @@ export default function PicksForm({
         <button
           type="submit"
           disabled={submitting || !allReady}
-          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white dark:text-black"
         >
           {submitting ? "Submitting…" : "Submit picks"}
         </button>
@@ -198,7 +198,7 @@ function Column({
     <section className="space-y-4">
       <h2 className="text-sm font-extrabold uppercase tracking-[0.06em]">{title}</h2>
 
-      <div className="border-[3px] border-black p-5">
+      <div className="border-[3px] border-black p-5 dark:border-[#2a2a2a]">
         <label htmlFor={conferenceWinner.id} className="block">
           <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-2">Conference winner</span>
           <select
@@ -206,7 +206,7 @@ function Column({
             value={conferenceWinner.value}
             onChange={(e) => conferenceWinner.onChange(e.target.value)}
             disabled={conferenceWinner.teams.length === 0}
-            className="w-full border-2 border-black rounded-none bg-white px-2.5 py-1.5 text-[0.82rem] font-extrabold text-black disabled:opacity-50"
+            className="w-full border-2 border-black rounded-none bg-white px-2.5 py-1.5 text-[0.82rem] font-extrabold text-black disabled:opacity-50 dark:border-white dark:bg-[#1a1a1a] dark:text-white"
           >
             <option value="" disabled>
               {conferenceWinner.teams.length === 0 ? "TBD" : "Pick a team…"}
@@ -246,8 +246,8 @@ function MatchupCard({
   const ready = matchup.high.team.length > 0 && matchup.low.team.length > 0;
 
   return (
-    <li className="border-[3px] border-black p-5">
-      <div className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 mb-3.5">
+    <li className="border-[3px] border-black p-5 dark:border-[#2a2a2a]">
+      <div className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 mb-3.5 dark:border-[#2a2a2a]">
         {matchup.id}
       </div>
       {!ready ? (
@@ -258,7 +258,7 @@ function MatchupCard({
             {[matchup.high, matchup.low].map((t) => (
               <label
                 key={t.seed}
-                className={`flex items-center justify-between text-sm font-extrabold py-3 border-b border-[#f0f0f0] cursor-pointer ${pick?.winner === t.team ? "text-black" : "text-[#ccc]"}`}
+                className={`flex items-center justify-between text-sm font-extrabold py-3 border-b border-[#f0f0f0] cursor-pointer dark:border-[#1f1f1f] ${pick?.winner === t.team ? "text-black dark:text-white" : "text-[#ccc] dark:text-[#333]"}`}
               >
                 <span>{t.team}</span>
                 <input
@@ -278,7 +278,7 @@ function MatchupCard({
             <select
               value={pick?.games ?? ""}
               onChange={(e) => onChange({ games: Number(e.target.value) })}
-              className="bg-white border-2 border-black rounded-none px-2.5 py-1 text-[0.82rem] font-extrabold text-black"
+              className="bg-white border-2 border-black rounded-none px-2.5 py-1 text-[0.82rem] font-extrabold text-black dark:bg-[#1a1a1a] dark:border-white dark:text-white"
             >
               <option value="" disabled>—</option>
               {GAMES_OPTIONS.map((g) => (

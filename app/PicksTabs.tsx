@@ -85,7 +85,7 @@ export default function PicksTabs({
   return (
     <div>
       <nav
-        className="flex border-b-4 border-black"
+        className="flex border-b-4 border-black dark:border-white"
         role="tablist"
         aria-label="Picks sections"
       >
@@ -103,8 +103,8 @@ export default function PicksTabs({
               className={
                 "px-[18px] py-3 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] border-b-4 -mb-1 transition-colors " +
                 (selected
-                  ? "border-accent text-black"
-                  : "border-transparent text-[#999] hover:text-black")
+                  ? "border-accent text-black dark:text-white"
+                  : "border-transparent text-[#999] hover:text-black dark:hover:text-white")
               }
             >
               {t.label}
@@ -130,7 +130,7 @@ export default function PicksTabs({
             onChange={(e) => setName(e.target.value)}
             maxLength={50}
             required
-            className="w-full sm:w-64 border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
+            className="w-full sm:w-64 border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
             placeholder="Name here"
           />
         </div>

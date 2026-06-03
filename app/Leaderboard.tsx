@@ -9,7 +9,7 @@ export default function Leaderboard({
 }) {
   if (!hasResults) {
     return (
-      <div className="border-2 border-black px-4 py-4 text-sm text-[#999]">
+      <div className="border-2 border-black px-4 py-4 text-sm text-[#999] dark:border-[#2a2a2a]">
         Results haven&apos;t been entered yet — the leaderboard will populate as
         the admin records actual playoff outcomes.
       </div>
@@ -25,7 +25,7 @@ export default function Leaderboard({
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-sm">
         <thead>
-          <tr className="text-left text-[0.62rem] uppercase tracking-[0.1em] text-[#aaa] font-extrabold border-b-2 border-black">
+          <tr className="text-left text-[0.62rem] uppercase tracking-[0.1em] text-[#aaa] font-extrabold border-b-2 border-black dark:border-white">
             <th className="pb-3 pr-2.5">#</th>
             <th className="pb-3 pr-2.5">Name</th>
             <th className="pb-3 px-2.5 text-right">R1</th>
@@ -42,8 +42,8 @@ export default function Leaderboard({
             const r1 = e.breakdown.r1Series + e.breakdown.r1ConferenceWinners;
             const awards = e.breakdown.awardsSingle + e.breakdown.awardsAllNba;
             return (
-              <tr key={e.name} className="border-b border-[#f0f0f0] hover:bg-[#fafafa]">
-                <td className={`py-3 pr-2.5 text-[0.8rem] font-extrabold w-7 ${i === 0 ? "text-accent" : "text-[#ccc]"}`}>{i + 1}</td>
+              <tr key={e.name} className="border-b border-[#f0f0f0] hover:bg-[#fafafa] dark:border-[#1f1f1f] dark:hover:bg-[#1a1a1a]">
+                <td className={`py-3 pr-2.5 text-[0.8rem] font-extrabold w-7 ${i === 0 ? "text-accent" : "text-[#ccc] dark:text-[#333]"}`}>{i + 1}</td>
                 <td className="py-3 pr-2.5 font-black text-[0.95rem] tracking-[-0.01em]">{e.name}</td>
                 <td className="py-3 px-2.5 text-right tabular-nums">{r1}</td>
                 <td className="py-3 px-2.5 text-right tabular-nums">{e.breakdown.r2Series}</td>

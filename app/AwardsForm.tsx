@@ -118,7 +118,7 @@ export default function AwardsForm({ name }: { name: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      <div className="border-2 border-black px-4 py-3 text-sm font-medium">
+      <div className="border-2 border-black px-4 py-3 text-sm font-medium dark:border-[#2a2a2a]">
         ⚠️ The following players are ineligible — Anthony Edwards, Steph Curry, Devin Booker, LeBron James.
       </div>
 
@@ -137,7 +137,7 @@ export default function AwardsForm({ name }: { name: string }) {
               setError(null);
             }}
             maxLength={60}
-            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
+            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
             placeholder="Player name"
           />
         </div>
@@ -155,7 +155,7 @@ export default function AwardsForm({ name }: { name: string }) {
               setError(null);
             }}
             maxLength={60}
-            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
+            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
             placeholder="Player name"
           />
         </div>
@@ -173,7 +173,7 @@ export default function AwardsForm({ name }: { name: string }) {
               setError(null);
             }}
             maxLength={60}
-            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
+            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
             placeholder="Player name"
           />
         </div>
@@ -191,7 +191,7 @@ export default function AwardsForm({ name }: { name: string }) {
               setError(null);
             }}
             maxLength={60}
-            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
+            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
             placeholder="Player name"
           />
         </div>
@@ -209,7 +209,7 @@ export default function AwardsForm({ name }: { name: string }) {
               setError(null);
             }}
             maxLength={60}
-            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
+            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
             placeholder="Coach name"
           />
         </div>
@@ -243,7 +243,7 @@ export default function AwardsForm({ name }: { name: string }) {
         <button
           type="submit"
           disabled={submitting}
-          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white dark:text-black"
         >
           {submitting ? "Submitting…" : "Submit awards picks"}
         </button>
@@ -267,8 +267,8 @@ function TeamSection({
   onChange: (index: number, value: string) => void;
 }) {
   return (
-    <section className="border-[3px] border-black p-5 space-y-3">
-      <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5">{title}</h3>
+    <section className="border-[3px] border-black p-5 space-y-3 dark:border-[#2a2a2a]">
+      <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">{title}</h3>
       <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-5">
         {players.map((value, i) => (
           <label key={i} className="block">
@@ -280,7 +280,7 @@ function TeamSection({
               value={value}
               onChange={(e) => onChange(i, e.target.value)}
               maxLength={60}
-              className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold"
+              className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
               placeholder="Player name"
             />
           </label>

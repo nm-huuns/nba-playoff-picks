@@ -1,6 +1,16 @@
 "use client";
 
 import { useState } from "react";
+
+type ResultsTab = "r1" | "r2" | "r3" | "finals" | "awards";
+
+const RESULTS_TABS: { key: ResultsTab; label: string }[] = [
+  { key: "r1", label: "1st Round" },
+  { key: "r2", label: "2nd Round" },
+  { key: "r3", label: "Conf Finals" },
+  { key: "finals", label: "Finals" },
+  { key: "awards", label: "Awards" },
+];
 import type {
   FinalsMatchup,
   Matchup,
@@ -36,6 +46,7 @@ export default function ResultsForm({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<ResultsTab>("r1");
 
   function setSeries(
     section: "r1" | "r2" | "r3",
@@ -140,12 +151,35 @@ export default function ResultsForm({
 
   return (
     <div className="space-y-6">
+      <nav className="flex border-b-4 border-black dark:border-white" role="tablist" aria-label="Results by round">
+        {RESULTS_TABS.map((t) => {
+          const selected = t.key === activeTab;
+          return (
+            <button
+              key={t.key}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() => setActiveTab(t.key)}
+              className={
+                "px-[18px] py-3 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] border-b-4 -mb-1 transition-colors " +
+                (selected
+                  ? "border-accent text-black dark:text-white"
+                  : "border-transparent text-[#999] hover:text-black dark:hover:text-white")
+              }
+            >
+              {t.label}
+            </button>
+          );
+        })}
+      </nav>
+
       <p className="text-xs text-[#999]">
         Leave a winner blank or games as 0 (—) to mark a result as not yet decided. Scoring will skip blank fields.
       </p>
 
-      <section className="border-[3px] border-black p-4 space-y-4">
-        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5">Round 1</h3>
+      {activeTab === "r1" && <section className="border-[3px] border-black p-4 space-y-4 dark:border-[#2a2a2a]">
+        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Round 1</h3>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <ConferenceWinnerInput
@@ -177,10 +211,10 @@ export default function ResultsForm({
             );
           })}
         </div>
-      </section>
+      </section>}
 
-      <section className="border-[3px] border-black p-4 space-y-4">
-        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5">Round 2</h3>
+      {activeTab === "r2" && <section className="border-[3px] border-black p-4 space-y-4 dark:border-[#2a2a2a]">
+        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Round 2</h3>
         {round2Matchups.length === 0 ? (
           <p className="text-xs text-[#999]">No Round 2 matchups configured yet.</p>
         ) : (
@@ -200,10 +234,10 @@ export default function ResultsForm({
             })}
           </div>
         )}
-      </section>
+      </section>}
 
-      <section className="border-[3px] border-black p-4 space-y-4">
-        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5">Round 3</h3>
+      {activeTab === "r3" && <section className="border-[3px] border-black p-4 space-y-4 dark:border-[#2a2a2a]">
+        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Round 3</h3>
         {round3Matchups.length === 0 ? (
           <p className="text-xs text-[#999]">No Round 3 matchups configured yet.</p>
         ) : (
@@ -223,10 +257,10 @@ export default function ResultsForm({
             })}
           </div>
         )}
-      </section>
+      </section>}
 
-      <section className="border-[3px] border-black p-4 space-y-4">
-        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5">Finals</h3>
+      {activeTab === "finals" && <section className="border-[3px] border-black p-4 space-y-4 dark:border-[#2a2a2a]">
+        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Finals</h3>
         {finalsMatchups.length === 0 ? (
           <p className="text-xs text-[#999]">No Finals matchup configured yet.</p>
         ) : (
@@ -268,7 +302,7 @@ export default function ResultsForm({
                         <select
                           value={state.finals.games[k] ?? ""}
                           onChange={(e) => setFinalsGame(k, e.target.value)}
-                          className="flex-1 border-2 border-black rounded-none bg-white px-2 py-1 text-sm font-bold"
+                          className="flex-1 border-2 border-black rounded-none bg-white px-2 py-1 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
                         >
                           <option value="">—</option>
                           {teams.map((t) => (
@@ -291,10 +325,10 @@ export default function ResultsForm({
             );
           })()
         )}
-      </section>
+      </section>}
 
-      <section className="border-[3px] border-black p-4 space-y-4">
-        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5">Award Winners</h3>
+      {activeTab === "awards" && <section className="border-[3px] border-black p-4 space-y-4 dark:border-[#2a2a2a]">
+        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 dark:border-[#2a2a2a]">Award Winners</h3>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <TextField label="MVP" value={state.awards.mvp} onChange={(v) => setSingleAward("mvp", v)} />
@@ -324,14 +358,14 @@ export default function ResultsForm({
             </div>
           </div>
         ))}
-      </section>
+      </section>}
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <button
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white dark:text-black"
         >
           {saving ? "Saving…" : "Save results"}
         </button>
@@ -361,7 +395,7 @@ function ConferenceWinnerInput({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold"
+        className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
       >
         <option value="">— not yet decided —</option>
         {options.map((t) => (
@@ -386,14 +420,14 @@ function SeriesRow({
   onChange: (update: Partial<SeriesResult>) => void;
 }) {
   return (
-    <div className="border-2 border-black p-3 space-y-2">
+    <div className="border-2 border-black p-3 space-y-2 dark:border-[#2a2a2a]">
       <div className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em]">{id}</div>
       <label className="block">
         <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5">Winner</span>
         <select
           value={result.winner}
           onChange={(e) => onChange({ winner: e.target.value })}
-          className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold"
+          className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
         >
           <option value="">— not yet decided —</option>
           {teams.map((t) => (
@@ -408,7 +442,7 @@ function SeriesRow({
         <select
           value={result.games}
           onChange={(e) => onChange({ games: Number(e.target.value) })}
-          className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold"
+          className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
         >
           {GAMES_OPTIONS.map((g) => (
             <option key={g} value={g}>
@@ -438,7 +472,7 @@ function TextField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         maxLength={60}
-        className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold"
+        className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold dark:border-white dark:bg-[#1a1a1a] dark:text-white"
         placeholder="—"
       />
     </label>

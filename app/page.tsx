@@ -23,6 +23,7 @@ import { parseAwardsFile, readAwardsRaw } from "@/lib/awards";
 import { readResultsState } from "@/lib/results";
 import { buildLeaderboard } from "@/lib/scoring";
 import PicksTabs from "./PicksTabs";
+import ThemeToggle from "./ThemeToggle";
 
 const bracket = bracketData as BracketConfig;
 
@@ -76,8 +77,11 @@ export default async function Home() {
             Playoff<br />
             <em className="not-italic text-accent">Picks.</em>
           </h1>
-          <div className="text-[0.75rem] font-bold tracking-[0.1em] text-[#555] uppercase pb-1">
-            {bracket.season} Season
+          <div className="flex items-end gap-4">
+            <div className="text-[0.75rem] font-bold tracking-[0.1em] text-[#555] uppercase pb-1">
+              {bracket.season} Season
+            </div>
+            <ThemeToggle />
           </div>
         </div>
       </header>

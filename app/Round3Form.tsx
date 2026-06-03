@@ -96,13 +96,13 @@ export default function Round3Form({
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {matchups.length === 0 && (
-        <div className="border-2 border-black px-4 py-3 text-sm">
+        <div className="border-2 border-black px-4 py-3 text-sm dark:border-[#2a2a2a]">
           Round 3 hasn&apos;t been configured yet.
         </div>
       )}
 
       {matchups.length > 0 && !allReady && (
-        <div className="border-2 border-black px-4 py-3 text-sm">
+        <div className="border-2 border-black px-4 py-3 text-sm dark:border-[#2a2a2a]">
           Round 3 matchups aren&apos;t fully filled in yet.
         </div>
       )}
@@ -116,7 +116,7 @@ export default function Round3Form({
         <button
           type="submit"
           disabled={submitting || !allReady}
-          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white dark:text-black"
         >
           {submitting ? "Submitting…" : "Submit Round 3 picks"}
         </button>
@@ -175,8 +175,8 @@ function MatchupCard({
   const ready = matchup.teamA.length > 0 && matchup.teamB.length > 0;
 
   return (
-    <li className="border-[3px] border-black p-5">
-      <div className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 mb-3.5">
+    <li className="border-[3px] border-black p-5 dark:border-[#2a2a2a]">
+      <div className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 mb-3.5 dark:border-[#2a2a2a]">
         {matchup.id}
       </div>
       {!ready ? (
@@ -187,7 +187,7 @@ function MatchupCard({
             {[matchup.teamA, matchup.teamB].map((t) => (
               <label
                 key={t}
-                className={`flex items-center justify-between text-sm font-extrabold py-3 border-b border-[#f0f0f0] cursor-pointer ${pick?.winner === t ? "text-black" : "text-[#ccc]"}`}
+                className={`flex items-center justify-between text-sm font-extrabold py-3 border-b border-[#f0f0f0] cursor-pointer dark:border-[#1f1f1f] ${pick?.winner === t ? "text-black dark:text-white" : "text-[#ccc] dark:text-[#333]"}`}
               >
                 <span>{t}</span>
                 <input
@@ -207,7 +207,7 @@ function MatchupCard({
             <select
               value={pick?.games ?? ""}
               onChange={(e) => onChange({ games: Number(e.target.value) })}
-              className="bg-white border-2 border-black rounded-none px-2.5 py-1 text-[0.82rem] font-extrabold text-black"
+              className="bg-white border-2 border-black rounded-none px-2.5 py-1 text-[0.82rem] font-extrabold text-black dark:bg-[#1a1a1a] dark:border-white dark:text-white"
             >
               <option value="" disabled>—</option>
               {GAMES_OPTIONS.map((g) => (

@@ -35,7 +35,7 @@ export default function SubmissionsTabs({
 
   return (
     <div>
-      <nav className="flex border-b-4 border-black" role="tablist" aria-label="Submissions by round">
+      <nav className="flex border-b-4 border-black dark:border-white" role="tablist" aria-label="Submissions by round">
         {TABS.map((t) => {
           const selected = t.key === active;
           return (
@@ -50,8 +50,8 @@ export default function SubmissionsTabs({
               className={
                 "px-[18px] py-3 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] border-b-4 -mb-1 transition-colors " +
                 (selected
-                  ? "border-accent text-black"
-                  : "border-transparent text-[#999] hover:text-black")
+                  ? "border-accent text-black dark:text-white"
+                  : "border-transparent text-[#999] hover:text-black dark:hover:text-white")
               }
             >
               {t.label}
@@ -195,8 +195,8 @@ function PickGridRow({
   west: { id: string; winner: string; games: number }[];
 }) {
   return (
-    <li className="border-[3px] border-black p-3">
-      <div className="flex items-baseline justify-between gap-4 border-b-2 border-black pb-2 mb-2">
+    <li className="border-[3px] border-black p-3 dark:border-[#2a2a2a]">
+      <div className="flex items-baseline justify-between gap-4 border-b-2 border-black pb-2 mb-2 dark:border-[#2a2a2a]">
         <span className="font-black text-sm">{name}</span>
         <span className="text-xs text-[#999] font-mono">{timestamp}</span>
       </div>
@@ -208,8 +208,8 @@ function PickGridRow({
 function FinalsRow({ submission }: { submission: FinalsSubmission }) {
   const gamesPicked = GAME_KEYS.filter((k) => submission.games[k]);
   return (
-    <li className="border-[3px] border-black p-3">
-      <div className="flex items-baseline justify-between gap-4 border-b-2 border-black pb-2 mb-2">
+    <li className="border-[3px] border-black p-3 dark:border-[#2a2a2a]">
+      <div className="flex items-baseline justify-between gap-4 border-b-2 border-black pb-2 mb-2 dark:border-[#2a2a2a]">
         <span className="font-black text-sm">{submission.name}</span>
         <span className="text-xs text-[#999] font-mono">{submission.timestamp}</span>
       </div>
@@ -244,8 +244,8 @@ function FinalsRow({ submission }: { submission: FinalsSubmission }) {
 
 function AwardsRow({ submission }: { submission: AwardsSubmission }) {
   return (
-    <li className="border-[3px] border-black p-3">
-      <div className="flex items-baseline justify-between gap-4 border-b-2 border-black pb-2 mb-2">
+    <li className="border-[3px] border-black p-3 dark:border-[#2a2a2a]">
+      <div className="flex items-baseline justify-between gap-4 border-b-2 border-black pb-2 mb-2 dark:border-[#2a2a2a]">
         <span className="font-black text-sm">{submission.name}</span>
         <span className="text-xs text-[#999] font-mono">{submission.timestamp}</span>
       </div>
@@ -263,15 +263,15 @@ function AwardsRow({ submission }: { submission: AwardsSubmission }) {
       </div>
       <dl className="text-xs text-[#999] space-y-0.5">
         <div>
-          <dt className="inline font-extrabold text-black">1st team: </dt>
+          <dt className="inline font-extrabold text-black dark:text-white">1st team: </dt>
           <dd className="inline">{submission.allNBA.first.join(", ")}</dd>
         </div>
         <div>
-          <dt className="inline font-extrabold text-black">2nd team: </dt>
+          <dt className="inline font-extrabold text-black dark:text-white">2nd team: </dt>
           <dd className="inline">{submission.allNBA.second.join(", ")}</dd>
         </div>
         <div>
-          <dt className="inline font-extrabold text-black">3rd team: </dt>
+          <dt className="inline font-extrabold text-black dark:text-white">3rd team: </dt>
           <dd className="inline">{submission.allNBA.third.join(", ")}</dd>
         </div>
       </dl>

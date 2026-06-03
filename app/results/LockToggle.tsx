@@ -47,7 +47,7 @@ export default function LockToggle({
   }
 
   return (
-    <div className="border-2 border-black p-3 flex items-center gap-4 flex-wrap">
+    <div className="border-2 border-black p-3 flex items-center gap-4 flex-wrap dark:border-[#2a2a2a]">
       <div className="text-sm min-w-40">
         <span className="text-[#999] text-[0.72rem] font-extrabold uppercase tracking-[0.06em]">{label}: </span>
         <strong className={`font-black ${locked ? "text-red-600" : "text-accent"}`}>
@@ -58,7 +58,7 @@ export default function LockToggle({
         type="button"
         onClick={toggle}
         disabled={busy}
-        className="bg-black text-white px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed"
+        className="bg-black text-white px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white dark:text-black"
       >
         {busy ? "…" : locked ? "Unlock" : "Lock"}
       </button>
