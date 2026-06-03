@@ -8,7 +8,10 @@
       "Bash(npx tsx *)",
       "Bash(git restore *)",
       "Bash(grep -rln *)",
-      "Bash(grep -rn *)"
+      "Bash(grep -rn *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3737/)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(git stash *)"
     ]
   }
 }

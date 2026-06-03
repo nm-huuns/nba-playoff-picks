@@ -140,12 +140,12 @@ export default function ResultsForm({
 
   return (
     <div className="space-y-6">
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-[#999]">
         Leave a winner blank or games as 0 (—) to mark a result as not yet decided. Scoring will skip blank fields.
       </p>
 
-      <section className="rounded border border-gray-200 dark:border-gray-800 p-4 space-y-4">
-        <h3 className="text-sm font-semibold">Round 1</h3>
+      <section className="border-[3px] border-black p-4 space-y-4">
+        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5">Round 1</h3>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <ConferenceWinnerInput
@@ -179,10 +179,10 @@ export default function ResultsForm({
         </div>
       </section>
 
-      <section className="rounded border border-gray-200 dark:border-gray-800 p-4 space-y-4">
-        <h3 className="text-sm font-semibold">Round 2</h3>
+      <section className="border-[3px] border-black p-4 space-y-4">
+        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5">Round 2</h3>
         {round2Matchups.length === 0 ? (
-          <p className="text-xs text-gray-500">No Round 2 matchups configured yet.</p>
+          <p className="text-xs text-[#999]">No Round 2 matchups configured yet.</p>
         ) : (
           <div className="grid gap-3 md:grid-cols-2">
             {round2Matchups.map((m) => {
@@ -202,10 +202,10 @@ export default function ResultsForm({
         )}
       </section>
 
-      <section className="rounded border border-gray-200 dark:border-gray-800 p-4 space-y-4">
-        <h3 className="text-sm font-semibold">Round 3</h3>
+      <section className="border-[3px] border-black p-4 space-y-4">
+        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5">Round 3</h3>
         {round3Matchups.length === 0 ? (
-          <p className="text-xs text-gray-500">No Round 3 matchups configured yet.</p>
+          <p className="text-xs text-[#999]">No Round 3 matchups configured yet.</p>
         ) : (
           <div className="grid gap-3 md:grid-cols-2">
             {round3Matchups.map((m) => {
@@ -225,10 +225,10 @@ export default function ResultsForm({
         )}
       </section>
 
-      <section className="rounded border border-gray-200 dark:border-gray-800 p-4 space-y-4">
-        <h3 className="text-sm font-semibold">Finals</h3>
+      <section className="border-[3px] border-black p-4 space-y-4">
+        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5">Finals</h3>
         {finalsMatchups.length === 0 ? (
-          <p className="text-xs text-gray-500">No Finals matchup configured yet.</p>
+          <p className="text-xs text-[#999]">No Finals matchup configured yet.</p>
         ) : (
           (() => {
             const m = finalsMatchups[0];
@@ -236,7 +236,7 @@ export default function ResultsForm({
             return (
               <>
                 <div className="space-y-2">
-                  <h4 className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  <h4 className="text-[0.62rem] font-extrabold uppercase tracking-[0.12em] text-[#999]">
                     Champion
                   </h4>
                   <SeriesRow
@@ -258,17 +258,17 @@ export default function ResultsForm({
                   />
                 </div>
                 <div className="space-y-2">
-                  <h4 className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                  <h4 className="text-[0.62rem] font-extrabold uppercase tracking-[0.12em] text-[#999]">
                     Game winners
                   </h4>
                   <div className="grid gap-2 sm:grid-cols-2">
                     {GAME_KEYS.map((k) => (
                       <label key={k} className="flex items-center gap-2 text-sm">
-                        <span className="font-mono text-gray-500 w-8">{k}</span>
+                        <span className="font-mono text-[#999] w-8">{k}</span>
                         <select
                           value={state.finals.games[k] ?? ""}
                           onChange={(e) => setFinalsGame(k, e.target.value)}
-                          className="flex-1 rounded border border-gray-300 dark:border-gray-700 bg-transparent px-2 py-1 text-sm"
+                          className="flex-1 border-2 border-black rounded-none bg-white px-2 py-1 text-sm font-bold"
                         >
                           <option value="">—</option>
                           {teams.map((t) => (
@@ -293,8 +293,8 @@ export default function ResultsForm({
         )}
       </section>
 
-      <section className="rounded border border-gray-200 dark:border-gray-800 p-4 space-y-4">
-        <h3 className="text-sm font-semibold">Award Winners</h3>
+      <section className="border-[3px] border-black p-4 space-y-4">
+        <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5">Award Winners</h3>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <TextField label="MVP" value={state.awards.mvp} onChange={(v) => setSingleAward("mvp", v)} />
@@ -306,7 +306,7 @@ export default function ResultsForm({
 
         {(["first", "second", "third"] as const).map((team) => (
           <div key={team} className="space-y-2">
-            <h4 className="text-xs font-medium uppercase tracking-wide text-gray-500">
+            <h4 className="text-[0.62rem] font-extrabold uppercase tracking-[0.12em] text-[#999]">
               All-NBA {team === "first" ? "1st" : team === "second" ? "2nd" : "3rd"} team
             </h4>
             <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-5">
@@ -318,7 +318,7 @@ export default function ResultsForm({
                   onChange={(e) => setAllNbaPlayer(team, i, e.target.value)}
                   maxLength={60}
                   placeholder={`Player ${i + 1}`}
-                  className="rounded border border-gray-300 dark:border-gray-700 bg-transparent px-2 py-1 text-sm"
+                  className="border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold"
                 />
               ))}
             </div>
@@ -331,15 +331,13 @@ export default function ResultsForm({
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="rounded bg-black text-white px-5 py-2 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white dark:text-black"
+          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {saving ? "Saving…" : "Save results"}
         </button>
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm font-bold text-red-600">{error}</p>}
         {savedAt && (
-          <p className="text-sm text-green-700 dark:text-green-400">
-            Saved.
-          </p>
+          <p className="text-sm font-bold text-accent">Saved.</p>
         )}
       </div>
     </div>
@@ -359,11 +357,11 @@ function ConferenceWinnerInput({
 }) {
   return (
     <label className="block">
-      <span className="block text-xs text-gray-500 mb-1">{label}</span>
+      <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5">{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-2 py-1 text-sm"
+        className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold"
       >
         <option value="">— not yet decided —</option>
         {options.map((t) => (
@@ -388,14 +386,14 @@ function SeriesRow({
   onChange: (update: Partial<SeriesResult>) => void;
 }) {
   return (
-    <div className="rounded border border-gray-200 dark:border-gray-800 p-3 space-y-2">
-      <div className="text-xs font-mono text-gray-500">{id}</div>
+    <div className="border-2 border-black p-3 space-y-2">
+      <div className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em]">{id}</div>
       <label className="block">
-        <span className="block text-xs text-gray-500 mb-1">Winner</span>
+        <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5">Winner</span>
         <select
           value={result.winner}
           onChange={(e) => onChange({ winner: e.target.value })}
-          className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-2 py-1 text-sm"
+          className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold"
         >
           <option value="">— not yet decided —</option>
           {teams.map((t) => (
@@ -406,11 +404,11 @@ function SeriesRow({
         </select>
       </label>
       <label className="block">
-        <span className="block text-xs text-gray-500 mb-1">Games</span>
+        <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5">Games</span>
         <select
           value={result.games}
           onChange={(e) => onChange({ games: Number(e.target.value) })}
-          className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-2 py-1 text-sm"
+          className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold"
         >
           {GAMES_OPTIONS.map((g) => (
             <option key={g} value={g}>
@@ -434,13 +432,13 @@ function TextField({
 }) {
   return (
     <label className="block">
-      <span className="block text-xs text-gray-500 mb-1">{label}</span>
+      <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5">{label}</span>
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         maxLength={60}
-        className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-2 py-1 text-sm"
+        className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold"
         placeholder="—"
       />
     </label>

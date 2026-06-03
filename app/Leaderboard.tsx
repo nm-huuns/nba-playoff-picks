@@ -9,7 +9,7 @@ export default function Leaderboard({
 }) {
   if (!hasResults) {
     return (
-      <div className="rounded border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/40 p-4 text-sm text-gray-600 dark:text-gray-400">
+      <div className="border-2 border-black px-4 py-4 text-sm text-[#999]">
         Results haven&apos;t been entered yet — the leaderboard will populate as
         the admin records actual playoff outcomes.
       </div>
@@ -17,44 +17,43 @@ export default function Leaderboard({
   }
   if (entries.length === 0) {
     return (
-      <p className="text-sm text-gray-500">No submissions to score yet.</p>
+      <p className="text-sm text-[#999]">No submissions to score yet.</p>
     );
   }
+  const topTotal = entries[0]?.total ?? 0;
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full text-sm">
+      <table className="w-full border-collapse text-sm">
         <thead>
-          <tr className="text-left text-xs uppercase tracking-wide text-gray-500">
-            <th className="py-2 pr-3">#</th>
-            <th className="py-2 pr-3">Name</th>
-            <th className="py-2 pr-3 text-right font-semibold">Total</th>
-            <th className="py-2 pr-3 text-right">R1 series</th>
-            <th className="py-2 pr-3 text-right">R1 conf</th>
-            <th className="py-2 pr-3 text-right">R2</th>
-            <th className="py-2 pr-3 text-right">R3</th>
-            <th className="py-2 pr-3 text-right">Finals</th>
-            <th className="py-2 pr-3 text-right">Awards</th>
-            <th className="py-2 pr-3 text-right">All-NBA</th>
+          <tr className="text-left text-[0.62rem] uppercase tracking-[0.1em] text-[#aaa] font-extrabold border-b-2 border-black">
+            <th className="pb-3 pr-2.5">#</th>
+            <th className="pb-3 pr-2.5">Name</th>
+            <th className="pb-3 px-2.5 text-right">R1</th>
+            <th className="pb-3 px-2.5 text-right">R2</th>
+            <th className="pb-3 px-2.5 text-right">CF</th>
+            <th className="pb-3 px-2.5 text-right">Finals</th>
+            <th className="pb-3 px-2.5 text-right">Awards</th>
+            <th className="pb-3 pl-2.5 text-right">Total</th>
           </tr>
         </thead>
         <tbody>
-          {entries.map((e, i) => (
-            <tr
-              key={e.name}
-              className="border-t border-gray-200 dark:border-gray-800"
-            >
-              <td className="py-2 pr-3 text-gray-500">{i + 1}</td>
-              <td className="py-2 pr-3 font-medium">{e.name}</td>
-              <td className="py-2 pr-3 text-right tabular-nums font-semibold">{e.total}</td>
-              <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.r1Series}</td>
-              <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.r1ConferenceWinners}</td>
-              <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.r2Series}</td>
-              <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.r3Series}</td>
-              <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.finalsSeries}</td>
-              <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.awardsSingle}</td>
-              <td className="py-2 pr-3 text-right tabular-nums">{e.breakdown.awardsAllNba}</td>
-            </tr>
-          ))}
+          {entries.map((e, i) => {
+            const isLead = e.total === topTotal && e.total > 0;
+            const r1 = e.breakdown.r1Series + e.breakdown.r1ConferenceWinners;
+            const awards = e.breakdown.awardsSingle + e.breakdown.awardsAllNba;
+            return (
+              <tr key={e.name} className="border-b border-[#f0f0f0] hover:bg-[#fafafa]">
+                <td className={`py-3 pr-2.5 text-[0.8rem] font-extrabold w-7 ${i === 0 ? "text-accent" : "text-[#ccc]"}`}>{i + 1}</td>
+                <td className="py-3 pr-2.5 font-black text-[0.95rem] tracking-[-0.01em]">{e.name}</td>
+                <td className="py-3 px-2.5 text-right tabular-nums">{r1}</td>
+                <td className="py-3 px-2.5 text-right tabular-nums">{e.breakdown.r2Series}</td>
+                <td className="py-3 px-2.5 text-right tabular-nums">{e.breakdown.r3Series}</td>
+                <td className="py-3 px-2.5 text-right tabular-nums">{e.breakdown.finalsSeries}</td>
+                <td className="py-3 px-2.5 text-right tabular-nums">{awards}</td>
+                <td className={`py-3 pl-2.5 text-right tabular-nums font-black text-[1.05rem] ${isLead ? "text-accent" : ""}`}>{e.total}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

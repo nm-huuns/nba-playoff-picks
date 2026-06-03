@@ -113,7 +113,7 @@ export default function FinalsForm({
 
   if (!ready) {
     return (
-      <div className="rounded border border-yellow-500/60 bg-yellow-50 dark:bg-yellow-950/30 px-4 py-3 text-sm">
+      <div className="border-2 border-black px-4 py-3 text-sm">
         Finals matchup isn&apos;t set yet. Check back once the two teams are confirmed.
       </div>
     );
@@ -122,15 +122,15 @@ export default function FinalsForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       <section className="space-y-3">
-        <h2 className="text-base font-semibold">Championship pick</h2>
+        <h2 className="text-sm font-extrabold uppercase tracking-[0.06em]">Championship pick</h2>
         <div className="flex flex-wrap gap-4">
           <div className="space-y-1">
-            <label className="block text-xs text-gray-500" htmlFor="finals-champion">Champion</label>
+            <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999]" htmlFor="finals-champion">Champion</label>
             <select
               id="finals-champion"
               value={champion}
               onChange={(e) => { setChampion(e.target.value); setSuccess(false); setError(null); }}
-              className="rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+              className="border-2 border-black rounded-none bg-white px-2.5 py-2 text-[0.82rem] font-extrabold text-black"
             >
               <option value="">— select team —</option>
               {[matchup.teamA, matchup.teamB].map((team) => (
@@ -139,12 +139,12 @@ export default function FinalsForm({
             </select>
           </div>
           <div className="space-y-1">
-            <label className="block text-xs text-gray-500" htmlFor="finals-champion-games">In how many games?</label>
+            <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999]" htmlFor="finals-champion-games">In how many games?</label>
             <select
               id="finals-champion-games"
               value={championGames === 0 ? "" : championGames}
               onChange={(e) => { setChampionGames(Number(e.target.value)); setSuccess(false); setError(null); }}
-              className="rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+              className="border-2 border-black rounded-none bg-white px-2.5 py-2 text-[0.82rem] font-extrabold text-black"
             >
               <option value="">— select —</option>
               {VALID_CHAMPION_GAMES.map((g) => (
@@ -156,17 +156,17 @@ export default function FinalsForm({
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-base font-semibold">Game-by-game results</h2>
+        <h2 className="text-sm font-extrabold uppercase tracking-[0.06em]">Game-by-game results</h2>
         <div className="overflow-x-auto">
           <table className="text-sm border-separate border-spacing-1">
             <thead>
-              <tr className="text-xs uppercase tracking-wide text-gray-500">
+              <tr className="text-[0.62rem] uppercase tracking-[0.1em] text-[#aaa] font-extrabold">
                 <th className="text-left pr-3">Team</th>
                 {GAME_KEYS.map((k) => (
-                  <th key={k} className="px-1 text-center font-medium">
+                  <th key={k} className="px-1 text-center">
                     {k}
                     {!REQUIRED_GAME_KEYS.includes(k) && (
-                      <span className="block text-[9px] normal-case text-gray-400">opt</span>
+                      <span className="block text-[9px] normal-case text-[#ccc]">opt</span>
                     )}
                   </th>
                 ))}
@@ -175,7 +175,7 @@ export default function FinalsForm({
             <tbody>
               {[matchup.teamA, matchup.teamB].map((team) => (
                 <tr key={team}>
-                  <td className="pr-3 font-medium whitespace-nowrap">{team}</td>
+                  <td className="pr-3 font-extrabold whitespace-nowrap">{team}</td>
                   {GAME_KEYS.map((k) => (
                     <td key={k} className="text-center">
                       <input
@@ -195,11 +195,11 @@ export default function FinalsForm({
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-base font-semibold">Finals awards</h2>
+        <h2 className="text-sm font-extrabold uppercase tracking-[0.06em]">Finals awards</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {PLAYER_FIELDS.map(({ key, label }) => (
             <div key={key}>
-              <label className="block text-sm font-medium mb-1" htmlFor={`finals-${key}`}>
+              <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor={`finals-${key}`}>
                 {label}
               </label>
               <input
@@ -208,7 +208,7 @@ export default function FinalsForm({
                 value={players[key]}
                 onChange={(e) => setPlayer(key, e.target.value)}
                 maxLength={60}
-                className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+                className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
                 placeholder="Player name"
               />
             </div>
@@ -220,14 +220,14 @@ export default function FinalsForm({
         <button
           type="submit"
           disabled={submitting}
-          className="rounded bg-black text-white px-5 py-2 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white dark:text-black"
+          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {submitting ? "Submitting…" : "Submit Finals picks"}
         </button>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm font-bold text-red-600">{error}</p>}
         {success && (
-          <p className="text-sm text-green-700 dark:text-green-400">Finals picks saved!</p>
+          <p className="text-sm font-bold text-accent">Finals picks saved!</p>
         )}
       </div>
     </form>

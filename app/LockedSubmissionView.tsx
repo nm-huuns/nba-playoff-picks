@@ -16,9 +16,9 @@ const SECTION_LABEL: Record<Section, string> = {
   awards: "Award Winners",
 };
 
-const GREY = "text-gray-500 dark:text-gray-500";
-const GREY_HEADING = "text-gray-600 dark:text-gray-400";
-const CORRECT = "font-bold text-gray-900 dark:text-gray-100";
+const GREY = "text-[#999]";
+const GREY_HEADING = "text-[#666]";
+const CORRECT = "font-black text-black";
 
 function pluralPts(n: number): string {
   return `${n} ${n === 1 ? "pt" : "pts"}`;
@@ -301,7 +301,7 @@ function ListWrapper({
 }) {
   return (
     <div className="space-y-3">
-      <p className={`text-xs uppercase tracking-wide font-medium ${GREY_HEADING}`}>
+      <p className="text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999]">
         {SECTION_LABEL[section]} picks (locked) — {count} {count === 1 ? "submission" : "submissions"}
       </p>
       <div className="space-y-3">{children}</div>
@@ -319,9 +319,9 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 px-4 py-3">
-      <div className="flex items-baseline justify-between gap-4 mb-2">
-        <span className={`font-medium ${GREY_HEADING}`}>{name}</span>
+    <div className="border-[3px] border-black px-4 py-3">
+      <div className="flex items-baseline justify-between gap-4 border-b-2 border-black pb-2 mb-3">
+        <span className="font-black text-sm tracking-[-0.01em]">{name}</span>
         <span className={`text-xs font-mono ${GREY}`}>{timestamp}</span>
       </div>
       {children}
@@ -331,9 +331,9 @@ function Card({
 
 function EmptyBanner({ section }: { section: Section }) {
   return (
-    <div className="rounded border border-red-500/60 bg-red-50 dark:bg-red-950/30 px-4 py-4 text-sm">
-      <p className="font-medium mb-1">{SECTION_LABEL[section]} picks are locked</p>
-      <p className="text-gray-600 dark:text-gray-400">
+    <div className="border-2 border-black px-4 py-4 text-sm">
+      <p className="font-extrabold mb-1">{SECTION_LABEL[section]} picks are locked</p>
+      <p className={GREY}>
         No submissions were recorded before this section closed.
       </p>
     </div>

@@ -83,28 +83,9 @@ export default function PicksTabs({
   const [name, setName] = useState("");
 
   return (
-    <div className="space-y-6">
-      {active !== "scores" && !locks[active] && (
-        <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="name">
-            Your name
-          </label>
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={50}
-            required
-            className="w-full sm:w-64 rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
-            placeholder="Name here"
-          />
-          <p className="text-xs text-gray-500 mt-1">Used across all tabs.</p>
-        </div>
-      )}
-
+    <div>
       <nav
-        className="flex gap-1 border-b border-gray-200 dark:border-gray-800"
+        className="flex border-b-4 border-black"
         role="tablist"
         aria-label="Picks sections"
       >
@@ -120,16 +101,16 @@ export default function PicksTabs({
               id={`tab-${t.key}`}
               onClick={() => setActive(t.key)}
               className={
-                "px-4 py-2 text-sm font-medium -mb-px border-b-2 transition-colors " +
+                "px-[18px] py-3 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] border-b-4 -mb-1 transition-colors " +
                 (selected
-                  ? "border-black text-black dark:border-white dark:text-white"
-                  : "border-transparent text-gray-500 hover:text-gray-800 dark:hover:text-gray-200")
+                  ? "border-accent text-black"
+                  : "border-transparent text-[#999] hover:text-black")
               }
             >
               {t.label}
               {t.key !== "scores" && locks[t.key] && (
-                <span className="ml-2 text-xs text-red-600" aria-label="locked">
-                  (locked)
+                <span className="ml-1.5 text-[0.6rem] font-extrabold text-accent uppercase tracking-[0.06em]" aria-label="locked">
+                  locked
                 </span>
               )}
             </button>
@@ -137,11 +118,29 @@ export default function PicksTabs({
         })}
       </nav>
 
+      {active !== "scores" && !locks[active] && (
+        <div className="pt-8 pb-4">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-2" htmlFor="name">
+            Your name
+          </label>
+          <input
+            id="name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={50}
+            required
+            className="w-full sm:w-64 border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
+            placeholder="Name here"
+          />
+        </div>
+      )}
+
       <div
         role="tabpanel"
         id={`panel-${active}`}
         aria-labelledby={`tab-${active}`}
-        className="pt-2"
+        className="pt-8"
       >
         {active === "scores" ? (
           <Leaderboard entries={leaderboard} hasResults={resultsEntered} />

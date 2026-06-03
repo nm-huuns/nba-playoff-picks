@@ -117,7 +117,7 @@ export default function PicksForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {!allReady && (
-        <div className="rounded border border-yellow-500/60 bg-yellow-50 dark:bg-yellow-950/30 px-4 py-3 text-sm">
+        <div className="border-2 border-black px-4 py-3 text-sm">
           The bracket isn&apos;t fully configured yet. Fill in the team names in{" "}
           <code>bracket.json</code> to enable submissions.
         </div>
@@ -162,13 +162,13 @@ export default function PicksForm({
         <button
           type="submit"
           disabled={submitting || !allReady}
-          className="rounded bg-black text-white px-5 py-2 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white dark:text-black"
+          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {submitting ? "Submitting…" : "Submit picks"}
         </button>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        {success && <p className="text-sm text-green-700 dark:text-green-400">Picks saved!</p>}
+        {error && <p className="text-sm font-bold text-red-600">{error}</p>}
+        {success && <p className="text-sm font-bold text-accent">Picks saved!</p>}
       </div>
     </form>
   );
@@ -196,17 +196,17 @@ function Column({
 }) {
   return (
     <section className="space-y-4">
-      <h2 className="text-base font-semibold">{title}</h2>
+      <h2 className="text-sm font-extrabold uppercase tracking-[0.06em]">{title}</h2>
 
-      <div className="rounded border border-gray-200 dark:border-gray-800 p-3">
+      <div className="border-[3px] border-black p-5">
         <label htmlFor={conferenceWinner.id} className="block">
-          <span className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Conference winner</span>
+          <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-2">Conference winner</span>
           <select
             id={conferenceWinner.id}
             value={conferenceWinner.value}
             onChange={(e) => conferenceWinner.onChange(e.target.value)}
             disabled={conferenceWinner.teams.length === 0}
-            className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-2 py-1 text-sm disabled:opacity-50"
+            className="w-full border-2 border-black rounded-none bg-white px-2.5 py-1.5 text-[0.82rem] font-extrabold text-black disabled:opacity-50"
           >
             <option value="" disabled>
               {conferenceWinner.teams.length === 0 ? "TBD" : "Pick a team…"}
@@ -246,44 +246,46 @@ function MatchupCard({
   const ready = matchup.high.team.length > 0 && matchup.low.team.length > 0;
 
   return (
-    <li className="rounded border border-gray-200 dark:border-gray-800 p-3">
+    <li className="border-[3px] border-black p-5">
+      <div className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5 mb-3.5">
+        {matchup.id}
+      </div>
       {!ready ? (
-        <p className="text-sm italic text-gray-500">TBD — team(s) not yet set</p>
+        <p className="text-sm text-[#999]">TBD — team(s) not yet set</p>
       ) : (
         <>
-          <div className="space-y-2 mb-3">
+          <div className="mb-1">
             {[matchup.high, matchup.low].map((t) => (
-              <label key={t.seed} className="flex items-center gap-2 text-sm">
+              <label
+                key={t.seed}
+                className={`flex items-center justify-between text-sm font-extrabold py-3 border-b border-[#f0f0f0] cursor-pointer ${pick?.winner === t.team ? "text-black" : "text-[#ccc]"}`}
+              >
+                <span>{t.team}</span>
                 <input
                   type="radio"
                   name={matchup.id}
                   value={t.team}
                   checked={pick?.winner === t.team}
                   onChange={() => onChange({ winner: t.team })}
+                  className="ml-2"
                 />
-                <span className="text-xs font-mono text-gray-500 w-4">{t.seed}</span>
-                <span>{t.team}</span>
               </label>
             ))}
           </div>
 
-          <label className="flex items-center gap-2 text-sm">
-            <span className="text-gray-500">in</span>
+          <div className="flex items-center gap-2 text-sm mt-3.5">
+            <span className="text-[#999] font-bold">In</span>
             <select
               value={pick?.games ?? ""}
               onChange={(e) => onChange({ games: Number(e.target.value) })}
-              className="rounded border border-gray-300 dark:border-gray-700 bg-transparent px-2 py-1 text-sm"
+              className="bg-white border-2 border-black rounded-none px-2.5 py-1 text-[0.82rem] font-extrabold text-black"
             >
-              <option value="" disabled>
-                —
-              </option>
+              <option value="" disabled>—</option>
               {GAMES_OPTIONS.map((g) => (
-                <option key={g} value={g}>
-                  {g} games
-                </option>
+                <option key={g} value={g}>{g} games</option>
               ))}
             </select>
-          </label>
+          </div>
         </>
       )}
     </li>

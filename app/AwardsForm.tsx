@@ -118,13 +118,13 @@ export default function AwardsForm({ name }: { name: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      <div className="rounded italic border border-grey-300 bg-grey-50 px-4 py-3 text-sm text-grey-900 dark:border-grey-700 dark:bg-grey-950/40 dark:text-grey-200">
-        <span aria-label="Caution" role="img">⚠️</span> The following players are ineligible — Anthony Edwards, Steph Curry, Devin Booker, LeBron James.
+      <div className="border-2 border-black px-4 py-3 text-sm font-medium">
+        ⚠️ The following players are ineligible — Anthony Edwards, Steph Curry, Devin Booker, LeBron James.
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="awards-mvp">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor="awards-mvp">
             MVP
           </label>
           <input
@@ -137,12 +137,12 @@ export default function AwardsForm({ name }: { name: string }) {
               setError(null);
             }}
             maxLength={60}
-            className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
             placeholder="Player name"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="awards-roy">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor="awards-roy">
             Rookie of the Year
           </label>
           <input
@@ -155,12 +155,12 @@ export default function AwardsForm({ name }: { name: string }) {
               setError(null);
             }}
             maxLength={60}
-            className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
             placeholder="Player name"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="awards-mip">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor="awards-mip">
             Most Improved Player
           </label>
           <input
@@ -173,12 +173,12 @@ export default function AwardsForm({ name }: { name: string }) {
               setError(null);
             }}
             maxLength={60}
-            className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
             placeholder="Player name"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="awards-smoy">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor="awards-smoy">
             Sixth Man of the Year
           </label>
           <input
@@ -191,12 +191,12 @@ export default function AwardsForm({ name }: { name: string }) {
               setError(null);
             }}
             maxLength={60}
-            className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
             placeholder="Player name"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="awards-coy">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor="awards-coy">
             Coach of the Year
           </label>
           <input
@@ -209,12 +209,12 @@ export default function AwardsForm({ name }: { name: string }) {
               setError(null);
             }}
             maxLength={60}
-            className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm"
+            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold"
             placeholder="Coach name"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="awards-dpoy">
+          <label className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5" htmlFor="awards-dpoy">
             Defensive Player of the Year
           </label>
           <input
@@ -223,7 +223,7 @@ export default function AwardsForm({ name }: { name: string }) {
             value="Victor Wembanyama"
             readOnly
             disabled
-            className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-3 py-2 text-sm cursor-not-allowed"
+            className="w-full border-2 border-black rounded-none bg-white px-3 py-2 text-sm font-bold opacity-40 cursor-not-allowed"
           />
         </div>
       </div>
@@ -243,14 +243,14 @@ export default function AwardsForm({ name }: { name: string }) {
         <button
           type="submit"
           disabled={submitting}
-          className="rounded bg-black text-white px-5 py-2 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white dark:text-black"
+          className="bg-black text-white px-5 py-2.5 text-[0.72rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {submitting ? "Submitting…" : "Submit awards picks"}
         </button>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm font-bold text-red-600">{error}</p>}
         {success && (
-          <p className="text-sm text-green-700 dark:text-green-400">Awards picks saved!</p>
+          <p className="text-sm font-bold text-accent">Awards picks saved!</p>
         )}
       </div>
     </form>
@@ -267,12 +267,12 @@ function TeamSection({
   onChange: (index: number, value: string) => void;
 }) {
   return (
-    <section className="rounded border border-gray-200 dark:border-gray-800 p-4 space-y-3">
-      <h3 className="text-sm font-semibold">{title}</h3>
+    <section className="border-[3px] border-black p-5 space-y-3">
+      <h3 className="text-[0.65rem] font-extrabold text-[#999] uppercase tracking-[0.12em] border-b-2 border-black pb-2.5">{title}</h3>
       <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-5">
         {players.map((value, i) => (
           <label key={i} className="block">
-            <span className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
+            <span className="block text-[0.62rem] font-extrabold uppercase tracking-[0.18em] text-[#999] mb-1.5">
               Player {i + 1}
             </span>
             <input
@@ -280,7 +280,7 @@ function TeamSection({
               value={value}
               onChange={(e) => onChange(i, e.target.value)}
               maxLength={60}
-              className="w-full rounded border border-gray-300 dark:border-gray-700 bg-transparent px-2 py-1 text-sm"
+              className="w-full border-2 border-black rounded-none bg-white px-2 py-1.5 text-sm font-bold"
               placeholder="Player name"
             />
           </label>

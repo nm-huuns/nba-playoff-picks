@@ -47,10 +47,10 @@ export default function LockToggle({
   }
 
   return (
-    <div className="rounded border border-gray-200 dark:border-gray-800 p-3 flex items-center gap-4 flex-wrap">
+    <div className="border-2 border-black p-3 flex items-center gap-4 flex-wrap">
       <div className="text-sm min-w-40">
-        <span className="text-gray-500">{label}: </span>
-        <strong className={locked ? "text-red-600" : "text-green-700 dark:text-green-400"}>
+        <span className="text-[#999] text-[0.72rem] font-extrabold uppercase tracking-[0.06em]">{label}: </span>
+        <strong className={`font-black ${locked ? "text-red-600" : "text-accent"}`}>
           {locked ? "Locked" : "Open"}
         </strong>
       </div>
@@ -58,11 +58,11 @@ export default function LockToggle({
         type="button"
         onClick={toggle}
         disabled={busy}
-        className="rounded bg-black text-white px-3 py-1 text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed dark:bg-white dark:text-black"
+        className="bg-black text-white px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-[0.06em] disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {busy ? "…" : locked ? "Unlock" : "Lock"}
       </button>
-      {error && <span className="text-xs text-red-600">{error}</span>}
+      {error && <span className="text-xs font-bold text-red-600">{error}</span>}
     </div>
   );
 }

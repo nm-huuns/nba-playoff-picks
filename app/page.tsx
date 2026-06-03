@@ -69,65 +69,38 @@ export default async function Home() {
   const resultsEntered = hasAnyResults(results);
 
   return (
-    <main className="max-w-5xl mx-auto py-12 px-4 w-full">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold">NBA Playoff Picks — {bracket.season}</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          Pick your playoff series winners, series length, and regular-season award winners.
-        </p>
-      </header>
-
-      <section className="mb-8 rounded border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/40 p-4">
-        <h2 className="text-base font-semibold mb-2">Scoring rules</h2>
-        <div className="text-sm space-y-3 text-gray-700 dark:text-gray-300">
-          <div>
-            <p className="font-medium">Playoff rounds (1st Round through Conference Finals)</p>
-            <ul className="list-disc pl-5 mt-1 space-y-1">
-              <li>1 point for picking the correct series winner</li>
-              <li>2 extra points for picking the correct number of games</li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-medium">Conference winner (Round 1 only)</p>
-            <ul className="list-disc pl-5 mt-1 space-y-1">
-              <li>2 points for picking the conference winner</li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-medium">Finals</p>
-            <ul className="list-disc pl-5 mt-1 space-y-1">
-              <li>1 point for each game whose winner you pick correctly (games actually played)</li>
-              <li>1 point for the correct Finals MVP</li>
-              <li>1 point each for the correct series points, rebounds, and assists leader</li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-medium">Award winners</p>
-            <ul className="list-disc pl-5 mt-1 space-y-1">
-              <li>1 point each for MVP, Rookie of the Year, Most Improved Player, Sixth Man of the Year, and Coach of the Year</li>
-              <li>1 point per player placed on the correct All-NBA team (1st, 2nd, or 3rd)</li>
-            </ul>
+    <>
+      <header className="bg-black px-6 py-5">
+        <div className="max-w-[860px] mx-auto flex items-end justify-between">
+          <h1 className="text-[2.2rem] font-black leading-none tracking-[-0.05em] text-white">
+            Playoff<br />
+            <em className="not-italic text-accent">Picks.</em>
+          </h1>
+          <div className="text-[0.75rem] font-bold tracking-[0.1em] text-[#555] uppercase pb-1">
+            {bracket.season} Season
           </div>
         </div>
-      </section>
+      </header>
 
-      <PicksTabs
-        matchups={matchups}
-        round2Matchups={round2Matchups}
-        round3Matchups={round3Matchups}
-        finalsMatchups={finalsMatchups}
-        eastTeams={bracket.east}
-        westTeams={bracket.west}
-        locks={locks}
-        leaderboard={leaderboard}
-        resultsEntered={resultsEntered}
-        r1Submissions={r1Submissions}
-        r2Submissions={r2Submissions}
-        r3Submissions={r3Submissions}
-        finalsSubmissions={finalsSubmissions}
-        awardsSubmissions={awardsSubmissions}
-        results={results}
-      />
-    </main>
+      <main className="max-w-[860px] mx-auto px-6 w-full pb-16">
+        <PicksTabs
+          matchups={matchups}
+          round2Matchups={round2Matchups}
+          round3Matchups={round3Matchups}
+          finalsMatchups={finalsMatchups}
+          eastTeams={bracket.east}
+          westTeams={bracket.west}
+          locks={locks}
+          leaderboard={leaderboard}
+          resultsEntered={resultsEntered}
+          r1Submissions={r1Submissions}
+          r2Submissions={r2Submissions}
+          r3Submissions={r3Submissions}
+          finalsSubmissions={finalsSubmissions}
+          awardsSubmissions={awardsSubmissions}
+          results={results}
+        />
+      </main>
+    </>
   );
 }
