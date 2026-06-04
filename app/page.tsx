@@ -22,6 +22,7 @@ import { parseFinalsFile } from "@/lib/finals";
 import { parseAwardsFile, readAwardsRaw } from "@/lib/awards";
 import { readResultsState } from "@/lib/results";
 import { buildLeaderboard } from "@/lib/scoring";
+import Link from "next/link";
 import PicksTabs from "./PicksTabs";
 import ThemeToggle from "./ThemeToggle";
 
@@ -73,10 +74,12 @@ export default async function Home() {
     <>
       <header className="bg-black px-4 sm:px-6 py-5">
         <div className="max-w-[860px] mx-auto flex items-end justify-between">
-          <h1 className="text-[2.2rem] font-black leading-none tracking-[-0.05em] text-white">
-            Postseason<br />
-            <em className="not-italic text-accent">Picks.</em>
-          </h1>
+          <Link href="/">
+            <h1 className="text-[2.2rem] font-black leading-none tracking-[-0.05em] text-white">
+              Postseason<br />
+              <em className="not-italic text-accent">Picks.</em>
+            </h1>
+          </Link>
           <div className="flex flex-col items-end gap-1.5 pb-1">
             <ThemeToggle />
             <div className="text-[0.75rem] font-bold tracking-[0.1em] text-[#555] dark:text-[#999] uppercase">

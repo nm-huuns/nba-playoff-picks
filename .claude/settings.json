@@ -12,7 +12,8 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3737/)",
       "Bash(pkill -f \"next dev\")",
       "Bash(git stash *)",
-      "WebFetch(domain:favicon.io)"
+      "WebFetch(domain:favicon.io)",
+      "Bash(CLAUDE_CODE_TMPDIR=/tmp grep -r \"Postseason Picks\" /Users/sunny/Workspace/nba-playoff-picks --include=\"*.tsx\" --include=\"*.ts\" -l)"
     ]
   }
 }
